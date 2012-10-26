@@ -1,0 +1,12 @@
+obj
+bin
+_ReSharper.*
+*.csproj.user
+*.resharper.user
+*.ReSharper.user
+*.suo
+*.cache
+~$*
+Thumbs.db
+.DS_Store
+SampleApp/App.config
