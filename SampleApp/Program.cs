@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
 using DotNetShipping.ShippingProviders;
@@ -27,7 +28,10 @@ namespace DotNetShipping.SampleApp
 			string uspsPassword = appSettings["USPSPassword"];
 
 			// Setup package and destination/origin addresses
-			var package = new Package(0, 0, 0, 35, 0);
+			var packages = new List<Package>();
+			packages.Add(new Package(0, 0, 0, 35, 0));
+			packages.Add(new Package(0, 0, 0, 15, 0));
+
 			var origin = new Address("", "", "06405", "US");
 			var destination = new Address("", "", "20852", "US"); // US Address
 			//var destination = new Address("", "", "L4W 1S2", "CA"); // Canada Address
@@ -42,7 +46,7 @@ namespace DotNetShipping.SampleApp
 			rateManager.AddProvider(new USPSProvider(uspsUserId, uspsPassword));
 
 			// Call GetRates()
-			Shipment shipment = rateManager.GetRates(origin, destination, package);
+			Shipment shipment = rateManager.GetRates(origin, destination, packages);
 
 			// Iterate through the rates returned
 			foreach (Rate rate in shipment.Rates)
