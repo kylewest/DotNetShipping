@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 
 [assembly: AssemblyTitle("DotNetShipping")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("UPS, FedEx, USPS shipping rate calculators for .NET")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Kyle West")]
 [assembly: AssemblyProduct("DotNetShipping")]
 [assembly: AssemblyCopyright("Copyright ©  2012")]
 [assembly: AssemblyTrademark("")]
