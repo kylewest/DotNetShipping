@@ -1,11 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Net;
-using System.Text;
-using System.Xml;
+using System.Linq;
+using System.Web.Services.Protocols;
+using DotNetShipping.RateServiceWebReference;
 
 namespace DotNetShipping.ShippingProviders
 {
@@ -16,42 +14,23 @@ namespace DotNetShipping.ShippingProviders
 	{
 		#region Fields
 
-		private const int DEFAULT_TIMEOUT = 10;
-		private const string URL = "https://gateway.fedex.com/GatewayDC";
-
 		private readonly string _accountNumber;
+		private readonly string _key;
 		private readonly string _meterNumber;
+		private readonly string _password;
 
-		private readonly Hashtable _serviceCodes = new Hashtable
-		                                           	{
-		                                           		{
-		                                           			"PRIORITYOVERNIGHT", new AvailableService("FedEx Priority Overnight", 1)
-		                                           			},
-		                                           		{"FEDEX2DAY", new AvailableService("FedEx 2nd Day", 2)},
-		                                           		{
-		                                           			"STANDARDOVERNIGHT", new AvailableService("FedEx Standard Overnight", 4)
-		                                           			},
-		                                           		{"FIRSTOVERNIGHT", new AvailableService("FedEx First Overnight", 8)},
-		                                           		{"FEDEXEXPRESSSAVER", new AvailableService("FedEx Express Saver", 16)},
-		                                           		{"FEDEX1DAYFREIGHT", new AvailableService("FedEx Overnight Freight", 32)},
-		                                           		{"FEDEX2DAYFREIGHT", new AvailableService("FedEx 2nd Day Freight", 64)},
-		                                           		{
-		                                           			"FEDEX3DAYFREIGHT",
-		                                           			new AvailableService("FedEx Express Saver Freight", 128)
-		                                           			},
-		                                           		{"GROUNDHOMEDELIVERY", new AvailableService("FedEx Home Delivery", 256)},
-		                                           		{"FEDEXGROUND", new AvailableService("FedEx Ground", 512)},
-		                                           		{
-		                                           			"INTERNATIONALECONOMY",
-		                                           			new AvailableService("FedEx International Economy", 9990)
-		                                           			},
-		                                           		{
-		                                           			"INTERNATIONALPRIORITY",
-		                                           			new AvailableService("FedEx International Priority", 9991)
-		                                           			}
-		                                           	};
-
-		private readonly int _timeout;
+		private readonly Dictionary<string, string> _serviceCodes = new Dictionary<string, string>
+		                                                            	{
+		                                                            		{"PRIORITY_OVERNIGHT", "FedEx Priority Overnight"},
+		                                                            		{"FEDEX_2_DAY", "FedEx 2nd Day"},
+		                                                            		{"FEDEX_2_DAY_AM", "FedEx 2nd Day A.M."},
+		                                                            		{"STANDARD_OVERNIGHT", "FedEx Standard Overnight"},
+		                                                            		{"FIRST_OVERNIGHT", "FedEx First Overnight"},
+		                                                            		{"FEDEX_EXPRESS_SAVER", "FedEx Express Saver"},
+		                                                            		{"FEDEX_GROUND", "FedEx Ground"},
+		                                                            		{"INTERNATIONAL_ECONOMY", "FedEx International Economy"},
+		                                                            		{"INTERNATIONAL_PRIORITY", "FedEx International Priority"}
+		                                                            	};
 
 		#endregion
 
@@ -59,23 +38,18 @@ namespace DotNetShipping.ShippingProviders
 
 		///<summary>
 		///</summary>
-		///<param name = "accountNumber"></param>
-		///<param name = "meterNumber"></param>
-		public FedExProvider(string accountNumber, string meterNumber) : this(accountNumber, meterNumber, DEFAULT_TIMEOUT)
+		///<param name="key"></param>
+		///<param name="password"></param>
+		///<param name="accountNumber"></param>
+		///<param name="meterNumber"></param>
+		public FedExProvider(string key, string password, string accountNumber, string meterNumber)
 		{
-		}
+			_name = "FexEx";
 
-		///<summary>
-		///</summary>
-		///<param name = "accountNumber"></param>
-		///<param name = "meterNumber"></param>
-		///<param name = "timeout"></param>
-		public FedExProvider(string accountNumber, string meterNumber, int timeout)
-		{
-			_name = "FedEx";
+			_key = key;
+			_password = password;
 			_accountNumber = accountNumber;
 			_meterNumber = meterNumber;
-			_timeout = timeout;
 		}
 
 		#endregion
@@ -84,180 +58,149 @@ namespace DotNetShipping.ShippingProviders
 
 		public override void GetRates()
 		{
-			var request = (HttpWebRequest) WebRequest.Create(URL);
-			request.Method = "POST";
-			request.Timeout = _timeout*1000;
-			// Per the FedEx documentation, the "ContentType" should be "application/x-www-form-urlencoded".
-			// However, using "text/xml; encoding=UTF-8" lets us avoid converting the byte array returned by
-			// the buildRatesRequestMessage method and (so far) works just fine.
-			request.ContentType = "text/xml; encoding=UTF-8"; //"application/x-www-form-urlencoded";
-			byte[] bytes = BuildRequestMessage();
-			//System.Text.Encoding.Convert(Encoding.UTF8, Encoding.ASCII, this.buildRequestMessage());
-			request.ContentLength = bytes.Length;
-			Stream stream = request.GetRequestStream();
-			stream.Write(bytes, 0, bytes.Length);
-			stream.Close();
-			Debug.WriteLine("Request Sent!", "FedEx");
-			var response = (HttpWebResponse) request.GetResponse();
-			var xml = new XmlDocument();
-			xml.LoadXml(new StreamReader(response.GetResponseStream()).ReadToEnd());
-			_shipment.rates.AddRange(ParseResponseMessage(xml));
-			response.Close();
-		}
-
-		internal List<Rate> ParseResponseMessage(XmlDocument response)
-		{
-			Debug.WriteLine(response.OuterXml);
-			var rates = new List<Rate>();
-
-			XmlNodeList nodesEntries = response.SelectNodes("/FDXRateAvailableServicesReply/Entry");
-			if (nodesEntries != null)
+			RateRequest request = CreateRateRequest();
+			var service = new RateService();
+			try
 			{
-				foreach (XmlNode nodeEntry in nodesEntries)
+				// Call the web service passing in a RateRequest and returning a RateReply
+				RateReply reply = service.getRates(request);
+				//
+				if (reply.HighestSeverity == NotificationSeverityType.SUCCESS || reply.HighestSeverity == NotificationSeverityType.NOTE ||
+				    reply.HighestSeverity == NotificationSeverityType.WARNING)
 				{
-					string rateName = nodeEntry.SelectSingleNode("Service").InnerText;
-					if (!WasSeriveRequested(rateName))
-					{
-						continue;
-					}
-					string rateDesc = _serviceCodes[rateName].ToString();
-					XmlNode rateNode = (ApplyDiscounts
-					                    	? nodeEntry.SelectSingleNode("EstimatedCharges/DiscountedCharges/NetCharge")
-					                    	: nodeEntry.SelectSingleNode("EstimatedCharges/ListCharges/NetCharge"));
-					decimal totalCharges = Decimal.Parse(rateNode.InnerText);
-					DateTime deliveryDate = DateTime.Now;
-					if (nodeEntry.SelectSingleNode("DeliveryDate") != null)
-					{
-						deliveryDate = GetDeliveryDateTime(rateName, DateTime.Parse(nodeEntry.SelectSingleNode("DeliveryDate").InnerText));
-					}
-					else if (nodeEntry.SelectSingleNode("TimeInTransit") != null)
-					{
-						deliveryDate = GetDeliveryDateTime(rateName,
-						                                   DateTime.Parse(
-						                                   	DateTime.Now.AddDays(
-						                                   		Convert.ToDouble(nodeEntry.SelectSingleNode("TimeInTransit").InnerText)).
-						                                   		ToString("MM/dd/yyyy")));
-					}
-					rates.Add(new Rate(Name, rateName, rateDesc, totalCharges, deliveryDate));
+					ProcessReply(reply);
 				}
+				ShowNotifications(reply);
 			}
-			return rates;
-		}
-
-		private static DateTime GetDeliveryDateTime(string serviceCode, DateTime deliveryDate)
-		{
-			DateTime result = deliveryDate;
-
-			switch (serviceCode)
+			catch (SoapException e)
 			{
-				case "PRIORITYOVERNIGHT":
-					result = result.AddHours(10.5);
-					break;
-				case "FIRSTOVERNIGHT":
-					result = result.AddHours(8.5);
-					break;
-				case "STANDARDOVERNIGHT":
-					result = result.AddHours(15);
-					break;
-				case "FEDEX2DAY":
-				case "FEDEXEXPRESSSAVER":
-					result = result.AddHours(16.5);
-					break;
-				default: // no specific time, so use 11:59 PM to ensure correct sorting
-					result = result.AddHours(23).AddMinutes(59);
-					break;
+				Debug.WriteLine(e.Detail.InnerText);
 			}
-			return result;
-		}
-
-		private byte[] BuildRequestMessage()
-		{
-			Debug.WriteLine("Building Request...", "FedEx");
-
-			Encoding utf8 = new UTF8Encoding(false);
-			var writer = new XmlTextWriter(new MemoryStream(2000), utf8);
-			writer.WriteStartDocument();
-			writer.WriteStartElement("FDXRateAvailableServicesRequest");
-			writer.WriteAttributeString("xmlns:api", "http://www.fedex.com/fsmapi");
-			writer.WriteAttributeString("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-			writer.WriteAttributeString("xsi:noNamespaceSchemaLocation", "FDXRateRequest.xsd");
-			writer.WriteStartElement("RequestHeader");
-			writer.WriteElementString("CustomerTransactionIdentifier", "RateRequest");
-			writer.WriteElementString("AccountNumber", _accountNumber);
-			writer.WriteElementString("MeterNumber", _meterNumber);
-			writer.WriteEndElement();
-			writer.WriteElementString("DropoffType", "REGULARPICKUP");
-			writer.WriteElementString("Packaging", "YOURPACKAGING");
-			writer.WriteElementString("WeightUnits", "LBS");
-			writer.WriteElementString("Weight", _shipment.Packages[0].Weight.ToString("00.0"));
-			writer.WriteElementString("ListRate", "1");
-			writer.WriteStartElement("OriginAddress");
-			writer.WriteElementString("StateOrProvinceCode", _shipment.OriginAddress.State);
-			writer.WriteElementString("PostalCode", _shipment.OriginAddress.PostalCode);
-			writer.WriteElementString("CountryCode", _shipment.OriginAddress.CountryCode);
-			writer.WriteEndElement();
-			writer.WriteStartElement("DestinationAddress");
-			writer.WriteElementString("StateOrProvinceCode", _shipment.DestinationAddress.State);
-			writer.WriteElementString("PostalCode", _shipment.DestinationAddress.PostalCode);
-			writer.WriteElementString("CountryCode", _shipment.DestinationAddress.CountryCode);
-			writer.WriteEndElement();
-			writer.WriteStartElement("Payment");
-			writer.WriteElementString("PayorType", "SENDER");
-			writer.WriteEndElement();
-			writer.WriteStartElement("Dimensions");
-			writer.WriteElementString("Units", "IN");
-			writer.WriteElementString("Length", _shipment.Packages[0].Length.ToString());
-			writer.WriteElementString("Width", _shipment.Packages[0].Width.ToString());
-			writer.WriteElementString("Height", _shipment.Packages[0].Height.ToString());
-			writer.WriteEndElement();
-			writer.WriteElementString("PackageCount", "1");
-			writer.WriteEndDocument();
-
-			writer.Flush();
-			var buffer = new byte[writer.BaseStream.Length];
-			writer.BaseStream.Position = 0;
-			writer.BaseStream.Read(buffer, 0, buffer.Length);
-			writer.Close();
-
-			return buffer;
-		}
-
-		private bool WasSeriveRequested(string rateName)
-		{
-			return _serviceCodes.ContainsKey(rateName);
-		}
-
-		#endregion
-
-		#region Nested type: AvailableService
-
-		private struct AvailableService
-		{
-			#region Fields
-
-			public readonly int EnumValue;
-			public readonly string Name;
-
-			#endregion
-
-			#region .ctor
-
-			public AvailableService(string name, int enumValue)
+			catch (Exception e)
 			{
-				Name = name;
-				EnumValue = enumValue;
+				Debug.WriteLine(e.Message);
 			}
+		}
 
-			#endregion
+		private RateRequest CreateRateRequest()
+		{
+			// Build the RateRequest
+			var request = new RateRequest();
 
-			#region Methods
+			request.WebAuthenticationDetail = new WebAuthenticationDetail();
+			request.WebAuthenticationDetail.UserCredential = new WebAuthenticationCredential();
+			request.WebAuthenticationDetail.UserCredential.Key = _key;
+			request.WebAuthenticationDetail.UserCredential.Password = _password;
 
-			public override string ToString()
+			request.ClientDetail = new ClientDetail();
+			request.ClientDetail.AccountNumber = _accountNumber;
+			request.ClientDetail.MeterNumber = _meterNumber;
+
+			request.Version = new VersionId();
+
+			request.ReturnTransitAndCommit = true;
+			request.ReturnTransitAndCommitSpecified = true;
+
+			SetShipmentDetails(request);
+
+			return request;
+		}
+
+		private void SetShipmentDetails(RateRequest request)
+		{
+			request.RequestedShipment = new RequestedShipment();
+			request.RequestedShipment.ShipTimestamp = DateTime.Now; // Shipping date and time
+			request.RequestedShipment.ShipTimestampSpecified = true;
+			request.RequestedShipment.DropoffType = DropoffType.REGULAR_PICKUP; //Drop off types are BUSINESS_SERVICE_CENTER, DROP_BOX, REGULAR_PICKUP, REQUEST_COURIER, STATION
+			request.RequestedShipment.DropoffTypeSpecified = true;
+			request.RequestedShipment.PackagingType = PackagingType.YOUR_PACKAGING;
+			request.RequestedShipment.PackagingTypeSpecified = true;
+
+			SetOrigin(request);
+
+			SetDestination(request);
+
+			SetPackageLineItems(request);
+
+			request.RequestedShipment.RateRequestTypes = new RateRequestType[1];
+			request.RequestedShipment.RateRequestTypes[0] = RateRequestType.LIST;
+			request.RequestedShipment.PackageCount = _shipment.PackageCount.ToString();
+		}
+
+		private void SetOrigin(RateRequest request)
+		{
+			request.RequestedShipment.Shipper = new Party();
+			request.RequestedShipment.Shipper.Address = new RateServiceWebReference.Address();
+			request.RequestedShipment.Shipper.Address.StreetLines = new string[1] {""};
+			request.RequestedShipment.Shipper.Address.City = "";
+			request.RequestedShipment.Shipper.Address.StateOrProvinceCode = "";
+			request.RequestedShipment.Shipper.Address.PostalCode = _shipment.OriginAddress.PostalCode;
+			request.RequestedShipment.Shipper.Address.CountryCode = _shipment.OriginAddress.CountryCode;
+		}
+
+		private void SetDestination(RateRequest request)
+		{
+			request.RequestedShipment.Recipient = new Party();
+			request.RequestedShipment.Recipient.Address = new RateServiceWebReference.Address();
+			request.RequestedShipment.Recipient.Address.StreetLines = new string[1] {""};
+			request.RequestedShipment.Recipient.Address.City = "";
+			request.RequestedShipment.Recipient.Address.StateOrProvinceCode = "";
+			request.RequestedShipment.Recipient.Address.PostalCode = _shipment.DestinationAddress.PostalCode;
+			request.RequestedShipment.Recipient.Address.CountryCode = _shipment.DestinationAddress.CountryCode;
+		}
+
+		private void SetPackageLineItems(RateRequest request)
+		{
+			request.RequestedShipment.RequestedPackageLineItems = new RequestedPackageLineItem[_shipment.PackageCount];
+
+			int i = 0;
+			foreach (Package package in _shipment.Packages)
 			{
-				return Name;
+				request.RequestedShipment.RequestedPackageLineItems[i] = new RequestedPackageLineItem();
+				request.RequestedShipment.RequestedPackageLineItems[i].SequenceNumber = (i + 1).ToString();
+				request.RequestedShipment.RequestedPackageLineItems[i].GroupPackageCount = "1";
+				// package weight
+				request.RequestedShipment.RequestedPackageLineItems[i].Weight = new Weight();
+				request.RequestedShipment.RequestedPackageLineItems[i].Weight.Units = WeightUnits.LB;
+				request.RequestedShipment.RequestedPackageLineItems[i].Weight.Value = package.Weight;
+				// package dimensions
+				request.RequestedShipment.RequestedPackageLineItems[i].Dimensions = new Dimensions();
+				request.RequestedShipment.RequestedPackageLineItems[i].Dimensions.Length = package.Length.ToString();
+				request.RequestedShipment.RequestedPackageLineItems[i].Dimensions.Width = package.Width.ToString();
+				request.RequestedShipment.RequestedPackageLineItems[i].Dimensions.Height = package.Height.ToString();
+				request.RequestedShipment.RequestedPackageLineItems[i].Dimensions.Units = LinearUnits.IN;
+				i++;
 			}
+		}
 
-			#endregion
+
+		private void ProcessReply(RateReply reply)
+		{
+			foreach (RateReplyDetail rateReplyDetail in reply.RateReplyDetails)
+			{
+				decimal netCharge = rateReplyDetail.RatedShipmentDetails.Max(x => x.ShipmentRateDetail.TotalNetCharge.Amount);
+
+				string key = rateReplyDetail.ServiceType.ToString();
+				DateTime deliveryDate = rateReplyDetail.DeliveryTimestampSpecified ? rateReplyDetail.DeliveryTimestamp : DateTime.Now.AddDays(30);
+				var rate = new Rate(Name, key, _serviceCodes[key], netCharge, deliveryDate);
+
+				_shipment.rates.Add(rate);
+			}
+		}
+
+
+		private static void ShowNotifications(RateReply reply)
+		{
+			Debug.WriteLine("Notifications");
+			for (int i = 0; i < reply.Notifications.Length; i++)
+			{
+				Notification notification = reply.Notifications[i];
+				Debug.WriteLine("Notification no. {0}", i);
+				Debug.WriteLine(" Severity: {0}", notification.Severity);
+				Debug.WriteLine(" Code: {0}", notification.Code);
+				Debug.WriteLine(" Message: {0}", notification.Message);
+				Debug.WriteLine(" Source: {0}", notification.Source);
+			}
 		}
 
 		#endregion

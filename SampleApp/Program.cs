@@ -20,6 +20,8 @@ namespace DotNetShipping.SampleApp
 			string upsPassword = appSettings["UPSPassword"];
 
 			// You will need an account # and meter # to utilize the FedEx provider.
+			string fedexKey = appSettings["FedExKey"];
+			string fedexPassword = appSettings["FedExPassword"];
 			string fedexAccountNumber = appSettings["FedExAccountNumber"];
 			string fedexMeterNumber = appSettings["FedExMeterNumber"];
 
@@ -42,7 +44,7 @@ namespace DotNetShipping.SampleApp
 
 			// Add desired DotNetShippingProviders
 			rateManager.AddProvider(new UPSProvider(upsLicenseNumber, upsUserId, upsPassword));
-			rateManager.AddProvider(new FedExProvider(fedexAccountNumber, fedexMeterNumber));
+			rateManager.AddProvider(new FedExProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber));
 			rateManager.AddProvider(new USPSProvider(uspsUserId, uspsPassword));
 
 			// Call GetRates()
