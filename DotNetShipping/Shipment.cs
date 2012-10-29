@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace DotNetShipping
 {
@@ -57,6 +58,16 @@ namespace DotNetShipping
 		public ReadOnlyCollection<TrackingActivity> TrackingActivities
 		{
 			get { return _trackingActivities.AsReadOnly(); }
+		}
+
+		public int PackageCount
+		{
+			get { return Packages.Count; }
+		}
+
+		public decimal TotalPackageWeight
+		{
+			get { return Packages.Sum(x => x.Weight); }
 		}
 
 		internal List<Rate> rates
