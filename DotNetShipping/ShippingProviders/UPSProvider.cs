@@ -40,7 +40,7 @@ namespace DotNetShipping.ShippingProviders
 
 		public UPSProvider(string licenseNumber, string userID, string password, int timeout)
 		{
-			_name = "UPS";
+			Name = "UPS";
 			_licenseNumber = licenseNumber;
 			_userID = userID;
 			_password = password;
@@ -132,28 +132,28 @@ namespace DotNetShipping.ShippingProviders
 			writer.WriteStartElement("Shipment");
 			writer.WriteStartElement("Shipper");
 			writer.WriteStartElement("Address");
-			writer.WriteElementString("PostalCode", _shipment.OriginAddress.PostalCode);
+			writer.WriteElementString("PostalCode", Shipment.OriginAddress.PostalCode);
 			writer.WriteEndElement(); // </Address>
 			writer.WriteEndElement(); // </Shipper>
 			writer.WriteStartElement("ShipTo");
 			writer.WriteStartElement("Address");
-			writer.WriteElementString("PostalCode", _shipment.DestinationAddress.PostalCode);
-			writer.WriteElementString("CountryCode", _shipment.DestinationAddress.CountryCode);
+			writer.WriteElementString("PostalCode", Shipment.DestinationAddress.PostalCode);
+			writer.WriteElementString("CountryCode", Shipment.DestinationAddress.CountryCode);
 			writer.WriteEndElement(); // </Address>
 			writer.WriteEndElement(); // </ShipTo>
-			for (int i = 0; i < _shipment.Packages.Count; i++)
+			for (int i = 0; i < Shipment.Packages.Count; i++)
 			{
 				writer.WriteStartElement("Package");
 				writer.WriteStartElement("PackagingType");
 				writer.WriteElementString("Code", "00");
 				writer.WriteEndElement(); //</PackagingType>
 				writer.WriteStartElement("PackageWeight");
-				writer.WriteElementString("Weight", _shipment.Packages[i].Weight.ToString());
+				writer.WriteElementString("Weight", Shipment.Packages[i].Weight.ToString());
 				writer.WriteEndElement(); // </PackageWeight>
 				writer.WriteStartElement("Dimensions");
-				writer.WriteElementString("Length", _shipment.Packages[i].Length.ToString());
-				writer.WriteElementString("Width", _shipment.Packages[i].Width.ToString());
-				writer.WriteElementString("Height", _shipment.Packages[i].Height.ToString());
+				writer.WriteElementString("Length", Shipment.Packages[i].Length.ToString());
+				writer.WriteElementString("Width", Shipment.Packages[i].Width.ToString());
+				writer.WriteElementString("Height", Shipment.Packages[i].Height.ToString());
 				writer.WriteEndElement(); // </Dimensions>
 				writer.WriteEndElement(); // </Package>
 			}
@@ -268,7 +268,7 @@ namespace DotNetShipping.ShippingProviders
 				{
 					delivery = DateTime.Parse(date);
 				}
-				_shipment.rates.Add(new Rate("UPS", name, description, totalCharges, delivery));
+				Shipment.rates.Add(new Rate("UPS", name, description, totalCharges, delivery));
 			}
 		}
 

@@ -40,7 +40,7 @@ namespace DotNetShipping
 			_rates = new List<Rate>();
 		}
 
-		internal Shipment(string trackingNumber)
+		public Shipment(string trackingNumber)
 		{
 			TrackingNumber = trackingNumber;
 			_trackingActivities = new List<TrackingActivity>();
@@ -70,12 +70,12 @@ namespace DotNetShipping
 			get { return Packages.Sum(x => x.Weight); }
 		}
 
-		internal List<Rate> rates
+		public List<Rate> rates
 		{
 			get { return _rates; }
 		}
 
-		internal List<TrackingActivity> trackingActivities
+		public List<TrackingActivity> trackingActivities
 		{
 			get { return _trackingActivities; }
 		}

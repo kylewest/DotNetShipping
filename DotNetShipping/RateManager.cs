@@ -88,7 +88,7 @@ namespace DotNetShipping
 			foreach (AbstractShippingProvider provider in _providers)
 			{
 				// assign the shipment and ApplyDiscounts value to the provider.
-				provider._shipment = shipment;
+				provider.Shipment = shipment;
 				// setting ApplyDiscounts here is overriding provider-specific settings - commenting it out for now
 				//if(this._applyDiscounts)
 				//	provider.ApplyDiscounts = true;

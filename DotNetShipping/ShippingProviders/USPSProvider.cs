@@ -31,7 +31,7 @@ namespace DotNetShipping.ShippingProviders
 		/// <param name = "password">Password</param>
 		public USPSProvider(string userID, string password)
 		{
-			_name = "USPS";
+			Name = "USPS";
 			_userID = userID;
 			_password = password;
 			_services = Services.Express;
@@ -78,29 +78,29 @@ namespace DotNetShipping.ShippingProviders
 			xRoot.Attributes.Append(xDoc.CreateAttribute("USERID")).Value = _userID;
 			xRoot.Attributes.Append(xDoc.CreateAttribute("PASSWORD")).Value = _password;
 
-			for (int i = 0; i < _shipment.Packages.Count; i++)
+			for (int i = 0; i < Shipment.Packages.Count; i++)
 			{
 				XmlNode xPackage = xRoot.AppendChild(xDoc.CreateElement("Package"));
 				xPackage.Attributes.Append(xDoc.CreateAttribute("ID")).Value = i.ToString();
 
-				string service = _shipment.Packages[i].Service == null ? _services.ToString() : _shipment.Packages[i].Service;
+				string service = Shipment.Packages[i].Service == null ? _services.ToString() : Shipment.Packages[i].Service;
 				xPackage.AppendChild(xDoc.CreateElement("Service")).InnerText = service; //"EXPRESS";
 
-				xPackage.AppendChild(xDoc.CreateElement("ZipOrigination")).InnerText = _shipment.OriginAddress.PostalCode; //"20770"
-				xPackage.AppendChild(xDoc.CreateElement("ZipDestination")).InnerText = _shipment.DestinationAddress.PostalCode;
+				xPackage.AppendChild(xDoc.CreateElement("ZipOrigination")).InnerText = Shipment.OriginAddress.PostalCode; //"20770"
+				xPackage.AppendChild(xDoc.CreateElement("ZipDestination")).InnerText = Shipment.DestinationAddress.PostalCode;
 					//"20852"
-				xPackage.AppendChild(xDoc.CreateElement("Pounds")).InnerText = _shipment.Packages[i].Pounds.ToString();
+				xPackage.AppendChild(xDoc.CreateElement("Pounds")).InnerText = Shipment.Packages[i].Pounds.ToString();
 				//"10"				                
-				xPackage.AppendChild(xDoc.CreateElement("Ounces")).InnerText = _shipment.Packages[i].Ounces.ToString();
+				xPackage.AppendChild(xDoc.CreateElement("Ounces")).InnerText = Shipment.Packages[i].Ounces.ToString();
 				//"0"
 
-				string container = _shipment.Packages[i].Container == null
+				string container = Shipment.Packages[i].Container == null
 				                   	? Containers.None.ToString()
-				                   	: _shipment.Packages[i].Container;
+				                   	: Shipment.Packages[i].Container;
 				xPackage.AppendChild(xDoc.CreateElement("Container")).InnerText = container; //"None"
 
 				xPackage.AppendChild(xDoc.CreateElement("Size")).InnerText = GetSize(i); //"Regular"
-				xPackage.AppendChild(xDoc.CreateElement("Machinable")).InnerText = _shipment.Packages[i].Machinable.ToString(); //""
+				xPackage.AppendChild(xDoc.CreateElement("Machinable")).InnerText = Shipment.Packages[i].Machinable.ToString(); //""
 			}
 
 			request += xDoc.OuterXml;
@@ -122,11 +122,11 @@ namespace DotNetShipping.ShippingProviders
 		/// <returns></returns>
 		private string GetSize(int PackageNumber)
 		{
-			decimal pounds = _shipment.Packages[PackageNumber].Pounds;
-			decimal ounces = _shipment.Packages[PackageNumber].Ounces;
-			decimal length = _shipment.Packages[PackageNumber].Length;
-			decimal width = _shipment.Packages[PackageNumber].Width;
-			decimal height = _shipment.Packages[PackageNumber].Height;
+			decimal pounds = Shipment.Packages[PackageNumber].Pounds;
+			decimal ounces = Shipment.Packages[PackageNumber].Ounces;
+			decimal length = Shipment.Packages[PackageNumber].Length;
+			decimal width = Shipment.Packages[PackageNumber].Width;
+			decimal height = Shipment.Packages[PackageNumber].Height;
 
 			decimal longest;
 			decimal girth;
@@ -190,7 +190,7 @@ namespace DotNetShipping.ShippingProviders
 						name = postage.SelectSingleNode("MailService").InnerText;
 						description = string.Empty;
 						totalCharges = Convert.ToDecimal(postage.SelectSingleNode("Rate").InnerText);
-						_shipment.rates.Add(new Rate("USPS", name, description, totalCharges, new DateTime(0)));
+						Shipment.rates.Add(new Rate("USPS", name, description, totalCharges, new DateTime(0)));
 					}
 				}
 				catch (NullReferenceException)

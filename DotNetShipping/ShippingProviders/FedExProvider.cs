@@ -44,7 +44,7 @@ namespace DotNetShipping.ShippingProviders
 		///<param name="meterNumber"></param>
 		public FedExProvider(string key, string password, string accountNumber, string meterNumber)
 		{
-			_name = "FexEx";
+			Name = "FexEx";
 
 			_key = key;
 			_password = password;
@@ -124,7 +124,7 @@ namespace DotNetShipping.ShippingProviders
 
 			request.RequestedShipment.RateRequestTypes = new RateRequestType[1];
 			request.RequestedShipment.RateRequestTypes[0] = RateRequestType.LIST;
-			request.RequestedShipment.PackageCount = _shipment.PackageCount.ToString();
+			request.RequestedShipment.PackageCount = Shipment.PackageCount.ToString();
 		}
 
 		private void SetOrigin(RateRequest request)
@@ -134,8 +134,8 @@ namespace DotNetShipping.ShippingProviders
 			request.RequestedShipment.Shipper.Address.StreetLines = new string[1] {""};
 			request.RequestedShipment.Shipper.Address.City = "";
 			request.RequestedShipment.Shipper.Address.StateOrProvinceCode = "";
-			request.RequestedShipment.Shipper.Address.PostalCode = _shipment.OriginAddress.PostalCode;
-			request.RequestedShipment.Shipper.Address.CountryCode = _shipment.OriginAddress.CountryCode;
+			request.RequestedShipment.Shipper.Address.PostalCode = Shipment.OriginAddress.PostalCode;
+			request.RequestedShipment.Shipper.Address.CountryCode = Shipment.OriginAddress.CountryCode;
 		}
 
 		private void SetDestination(RateRequest request)
@@ -145,16 +145,16 @@ namespace DotNetShipping.ShippingProviders
 			request.RequestedShipment.Recipient.Address.StreetLines = new string[1] {""};
 			request.RequestedShipment.Recipient.Address.City = "";
 			request.RequestedShipment.Recipient.Address.StateOrProvinceCode = "";
-			request.RequestedShipment.Recipient.Address.PostalCode = _shipment.DestinationAddress.PostalCode;
-			request.RequestedShipment.Recipient.Address.CountryCode = _shipment.DestinationAddress.CountryCode;
+			request.RequestedShipment.Recipient.Address.PostalCode = Shipment.DestinationAddress.PostalCode;
+			request.RequestedShipment.Recipient.Address.CountryCode = Shipment.DestinationAddress.CountryCode;
 		}
 
 		private void SetPackageLineItems(RateRequest request)
 		{
-			request.RequestedShipment.RequestedPackageLineItems = new RequestedPackageLineItem[_shipment.PackageCount];
+			request.RequestedShipment.RequestedPackageLineItems = new RequestedPackageLineItem[Shipment.PackageCount];
 
 			int i = 0;
-			foreach (Package package in _shipment.Packages)
+			foreach (Package package in Shipment.Packages)
 			{
 				request.RequestedShipment.RequestedPackageLineItems[i] = new RequestedPackageLineItem();
 				request.RequestedShipment.RequestedPackageLineItems[i].SequenceNumber = (i + 1).ToString();
@@ -184,7 +184,7 @@ namespace DotNetShipping.ShippingProviders
 				DateTime deliveryDate = rateReplyDetail.DeliveryTimestampSpecified ? rateReplyDetail.DeliveryTimestamp : DateTime.Now.AddDays(30);
 				var rate = new Rate(Name, key, _serviceCodes[key], netCharge, deliveryDate);
 
-				_shipment.rates.Add(rate);
+				Shipment.rates.Add(rate);
 			}
 		}
 
