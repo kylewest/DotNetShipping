@@ -77,8 +77,6 @@
     <Compile Include="ShippingProviders\FedExProvider.cs" />
     <Compile Include="ShippingProviders\IShippingProvider.cs" />
     <Compile Include="ShippingProviders\UPSProvider.cs" />
-    <Compile Include="ShippingProviders\USPSProvider.cs" />
-    <Compile Include="TrackingActivity.cs" />
     <Compile Include="Web References\RateServiceWebReference\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
