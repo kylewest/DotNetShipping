@@ -6,14 +6,8 @@ namespace DotNetShipping.ShippingProviders
 	/// </summary>
 	public abstract class AbstractShippingProvider : IShippingProvider
 	{
-		#region Fields
-
-		
-		#endregion
 
 		#region Properties
-
-
 
 		public string Name { get; set; }
 		public Shipment Shipment { get; set; }
@@ -24,11 +18,6 @@ namespace DotNetShipping.ShippingProviders
 
 		public virtual void GetRates()
 		{
-		}
-
-		public virtual Shipment GetTrackingActivity(string trackingNumber)
-		{
-			return null;
 		}
 
 		#endregion

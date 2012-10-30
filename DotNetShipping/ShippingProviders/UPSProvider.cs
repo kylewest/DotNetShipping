@@ -17,11 +17,7 @@ namespace DotNetShipping.ShippingProviders
 		#region Fields
 
 		private const int defaultTimeout = 10;
-
 		private const string ratesUrl = "https://www.ups.com/ups.app/xml/Rate";
-
-		private const string trackUrl = "https://www.ups.com/ups.app/xml/Track";
-		// this is the test URL: "https://wwwcie.ups.com/ups.app/xml/Track"
 
 		private readonly string _licenseNumber;
 		private readonly string _password;
@@ -83,24 +79,6 @@ namespace DotNetShipping.ShippingProviders
 			var response = (HttpWebResponse) request.GetResponse();
 			parseRatesResponseMessage(new StreamReader(response.GetResponseStream()).ReadToEnd());
 			response.Close();
-		}
-
-		public override Shipment GetTrackingActivity(string trackingNumber)
-		{
-			var shipment = new Shipment(trackingNumber);
-			var request = (HttpWebRequest) WebRequest.Create(trackUrl);
-			request.Method = "POST";
-			request.ContentType = "application/x-www-form-urlencoded";
-			request.Timeout = _timeout*1000;
-			byte[] bytes = Encoding.ASCII.GetBytes(buildTrackingActivityRequestMessage(trackingNumber));
-			request.ContentLength = bytes.Length;
-			Stream stream = request.GetRequestStream();
-			stream.Write(bytes, 0, bytes.Length);
-			stream.Close();
-			var response = (HttpWebResponse) request.GetResponse();
-			parseTrackingActivityResponseMessage(ref shipment, new StreamReader(response.GetResponseStream()).ReadToEnd());
-			response.Close();
-			return shipment;
 		}
 
 		private byte[] buildRatesRequestMessage()
@@ -168,38 +146,6 @@ namespace DotNetShipping.ShippingProviders
 			return buffer;
 		}
 
-		private string buildTrackingActivityRequestMessage(string trackingNumber)
-		{
-			Debug.WriteLine("Building Request...", "UPS");
-			string request = "";
-			request += "<?xml version=\"1.0\"?>\r\n";
-			request += "<AccessRequest xml:lang=\"en-US\">\r\n";
-			request += "<AccessLicenseNumber>" + _licenseNumber + "</AccessLicenseNumber>\r\n";
-			request += "<UserId>" + _userID + "</UserId>\r\n";
-			request += "<Password>" + _password + "</Password>\r\n";
-			request += "</AccessRequest>\r\n";
-			request += "<?xml version=\"1.0\"?>";
-
-			var xDoc = new XmlDocument();
-			XmlNode xRoot = xDoc.AppendChild(xDoc.CreateElement("TrackRequest"));
-			xRoot.Attributes.Append(xDoc.CreateAttribute("lang")).Value = "en-US";
-			XmlNode xRequest = xRoot.AppendChild(xDoc.CreateElement("Request"));
-			XmlNode xNode = xRequest.AppendChild(xDoc.CreateElement("TransactionReference"));
-			xNode.AppendChild(xDoc.CreateElement("CustomerContext")).InnerText = "Tracking";
-			xNode.AppendChild(xDoc.CreateElement("XpciVersion")).InnerText = "1.0001";
-			xRequest.AppendChild(xDoc.CreateElement("RequestAction")).InnerText = "Track";
-			xRequest.AppendChild(xDoc.CreateElement("RequestOption")).InnerText = "activity";
-
-			string[] trackingNumberArray = trackingNumber.Split(new[] {','});
-			foreach (string tracking in trackingNumberArray)
-			{
-				xRoot.AppendChild(xDoc.CreateElement("TrackingNumber")).InnerText = tracking;
-			}
-
-			request += xDoc.OuterXml;
-			Debug.WriteLine(request);
-			return request;
-		}
 
 		private void loadServiceCodes()
 		{
@@ -275,51 +221,6 @@ namespace DotNetShipping.ShippingProviders
 					rate = Shipment.RateAdjusters.Aggregate(rate, (current, adjuster) => adjuster.AdjustRate(current));
 				}
 				Shipment.rates.Add(rate);
-			}
-		}
-
-		private void parseTrackingActivityResponseMessage(ref Shipment shipment, string response)
-		{
-			Debug.WriteLine("UPS Response Received!");
-			Debug.WriteLine(response);
-			var xDoc = new XmlDocument();
-			xDoc.LoadXml(response);
-			XmlNodeList tracks = xDoc.SelectNodes("/TrackResponse/Shipment/Package");
-			foreach (XmlNode track in tracks)
-			{
-				string trackingNumber = track.SelectSingleNode("TrackingNumber").InnerText;
-				XmlNodeList activities = track.SelectNodes("Activity");
-				foreach (XmlNode activity in activities)
-				{
-					string statusDescription = activity.SelectSingleNode("Status/StatusType/Description").InnerText;
-					XmlNode nodeCity = activity.SelectSingleNode("ActivityLocation/Address/City");
-					string city = (nodeCity == null ? "" : nodeCity.InnerText);
-					XmlNode nodeState = activity.SelectSingleNode("ActivityLocation/Address/StateProvinceCode");
-					string state = (nodeState == null ? "" : nodeState.InnerText);
-					XmlNode nodeCountry = activity.SelectSingleNode("ActivityLocation/Address/CountryCode");
-					string countryCode = (nodeCountry == null ? "" : nodeCountry.InnerText);
-					string date = activity.SelectSingleNode("Date").InnerText;
-					if (date != "")
-					{
-						date =
-							new DateTime(Int16.Parse(date.Substring(0, 4)), Int16.Parse(date.Substring(4, 2)),
-							             Int16.Parse(date.Substring(6, 2))).ToShortDateString();
-					}
-					string time = activity.SelectSingleNode("Time").InnerText;
-					if (time == "")
-					{
-						time = new DateTime(1900, 1, 1, 11, 59, 59, 0).ToShortTimeString();
-					}
-					else
-					{
-						time =
-							new DateTime(1900, 1, 1, Int16.Parse(time.Substring(0, 2)), Int16.Parse(time.Substring(2, 2)),
-							             Int16.Parse(time.Substring(4, 2))).ToShortTimeString();
-					}
-
-					shipment.trackingActivities.Add(new TrackingActivity(trackingNumber, statusDescription, city, state, countryCode,
-					                                                     date, time));
-				}
 			}
 		}
 

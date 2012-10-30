@@ -13,25 +13,13 @@ namespace DotNetShipping
 
 		public readonly Address DestinationAddress;
 		public readonly Address OriginAddress;
-		public readonly string TrackingNumber;
 		private readonly List<Rate> _rates;
-		private readonly List<TrackingActivity> _trackingActivities;
 		public ReadOnlyCollection<Package> Packages;
 		public ICollection<IRateAdjuster> RateAdjusters;
 
 		#endregion
 
 		#region .ctor
-
-		public Shipment(Address originAddress, Address destinationAddress, Package package)
-		{
-			OriginAddress = originAddress;
-			DestinationAddress = destinationAddress;
-			var packages = new List<Package>();
-			packages.Add(package);
-			Packages = packages.AsReadOnly();
-			_rates = new List<Rate>();
-		}
 
 		public Shipment(Address originAddress, Address destinationAddress, List<Package> packages)
 		{
@@ -41,12 +29,6 @@ namespace DotNetShipping
 			_rates = new List<Rate>();
 		}
 
-		public Shipment(string trackingNumber)
-		{
-			TrackingNumber = trackingNumber;
-			_trackingActivities = new List<TrackingActivity>();
-		}
-
 		#endregion
 
 		#region Properties
@@ -54,11 +36,6 @@ namespace DotNetShipping
 		public ReadOnlyCollection<Rate> Rates
 		{
 			get { return _rates.AsReadOnly(); }
-		}
-
-		public ReadOnlyCollection<TrackingActivity> TrackingActivities
-		{
-			get { return _trackingActivities.AsReadOnly(); }
 		}
 
 		public int PackageCount
@@ -74,11 +51,6 @@ namespace DotNetShipping
 		public List<Rate> rates
 		{
 			get { return _rates; }
-		}
-
-		public List<TrackingActivity> trackingActivities
-		{
-			get { return _trackingActivities; }
 		}
 
 		#endregion

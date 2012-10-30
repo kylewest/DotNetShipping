@@ -26,11 +26,6 @@ namespace DotNetShipping.ShippingProviders
 		/// </summary>
 		void GetRates();
 
-		/// <summary>
-		/// 	Retrieves package tracking activity from the provider
-		/// </summary>
-		Shipment GetTrackingActivity(string trackingNumber);
-
 		#endregion
 	}
 }
