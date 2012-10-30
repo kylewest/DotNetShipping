@@ -3,57 +3,55 @@ using System;
 namespace DotNetShipping
 {
 	/// <summary>
-	/// 	Summary description for Rate.
+	/// 	Summary Name for Rate.
 	/// </summary>
 	public class Rate : IComparable
 	{
-		#region Fields
-
-		/// <summary>
-		/// 	A description of the rate, as specified by the provider.
-		/// </summary>
-		public string Description;
-
-		/// <summary>
-		/// 	The guaranteed date and time of delivery for this rate.
-		/// </summary>
-		public DateTime GuaranteedDelivery;
-
-		/// <summary>
-		/// 	The name of the rate, as specified by the provider.
-		/// </summary>
-		public string Name;
-
-		/// <summary>
-		/// 	The <see cref = "ShippingProviders.IShippingProvider" /> implementation which provided this rate.
-		/// </summary>
-		public string Provider;
-
-		/// <summary>
-		/// 	The total cost of this rate.
-		/// </summary>
-		public decimal TotalCharges;
-
-		#endregion
-
 		#region .ctor
 
 		/// <summary>
 		/// 	Creates a new instance of the <see cref = "Rate" /> class.
 		/// </summary>
 		/// <param name = "provider">The name of the provider responsible for this rate.</param>
-		/// <param name = "name">The name of the rate.</param>
-		/// <param name = "description">A description of the rate.</param>
+		/// <param name = "providerCode">The name of the rate.</param>
+		/// <param name = "name">A Name of the rate.</param>
 		/// <param name = "totalCharges">The total cost of this rate.</param>
 		/// <param name = "delivery">The guaranteed date and time of delivery for this rate.</param>
-		public Rate(string provider, string name, string description, decimal totalCharges, DateTime delivery)
+		public Rate(string provider, string providerCode, string name, decimal totalCharges, DateTime delivery)
 		{
 			Provider = provider;
+			ProviderCode = providerCode;
 			Name = name;
-			Description = description;
 			TotalCharges = totalCharges;
 			GuaranteedDelivery = delivery;
 		}
+
+		#endregion
+
+		#region Properties
+
+		/// <summary>
+		/// 	The guaranteed date and time of delivery for this rate.
+		/// </summary>
+		public DateTime GuaranteedDelivery { get; set; }
+		/// <summary>
+		/// 	A Name of the rate, as specified by the provider.
+		/// </summary>
+		public string Name { get; set; }
+
+		/// <summary>
+		/// 	The <see cref = "ShippingProviders.IShippingProvider" /> implementation which provided this rate.
+		/// </summary>
+		public string Provider { get; set; }
+		/// <summary>
+		/// 	The ProviderCode of the rate, as specified by the provider.
+		/// </summary>
+		public string ProviderCode { get; set; }
+
+		/// <summary>
+		/// 	The total cost of this rate.
+		/// </summary>
+		public decimal TotalCharges { get; set; }
 
 		#endregion
 
@@ -61,7 +59,7 @@ namespace DotNetShipping
 
 		public override string ToString()
 		{
-			return Provider + Environment.NewLine + "\t" + Name + Environment.NewLine + "\t" + Description + Environment.NewLine + "\t" + TotalCharges + Environment.NewLine + "\t" + GuaranteedDelivery;
+			return Provider + Environment.NewLine + "\t" + ProviderCode + Environment.NewLine + "\t" + Name + Environment.NewLine + "\t" + TotalCharges + Environment.NewLine + "\t" + GuaranteedDelivery;
 		}
 
 		public int CompareTo(object obj)
