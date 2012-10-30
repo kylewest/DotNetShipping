@@ -10,7 +10,7 @@ namespace DotNetShipping.SampleApp
 	{
 		#region Methods
 
-		private static void Main(string[] args)
+		private static void Main()
 		{
 			NameValueCollection appSettings = ConfigurationManager.AppSettings;
 
@@ -25,19 +25,20 @@ namespace DotNetShipping.SampleApp
 			string fedexAccountNumber = appSettings["FedExAccountNumber"];
 			string fedexMeterNumber = appSettings["FedExMeterNumber"];
 
+			// TODO: USPSProvider
 			// You will need a userId and password to use the USPS provider. Your account will also need access to the production servers.
-			string uspsUserId = appSettings["USPSUserId"];
-			string uspsPassword = appSettings["USPSPassword"];
+			//string uspsUserId = appSettings["USPSUserId"];
+			//string uspsPassword = appSettings["USPSPassword"];
 
 			// Setup package and destination/origin addresses
 			var packages = new List<Package>();
-			packages.Add(new Package(0, 0, 0, 35, 0));
-			packages.Add(new Package(0, 0, 0, 15, 0));
+			packages.Add(new Package(12, 12, 12, 35, 150));
+			packages.Add(new Package(4, 4, 6, 15, 250));
 
 			var origin = new Address("", "", "06405", "US");
 			var destination = new Address("", "", "20852", "US"); // US Address
 			//var destination = new Address("", "", "L4W 1S2", "CA"); // Canada Address
-			//var destination = new Address("Bath", "", "BA11HX", "GB"); // European Address
+			//var destination = new Address("", "", "BA11HX", "GB"); // European Address
 
 			// Create RateManager
 			var rateManager = new RateManager();
@@ -45,7 +46,8 @@ namespace DotNetShipping.SampleApp
 			// Add desired DotNetShippingProviders
 			rateManager.AddProvider(new UPSProvider(upsLicenseNumber, upsUserId, upsPassword));
 			rateManager.AddProvider(new FedExProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber));
-			rateManager.AddProvider(new USPSProvider(uspsUserId, uspsPassword));
+			// TODO: USPSProvider
+			//rateManager.AddProvider(new USPSProvider(uspsUserId, uspsPassword));
 
 			// (Optional) Add RateAdjusters
 			rateManager.AddRateAdjuster(new PercentageRateAdjuster(.9M));
