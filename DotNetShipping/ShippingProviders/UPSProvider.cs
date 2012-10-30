@@ -127,12 +127,12 @@ namespace DotNetShipping.ShippingProviders
 				writer.WriteElementString("Code", "00");
 				writer.WriteEndElement(); //</PackagingType>
 				writer.WriteStartElement("PackageWeight");
-				writer.WriteElementString("Weight", Shipment.Packages[i].Weight.ToString());
+				writer.WriteElementString("Weight", Shipment.Packages[i].RoundedWeight.ToString());
 				writer.WriteEndElement(); // </PackageWeight>
 				writer.WriteStartElement("Dimensions");
-				writer.WriteElementString("Length", Shipment.Packages[i].Length.ToString());
-				writer.WriteElementString("Width", Shipment.Packages[i].Width.ToString());
-				writer.WriteElementString("Height", Shipment.Packages[i].Height.ToString());
+				writer.WriteElementString("Length", Shipment.Packages[i].RoundedLength.ToString());
+				writer.WriteElementString("Width", Shipment.Packages[i].RoundedWidth.ToString());
+				writer.WriteElementString("Height", Shipment.Packages[i].RoundedHeight.ToString());
 				writer.WriteEndElement(); // </Dimensions>
 				writer.WriteEndElement(); // </Package>
 			}

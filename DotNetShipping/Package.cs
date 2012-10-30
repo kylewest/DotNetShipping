@@ -1,3 +1,5 @@
+using System;
+
 namespace DotNetShipping
 {
 	/// <summary>
@@ -43,6 +45,22 @@ namespace DotNetShipping
 		public decimal Height { get; set; }
 		public decimal InsuredValue { get; set; }
 		public decimal Length { get; set; }
+		public decimal RoundedHeight
+		{
+			get { return Math.Ceiling(Height); }
+		}
+		public decimal RoundedLength
+		{
+			get { return Math.Ceiling(Length); }
+		}
+		public decimal RoundedWeight
+		{
+			get { return Math.Ceiling(Weight); }
+		}
+		public decimal RoundedWidth
+		{
+			get { return Math.Ceiling(Width); }
+		}
 		public decimal Weight { get; set; }
 		public decimal Width { get; set; }
 

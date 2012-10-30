@@ -162,12 +162,12 @@ namespace DotNetShipping.ShippingProviders
 				// package weight
 				request.RequestedShipment.RequestedPackageLineItems[i].Weight = new Weight();
 				request.RequestedShipment.RequestedPackageLineItems[i].Weight.Units = WeightUnits.LB;
-				request.RequestedShipment.RequestedPackageLineItems[i].Weight.Value = package.Weight;
+				request.RequestedShipment.RequestedPackageLineItems[i].Weight.Value = package.RoundedWeight;
 				// package dimensions
 				request.RequestedShipment.RequestedPackageLineItems[i].Dimensions = new Dimensions();
-				request.RequestedShipment.RequestedPackageLineItems[i].Dimensions.Length = package.Length.ToString();
-				request.RequestedShipment.RequestedPackageLineItems[i].Dimensions.Width = package.Width.ToString();
-				request.RequestedShipment.RequestedPackageLineItems[i].Dimensions.Height = package.Height.ToString();
+				request.RequestedShipment.RequestedPackageLineItems[i].Dimensions.Length = package.RoundedLength.ToString();
+				request.RequestedShipment.RequestedPackageLineItems[i].Dimensions.Width = package.RoundedWidth.ToString();
+				request.RequestedShipment.RequestedPackageLineItems[i].Dimensions.Height = package.RoundedHeight.ToString();
 				request.RequestedShipment.RequestedPackageLineItems[i].Dimensions.Units = LinearUnits.IN;
 				i++;
 			}
