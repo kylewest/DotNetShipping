@@ -30,8 +30,7 @@ namespace DotNetShipping.ShippingProviders
 
 		#region .ctor
 
-		public UPSProvider(string licenseNumber, string userID, string password)
-			: this(licenseNumber, userID, password, defaultTimeout)
+		public UPSProvider(string licenseNumber, string userID, string password) : this(licenseNumber, userID, password, defaultTimeout)
 		{
 		}
 
@@ -64,7 +63,7 @@ namespace DotNetShipping.ShippingProviders
 		{
 			var request = (HttpWebRequest) WebRequest.Create(ratesUrl);
 			request.Method = "POST";
-			request.Timeout = _timeout*1000;
+			request.Timeout = _timeout * 1000;
 			// Per the UPS documentation, the "ContentType" should be "application/x-www-form-urlencoded".
 			// However, using "text/xml; encoding=UTF-8" lets us avoid converting the byte array returned by
 			// the buildRatesRequestMessage method and (so far) works just fine.
@@ -145,7 +144,6 @@ namespace DotNetShipping.ShippingProviders
 
 			return buffer;
 		}
-
 
 		private void loadServiceCodes()
 		{
@@ -228,8 +226,6 @@ namespace DotNetShipping.ShippingProviders
 
 		// These values need to stay in sync with the values in the "loadServiceCodes" method.
 
-		#region AvailableServices enum
-
 		public enum AvailableServices
 		{
 			NextDayAir = 1,
@@ -246,10 +242,6 @@ namespace DotNetShipping.ShippingProviders
 			ExpressSaver = 2048,
 			All = 4095
 		}
-
-		#endregion
-
-		#region Nested type: AvailableService
 
 		private struct AvailableService
 		{
@@ -279,7 +271,5 @@ namespace DotNetShipping.ShippingProviders
 
 			#endregion
 		}
-
-		#endregion
 	}
 }

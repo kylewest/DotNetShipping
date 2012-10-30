@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Web.Services.Protocols;
+
 using DotNetShipping.RateServiceWebReference;
 
 namespace DotNetShipping.ShippingProviders
@@ -38,10 +39,10 @@ namespace DotNetShipping.ShippingProviders
 
 		///<summary>
 		///</summary>
-		///<param name="key"></param>
-		///<param name="password"></param>
-		///<param name="accountNumber"></param>
-		///<param name="meterNumber"></param>
+		///<param name = "key"></param>
+		///<param name = "password"></param>
+		///<param name = "accountNumber"></param>
+		///<param name = "meterNumber"></param>
 		public FedExProvider(string key, string password, string accountNumber, string meterNumber)
 		{
 			Name = "FexEx";
@@ -65,8 +66,7 @@ namespace DotNetShipping.ShippingProviders
 				// Call the web service passing in a RateRequest and returning a RateReply
 				RateReply reply = service.getRates(request);
 				//
-				if (reply.HighestSeverity == NotificationSeverityType.SUCCESS || reply.HighestSeverity == NotificationSeverityType.NOTE ||
-				    reply.HighestSeverity == NotificationSeverityType.WARNING)
+				if (reply.HighestSeverity == NotificationSeverityType.SUCCESS || reply.HighestSeverity == NotificationSeverityType.NOTE || reply.HighestSeverity == NotificationSeverityType.WARNING)
 				{
 					ProcessReply(reply);
 				}
@@ -79,6 +79,20 @@ namespace DotNetShipping.ShippingProviders
 			catch (Exception e)
 			{
 				Debug.WriteLine(e.Message);
+			}
+		}
+
+		private static void ShowNotifications(RateReply reply)
+		{
+			Debug.WriteLine("Notifications");
+			for (int i = 0; i < reply.Notifications.Length; i++)
+			{
+				Notification notification = reply.Notifications[i];
+				Debug.WriteLine("Notification no. {0}", i);
+				Debug.WriteLine(" Severity: {0}", notification.Severity);
+				Debug.WriteLine(" Code: {0}", notification.Code);
+				Debug.WriteLine(" Message: {0}", notification.Message);
+				Debug.WriteLine(" Source: {0}", notification.Source);
 			}
 		}
 
@@ -106,36 +120,21 @@ namespace DotNetShipping.ShippingProviders
 			return request;
 		}
 
-		private void SetShipmentDetails(RateRequest request)
+		private void ProcessReply(RateReply reply)
 		{
-			request.RequestedShipment = new RequestedShipment();
-			request.RequestedShipment.ShipTimestamp = DateTime.Now; // Shipping date and time
-			request.RequestedShipment.ShipTimestampSpecified = true;
-			request.RequestedShipment.DropoffType = DropoffType.REGULAR_PICKUP; //Drop off types are BUSINESS_SERVICE_CENTER, DROP_BOX, REGULAR_PICKUP, REQUEST_COURIER, STATION
-			request.RequestedShipment.DropoffTypeSpecified = true;
-			request.RequestedShipment.PackagingType = PackagingType.YOUR_PACKAGING;
-			request.RequestedShipment.PackagingTypeSpecified = true;
+			foreach (RateReplyDetail rateReplyDetail in reply.RateReplyDetails)
+			{
+				decimal netCharge = rateReplyDetail.RatedShipmentDetails.Max(x => x.ShipmentRateDetail.TotalNetCharge.Amount);
 
-			SetOrigin(request);
-
-			SetDestination(request);
-
-			SetPackageLineItems(request);
-
-			request.RequestedShipment.RateRequestTypes = new RateRequestType[1];
-			request.RequestedShipment.RateRequestTypes[0] = RateRequestType.LIST;
-			request.RequestedShipment.PackageCount = Shipment.PackageCount.ToString();
-		}
-
-		private void SetOrigin(RateRequest request)
-		{
-			request.RequestedShipment.Shipper = new Party();
-			request.RequestedShipment.Shipper.Address = new RateServiceWebReference.Address();
-			request.RequestedShipment.Shipper.Address.StreetLines = new string[1] {""};
-			request.RequestedShipment.Shipper.Address.City = "";
-			request.RequestedShipment.Shipper.Address.StateOrProvinceCode = "";
-			request.RequestedShipment.Shipper.Address.PostalCode = Shipment.OriginAddress.PostalCode;
-			request.RequestedShipment.Shipper.Address.CountryCode = Shipment.OriginAddress.CountryCode;
+				string key = rateReplyDetail.ServiceType.ToString();
+				DateTime deliveryDate = rateReplyDetail.DeliveryTimestampSpecified ? rateReplyDetail.DeliveryTimestamp : DateTime.Now.AddDays(30);
+				var rate = new Rate(Name, key, _serviceCodes[key], netCharge, deliveryDate);
+				if (Shipment.RateAdjusters != null)
+				{
+					rate = Shipment.RateAdjusters.Aggregate(rate, (current, adjuster) => adjuster.AdjustRate(current));
+				}
+				Shipment.rates.Add(rate);
+			}
 		}
 
 		private void SetDestination(RateRequest request)
@@ -147,6 +146,17 @@ namespace DotNetShipping.ShippingProviders
 			request.RequestedShipment.Recipient.Address.StateOrProvinceCode = "";
 			request.RequestedShipment.Recipient.Address.PostalCode = Shipment.DestinationAddress.PostalCode;
 			request.RequestedShipment.Recipient.Address.CountryCode = Shipment.DestinationAddress.CountryCode;
+		}
+
+		private void SetOrigin(RateRequest request)
+		{
+			request.RequestedShipment.Shipper = new Party();
+			request.RequestedShipment.Shipper.Address = new RateServiceWebReference.Address();
+			request.RequestedShipment.Shipper.Address.StreetLines = new string[1] {""};
+			request.RequestedShipment.Shipper.Address.City = "";
+			request.RequestedShipment.Shipper.Address.StateOrProvinceCode = "";
+			request.RequestedShipment.Shipper.Address.PostalCode = Shipment.OriginAddress.PostalCode;
+			request.RequestedShipment.Shipper.Address.CountryCode = Shipment.OriginAddress.CountryCode;
 		}
 
 		private void SetPackageLineItems(RateRequest request)
@@ -178,37 +188,25 @@ namespace DotNetShipping.ShippingProviders
 			}
 		}
 
-
-		private void ProcessReply(RateReply reply)
+		private void SetShipmentDetails(RateRequest request)
 		{
-			foreach (RateReplyDetail rateReplyDetail in reply.RateReplyDetails)
-			{
-				decimal netCharge = rateReplyDetail.RatedShipmentDetails.Max(x => x.ShipmentRateDetail.TotalNetCharge.Amount);
+			request.RequestedShipment = new RequestedShipment();
+			request.RequestedShipment.ShipTimestamp = DateTime.Now; // Shipping date and time
+			request.RequestedShipment.ShipTimestampSpecified = true;
+			request.RequestedShipment.DropoffType = DropoffType.REGULAR_PICKUP; //Drop off types are BUSINESS_SERVICE_CENTER, DROP_BOX, REGULAR_PICKUP, REQUEST_COURIER, STATION
+			request.RequestedShipment.DropoffTypeSpecified = true;
+			request.RequestedShipment.PackagingType = PackagingType.YOUR_PACKAGING;
+			request.RequestedShipment.PackagingTypeSpecified = true;
 
-				string key = rateReplyDetail.ServiceType.ToString();
-				DateTime deliveryDate = rateReplyDetail.DeliveryTimestampSpecified ? rateReplyDetail.DeliveryTimestamp : DateTime.Now.AddDays(30);
-				var rate = new Rate(Name, key, _serviceCodes[key], netCharge, deliveryDate);
-				if (Shipment.RateAdjusters != null)
-				{
-					rate = Shipment.RateAdjusters.Aggregate(rate, (current, adjuster) => adjuster.AdjustRate(current));
-				}
-				Shipment.rates.Add(rate);
-			}
-		}
+			SetOrigin(request);
 
+			SetDestination(request);
 
-		private static void ShowNotifications(RateReply reply)
-		{
-			Debug.WriteLine("Notifications");
-			for (int i = 0; i < reply.Notifications.Length; i++)
-			{
-				Notification notification = reply.Notifications[i];
-				Debug.WriteLine("Notification no. {0}", i);
-				Debug.WriteLine(" Severity: {0}", notification.Severity);
-				Debug.WriteLine(" Code: {0}", notification.Code);
-				Debug.WriteLine(" Message: {0}", notification.Message);
-				Debug.WriteLine(" Source: {0}", notification.Source);
-			}
+			SetPackageLineItems(request);
+
+			request.RequestedShipment.RateRequestTypes = new RateRequestType[1];
+			request.RequestedShipment.RateRequestTypes[0] = RateRequestType.LIST;
+			request.RequestedShipment.PackageCount = Shipment.PackageCount.ToString();
 		}
 
 		#endregion

@@ -13,9 +13,9 @@ namespace DotNetShipping
 
 		public readonly Address DestinationAddress;
 		public readonly Address OriginAddress;
-		private readonly List<Rate> _rates;
 		public ReadOnlyCollection<Package> Packages;
 		public ICollection<IRateAdjuster> RateAdjusters;
+		private readonly List<Rate> _rates;
 
 		#endregion
 
@@ -33,14 +33,13 @@ namespace DotNetShipping
 
 		#region Properties
 
-		public ReadOnlyCollection<Rate> Rates
-		{
-			get { return _rates.AsReadOnly(); }
-		}
-
 		public int PackageCount
 		{
 			get { return Packages.Count; }
+		}
+		public ReadOnlyCollection<Rate> Rates
+		{
+			get { return _rates.AsReadOnly(); }
 		}
 
 		public decimal TotalPackageWeight

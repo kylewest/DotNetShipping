@@ -6,7 +6,6 @@ namespace DotNetShipping.ShippingProviders
 	/// </summary>
 	public abstract class AbstractShippingProvider : IShippingProvider
 	{
-
 		#region Properties
 
 		public string Name { get; set; }

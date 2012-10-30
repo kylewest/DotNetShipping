@@ -59,16 +59,15 @@ namespace DotNetShipping
 
 		#region Methods
 
+		public override string ToString()
+		{
+			return Provider + Environment.NewLine + "\t" + Name + Environment.NewLine + "\t" + Description + Environment.NewLine + "\t" + TotalCharges + Environment.NewLine + "\t" + GuaranteedDelivery;
+		}
+
 		public int CompareTo(object obj)
 		{
 			var rateB = (Rate) obj;
 			return GuaranteedDelivery.CompareTo(rateB.GuaranteedDelivery);
-		}
-
-		public override string ToString()
-		{
-			return Provider + Environment.NewLine + "\t" + Name + Environment.NewLine + "\t" + Description + Environment.NewLine +
-			       "\t" + TotalCharges + Environment.NewLine + "\t" + GuaranteedDelivery;
 		}
 
 		#endregion
