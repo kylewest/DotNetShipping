@@ -5,17 +5,13 @@ namespace DotNetShipping
 	/// </summary>
 	public class Address
 	{
-		#region Fields
-
-		public readonly string City;
-		public readonly string CountryCode;
-		public readonly string Line1;
-		public readonly string Line2;
-		public readonly string Line3;
-		public readonly string PostalCode;
-		public readonly string State;
-
-		#endregion
+		public string City { get; set; }
+		public string CountryCode { get; set; }
+		public string Line1 { get; set; }
+		public string Line2 { get; set; }
+		public string Line3 { get; set; }
+		public string PostalCode { get; set; }
+		public string State { get; set; }
 
 		#region .ctor
 
