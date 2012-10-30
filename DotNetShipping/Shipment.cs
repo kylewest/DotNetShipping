@@ -17,6 +17,7 @@ namespace DotNetShipping
 		private readonly List<Rate> _rates;
 		private readonly List<TrackingActivity> _trackingActivities;
 		public ReadOnlyCollection<Package> Packages;
+		public ICollection<IRateAdjuster> RateAdjusters;
 
 		#endregion
 

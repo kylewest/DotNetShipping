@@ -8,17 +8,12 @@ namespace DotNetShipping.ShippingProviders
 	{
 		#region Fields
 
-		private bool _applyDiscounts = RateManager.DEFAULT_APPLY_DISCOUNTS;
 		
 		#endregion
 
 		#region Properties
 
-		public bool ApplyDiscounts
-		{
-			get { return _applyDiscounts; }
-			set { _applyDiscounts = value; }
-		}
+
 
 		public string Name { get; set; }
 		public Shipment Shipment { get; set; }

@@ -8,11 +8,6 @@ namespace DotNetShipping.ShippingProviders
 		#region Properties
 
 		/// <summary>
-		/// 	Whether or not to apply discounts for the provider.
-		/// </summary>
-		bool ApplyDiscounts { get; set; }
-
-		/// <summary>
 		/// 	The name of the provider.
 		/// </summary>
 		string Name { get; }

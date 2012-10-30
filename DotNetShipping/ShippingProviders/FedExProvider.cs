@@ -183,7 +183,10 @@ namespace DotNetShipping.ShippingProviders
 				string key = rateReplyDetail.ServiceType.ToString();
 				DateTime deliveryDate = rateReplyDetail.DeliveryTimestampSpecified ? rateReplyDetail.DeliveryTimestamp : DateTime.Now.AddDays(30);
 				var rate = new Rate(Name, key, _serviceCodes[key], netCharge, deliveryDate);
-
+				if (Shipment.RateAdjusters != null)
+				{
+					rate = Shipment.RateAdjusters.Aggregate(rate, (current, adjuster) => adjuster.AdjustRate(current));
+				}
 				Shipment.rates.Add(rate);
 			}
 		}

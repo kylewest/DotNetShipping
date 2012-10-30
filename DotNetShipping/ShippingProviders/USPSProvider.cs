@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Xml;
@@ -88,7 +89,7 @@ namespace DotNetShipping.ShippingProviders
 
 				xPackage.AppendChild(xDoc.CreateElement("ZipOrigination")).InnerText = Shipment.OriginAddress.PostalCode; //"20770"
 				xPackage.AppendChild(xDoc.CreateElement("ZipDestination")).InnerText = Shipment.DestinationAddress.PostalCode;
-					//"20852"
+				//"20852"
 				xPackage.AppendChild(xDoc.CreateElement("Pounds")).InnerText = Shipment.Packages[i].Pounds.ToString();
 				//"10"				                
 				xPackage.AppendChild(xDoc.CreateElement("Ounces")).InnerText = Shipment.Packages[i].Ounces.ToString();
@@ -190,7 +191,12 @@ namespace DotNetShipping.ShippingProviders
 						name = postage.SelectSingleNode("MailService").InnerText;
 						description = string.Empty;
 						totalCharges = Convert.ToDecimal(postage.SelectSingleNode("Rate").InnerText);
-						Shipment.rates.Add(new Rate("USPS", name, description, totalCharges, new DateTime(0)));
+						var rate = new Rate(Name, name, description, totalCharges, new DateTime(0));
+						if (Shipment.RateAdjusters != null)
+						{
+							rate = Shipment.RateAdjusters.Aggregate(rate, (current, adjuster) => adjuster.AdjustRate(current));
+						}
+						Shipment.rates.Add(rate);
 					}
 				}
 				catch (NullReferenceException)

@@ -12,27 +12,27 @@ namespace DotNetShipping
 		/// <summary>
 		/// 	A description of the rate, as specified by the provider.
 		/// </summary>
-		public readonly string Description;
+		public string Description;
 
 		/// <summary>
 		/// 	The guaranteed date and time of delivery for this rate.
 		/// </summary>
-		public readonly DateTime GuaranteedDelivery;
+		public DateTime GuaranteedDelivery;
 
 		/// <summary>
 		/// 	The name of the rate, as specified by the provider.
 		/// </summary>
-		public readonly string Name;
+		public string Name;
 
 		/// <summary>
 		/// 	The <see cref = "ShippingProviders.IShippingProvider" /> implementation which provided this rate.
 		/// </summary>
-		public readonly string Provider;
+		public string Provider;
 
 		/// <summary>
 		/// 	The total cost of this rate.
 		/// </summary>
-		public readonly decimal TotalCharges;
+		public decimal TotalCharges;
 
 		#endregion
 

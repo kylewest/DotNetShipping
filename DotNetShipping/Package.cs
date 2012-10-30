@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace DotNetShipping
 {
@@ -19,7 +20,7 @@ namespace DotNetShipping
 		public string Container;
 		public bool Machinable;
 		public string Service;
-
+		
 		#endregion
 
 		#region .ctor

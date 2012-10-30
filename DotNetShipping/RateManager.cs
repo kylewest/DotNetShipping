@@ -12,33 +12,20 @@ namespace DotNetShipping
 	{
 		#region Fields
 
-		/// <summary>
-		/// 	Default value for handling discounts is to apply them.
-		/// </summary>
-		public const bool DEFAULT_APPLY_DISCOUNTS = false;
-
+		private readonly IList<IRateAdjuster> _adjusters;
 		private readonly ArrayList _providers;
-		private bool _applyDiscounts = DEFAULT_APPLY_DISCOUNTS;
 
 		#endregion
 
 		#region .ctor
 
 		/// <summary>
-		/// 	Creates a new RateManager instance using the default for whether or not to apply discounts.
+		/// 	Creates a new RateManager instance.
 		/// </summary>
-		public RateManager() : this(DEFAULT_APPLY_DISCOUNTS)
-		{
-		}
-
-		/// <summary>
-		/// 	Creates a new RateManager instance using the specified value for whether or not to apply discounts.
-		/// </summary>
-		/// <param name = "applyDiscounts">Boolean value indicating whether or not to apply discounts. Default is defined by <see cref = "DEFAULT_APPLY_DISCOUNTS" />.</param>
-		public RateManager(bool applyDiscounts)
+		public RateManager()
 		{
 			_providers = new ArrayList();
-			_applyDiscounts = applyDiscounts;
+			_adjusters = new List<IRateAdjuster>();
 		}
 
 		#endregion
@@ -54,6 +41,11 @@ namespace DotNetShipping
 			_providers.Add(provider);
 		}
 
+		public void AddRateAdjuster(IRateAdjuster adjuster)
+		{
+			_adjusters.Add(adjuster);
+		}
+
 		/// <summary>
 		/// 	Retrieves rates for all of the specified providers using the specified address and package information.
 		/// </summary>
@@ -63,8 +55,7 @@ namespace DotNetShipping
 		/// <returns>A <see cref = "Shipment" /> instance containing all returned rates.</returns>
 		public Shipment GetRates(Address originAddress, Address destinationAddress, Package package)
 		{
-			var shipment = new Shipment(originAddress, destinationAddress, package);
-			return getRates(ref shipment);
+			return GetRates(originAddress, destinationAddress, new List<Package> {package});
 		}
 
 		/// <summary>
@@ -76,7 +67,7 @@ namespace DotNetShipping
 		/// <returns>A <see cref = "Shipment" /> instance containing all returned rates.</returns>
 		public Shipment GetRates(Address originAddress, Address destinationAddress, List<Package> packages)
 		{
-			var shipment = new Shipment(originAddress, destinationAddress, packages);
+			var shipment = new Shipment(originAddress, destinationAddress, packages) {RateAdjusters = _adjusters};
 			return getRates(ref shipment);
 		}
 

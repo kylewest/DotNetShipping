@@ -47,6 +47,9 @@ namespace DotNetShipping.SampleApp
 			rateManager.AddProvider(new FedExProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber));
 			rateManager.AddProvider(new USPSProvider(uspsUserId, uspsPassword));
 
+			// (Optional) Add RateAdjusters
+			rateManager.AddRateAdjuster(new PercentageRateAdjuster(.9M));
+
 			// Call GetRates()
 			Shipment shipment = rateManager.GetRates(origin, destination, packages);
 

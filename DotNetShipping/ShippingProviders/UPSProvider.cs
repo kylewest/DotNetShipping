@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Xml;
@@ -222,10 +223,10 @@ namespace DotNetShipping.ShippingProviders
 			Debug.WriteLine(response);
 			var xDoc = new XmlDocument();
 			xDoc.LoadXml(response);
-			XmlNodeList rates = xDoc.SelectNodes("/RatingServiceSelectionResponse/RatedShipment");
-			foreach (XmlNode rate in rates)
+			XmlNodeList ratedShipment = xDoc.SelectNodes("/RatingServiceSelectionResponse/RatedShipment");
+			foreach (XmlNode rateNode in ratedShipment)
 			{
-				string name = rate.SelectSingleNode("Service/Code").InnerText;
+				string name = rateNode.SelectSingleNode("Service/Code").InnerText;
 				AvailableService service;
 				if (_serviceCodes.ContainsKey(name))
 				{
@@ -244,9 +245,9 @@ namespace DotNetShipping.ShippingProviders
 				{
 					description = _serviceCodes[name].ToString();
 				}
-				decimal totalCharges = Convert.ToDecimal(rate.SelectSingleNode("TotalCharges/MonetaryValue").InnerText);
+				decimal totalCharges = Convert.ToDecimal(rateNode.SelectSingleNode("TotalCharges/MonetaryValue").InnerText);
 				DateTime delivery = DateTime.Parse("1/1/1900 12:00 AM");
-				string date = rate.SelectSingleNode("GuaranteedDaysToDelivery").InnerText;
+				string date = rateNode.SelectSingleNode("GuaranteedDaysToDelivery").InnerText;
 				if (date == "") // no gauranteed delivery date, so use MaxDate to ensure correct sorting
 				{
 					date = DateTime.MaxValue.ToShortDateString();
@@ -255,7 +256,7 @@ namespace DotNetShipping.ShippingProviders
 				{
 					date = DateTime.Now.AddDays(Convert.ToDouble(date)).ToShortDateString();
 				}
-				string deliveryTime = rate.SelectSingleNode("ScheduledDeliveryTime").InnerText;
+				string deliveryTime = rateNode.SelectSingleNode("ScheduledDeliveryTime").InnerText;
 				if (deliveryTime == "") // no scheduled delivery time, so use 11:59:00 PM to ensure correct sorting
 				{
 					date += " 11:59:00 PM";
@@ -268,7 +269,12 @@ namespace DotNetShipping.ShippingProviders
 				{
 					delivery = DateTime.Parse(date);
 				}
-				Shipment.rates.Add(new Rate("UPS", name, description, totalCharges, delivery));
+				var rate = new Rate(Name, name, description, totalCharges, delivery);
+				if (Shipment.RateAdjusters != null)
+				{
+					rate = Shipment.RateAdjusters.Aggregate(rate, (current, adjuster) => adjuster.AdjustRate(current));
+				}
+				Shipment.rates.Add(rate);
 			}
 		}
 
