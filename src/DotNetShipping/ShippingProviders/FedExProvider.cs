@@ -170,6 +170,7 @@ namespace DotNetShipping.ShippingProviders
 				request.RequestedShipment.RequestedPackageLineItems[i].Dimensions.Height = package.RoundedHeight.ToString();
 				request.RequestedShipment.RequestedPackageLineItems[i].Dimensions.Units = LinearUnits.IN;
 				// package insured value
+				request.RequestedShipment.RequestedPackageLineItems[i].InsuredValue = new Money();
 				request.RequestedShipment.RequestedPackageLineItems[i].InsuredValue.Amount = package.InsuredValue;
 				request.RequestedShipment.RequestedPackageLineItems[i].InsuredValue.AmountSpecified = true;
 				request.RequestedShipment.RequestedPackageLineItems[i].InsuredValue.Currency = "USD";
