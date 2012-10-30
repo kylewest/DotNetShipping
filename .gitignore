@@ -9,5 +9,5 @@ _ReSharper.*
 ~$*
 Thumbs.db
 .DS_Store
-SampleApp/App.config
+src/SampleApp/App.config
 *.nupkg

@@ -1,0 +1,1 @@
+tools\NAnt\NAnt.exe -buildfile:nant.build %*
