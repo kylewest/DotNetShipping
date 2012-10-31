@@ -102,13 +102,8 @@ namespace DotNetShipping.ShippingProviders
 			foreach (var r in rates)
 			{
 				string name = r.Name.Replace(REMOVE_FROM_RATE_NAME, string.Empty);
-				var rate = new Rate(Name, name, string.Concat("USPS ", name), r.TotalCharges, DateTime.Now.AddDays(30))
-				if (Shipment.RateAdjusters != null)
-				{
-					rate = Shipment.RateAdjusters.Aggregate(rate, (current, adjuster) => adjuster.AdjustRate(current));
-				}
 
-				Shipment.rates.Add(rate);
+				AddRate(name, string.Concat("USPS ", name), r.TotalCharges, DateTime.Now.AddDays(30));
 			}
 		}
 

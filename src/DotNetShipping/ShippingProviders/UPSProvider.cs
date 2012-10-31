@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Text;
 using System.Xml;
@@ -213,12 +212,8 @@ namespace DotNetShipping.ShippingProviders
 				{
 					delivery = DateTime.Parse(date);
 				}
-				var rate = new Rate(Name, name, description, totalCharges, delivery);
-				if (Shipment.RateAdjusters != null)
-				{
-					rate = Shipment.RateAdjusters.Aggregate(rate, (current, adjuster) => adjuster.AdjustRate(current));
-				}
-				Shipment.rates.Add(rate);
+
+				AddRate(name, description, totalCharges, delivery);
 			}
 		}
 
