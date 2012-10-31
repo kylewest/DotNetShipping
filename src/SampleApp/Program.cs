@@ -26,10 +26,8 @@ namespace DotNetShipping.SampleApp
 			string fedexAccountNumber = appSettings["FedExAccountNumber"];
 			string fedexMeterNumber = appSettings["FedExMeterNumber"];
 
-			// TODO: USPSProvider
-			// You will need a userId and password to use the USPS provider. Your account will also need access to the production servers.
-			//string uspsUserId = appSettings["USPSUserId"];
-			//string uspsPassword = appSettings["USPSPassword"];
+			// You will need a userId to use the USPS provider. Your account will also need access to the production servers.
+			string uspsUserId = appSettings["USPSUserId"];
 
 			// Setup package and destination/origin addresses
 			var packages = new List<Package>();
@@ -47,8 +45,7 @@ namespace DotNetShipping.SampleApp
 			// Add desired DotNetShippingProviders
 			rateManager.AddProvider(new UPSProvider(upsLicenseNumber, upsUserId, upsPassword));
 			rateManager.AddProvider(new FedExProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber));
-			// TODO: USPSProvider
-			//rateManager.AddProvider(new USPSProvider(uspsUserId, uspsPassword));
+			rateManager.AddProvider(new USPSProvider(uspsUserId));
 
 			// (Optional) Add RateAdjusters
 			rateManager.AddRateAdjuster(new PercentageRateAdjuster(.9M));

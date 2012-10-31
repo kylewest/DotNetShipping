@@ -59,6 +59,7 @@
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\AssemblyInfo.cs">
@@ -79,6 +80,7 @@
     <Compile Include="ShippingProviders\FedExProvider.cs" />
     <Compile Include="ShippingProviders\IShippingProvider.cs" />
     <Compile Include="ShippingProviders\UPSProvider.cs" />
+    <Compile Include="ShippingProviders\USPSProvider.cs" />
     <Compile Include="Web References\RateServiceWebReference\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

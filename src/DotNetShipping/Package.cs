@@ -42,8 +42,18 @@ namespace DotNetShipping
 
 		#region Properties
 
+		public decimal CalculatedGirth
+		{
+			get
+			{
+				decimal result = (Width * 2) + (Height * 2);
+				return Math.Ceiling(result);
+			}
+		}
+
 		public decimal Height { get; set; }
 		public decimal InsuredValue { get; set; }
+		public bool IsOversize { get; set; }
 		public decimal Length { get; set; }
 		public decimal RoundedHeight
 		{
