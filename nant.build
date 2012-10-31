@@ -16,7 +16,7 @@
     <property name="company.name" value="Kyle West" />
 	<property name="assembly.description" value="UPS, FedEx, USPS shipping rate calculators for .NET" />
     <property name="version.major" value="0" />
-    <property name="version.minor" value="6" />
+    <property name="version.minor" value="7" />
     <property name="version.build" value="0" />
     <property name="version.revision" value="0" />
     <property name="project.fullversion" value="${version.major}.${version.minor}.${version.build}.${version.revision}" dynamic="true" />
