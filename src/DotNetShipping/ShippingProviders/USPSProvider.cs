@@ -99,10 +99,16 @@ namespace DotNetShipping.ShippingProviders
 			            group item by (string) item.Element("MailService")
 			            into g select new {Name = g.Key, TotalCharges = g.Sum(x => Decimal.Parse((string) x.Element("Rate")))};
 
-			foreach (var rate in rates)
+			foreach (var r in rates)
 			{
-				string name = rate.Name.Replace(REMOVE_FROM_RATE_NAME, string.Empty);
-				Shipment.rates.Add(new Rate(Name, name, string.Concat("USPS ", name), rate.TotalCharges, DateTime.Now.AddDays(30)));
+				string name = r.Name.Replace(REMOVE_FROM_RATE_NAME, string.Empty);
+				var rate = new Rate(Name, name, string.Concat("USPS ", name), r.TotalCharges, DateTime.Now.AddDays(30))
+				if (Shipment.RateAdjusters != null)
+				{
+					rate = Shipment.RateAdjusters.Aggregate(rate, (current, adjuster) => adjuster.AdjustRate(current));
+				}
+
+				Shipment.rates.Add(rate);
 			}
 		}
 
