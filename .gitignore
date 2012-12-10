@@ -6,6 +6,7 @@
 
 src/AssemblyInfo.cs
 src/SampleApp/App.config
+src/DotNetShipping.Tests/App.config
 
 #NuGet
 *.nupkgi
