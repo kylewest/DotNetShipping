@@ -55,6 +55,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Web.Services" />
@@ -75,6 +76,7 @@
     </Compile>
     <Compile Include="Rate.cs" />
     <Compile Include="RateManager.cs" />
+    <Compile Include="RateManagerFactory.cs" />
     <Compile Include="Shipment.cs" />
     <Compile Include="ShippingProviders\AbstractShippingProvider.cs" />
     <Compile Include="ShippingProviders\FedExProvider.cs" />

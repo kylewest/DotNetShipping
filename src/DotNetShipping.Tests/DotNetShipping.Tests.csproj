@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="Features\FedExShipRates.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Units\RateManagerFactoryTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="AppSample.config" />

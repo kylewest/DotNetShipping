@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using System.Web.Services.Protocols;
@@ -36,6 +38,19 @@ namespace DotNetShipping.ShippingProviders
 		#endregion
 
 		#region .ctor
+	    /// <summary>
+	    /// Paramaterless constructor that loads settings from app.config
+	    /// </summary>
+	    public FedExProvider()
+	    {
+            NameValueCollection appSettings = ConfigurationManager.AppSettings;
+
+            _key = appSettings["FedExKey"];
+            _password = appSettings["FedExPassword"];
+             _accountNumber = appSettings["FedExAccountNumber"];
+            _meterNumber = appSettings["FedExMeterNumber"];
+	    }
+
 
 		///<summary>
 		///</summary>
