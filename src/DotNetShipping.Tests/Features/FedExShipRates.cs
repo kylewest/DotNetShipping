@@ -23,10 +23,12 @@ namespace DotNetShipping.Tests.Features
 
             Shipment r = rateManager.GetRates(from, to, package);
 
-            Assert.NotNull(r);
-            Assert.True(r.rates.Any());
+            var fedExRates = r.Rates.Where(x => x.Provider == "FedEx").ToList();
 
-            foreach (var rate in r.rates)
+            Assert.NotNull(r);
+            Assert.True(fedExRates.Any());
+
+            foreach (var rate in fedExRates)
             {
                 Assert.True(rate.TotalCharges > 0);
             }

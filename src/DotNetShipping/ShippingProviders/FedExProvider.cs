@@ -43,7 +43,7 @@ namespace DotNetShipping.ShippingProviders
 	    /// </summary>
 	    public FedExProvider()
 	    {
-			Name = "FexEx";
+			Name = "FedEx";
             NameValueCollection appSettings = ConfigurationManager.AppSettings;
             _key = appSettings["FedExKey"];
             _password = appSettings["FedExPassword"];
@@ -60,7 +60,7 @@ namespace DotNetShipping.ShippingProviders
 		///<param name = "meterNumber"></param>
 		public FedExProvider(string key, string password, string accountNumber, string meterNumber)
 		{
-			Name = "FexEx";
+			Name = "FedEx";
 
 			_key = key;
 			_password = password;
