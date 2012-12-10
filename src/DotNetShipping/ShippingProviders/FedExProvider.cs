@@ -43,8 +43,8 @@ namespace DotNetShipping.ShippingProviders
 	    /// </summary>
 	    public FedExProvider()
 	    {
+			Name = "FexEx";
             NameValueCollection appSettings = ConfigurationManager.AppSettings;
-
             _key = appSettings["FedExKey"];
             _password = appSettings["FedExPassword"];
              _accountNumber = appSettings["FedExAccountNumber"];

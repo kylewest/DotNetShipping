@@ -36,6 +36,7 @@ namespace DotNetShipping.ShippingProviders
         /// </summary>
         public UPSProvider()
         {
+            Name = "UPS";
             NameValueCollection appSettings = ConfigurationManager.AppSettings;
             _licenseNumber = appSettings["UPSLicenseNumber"];
             _userID = appSettings["UPSUserId"];
