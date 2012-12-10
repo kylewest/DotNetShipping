@@ -1,4 +1,5 @@
 using System;
+using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
@@ -22,6 +23,12 @@ namespace DotNetShipping.ShippingProviders
 
 		#region .ctor
 
+	    public USPSProvider()
+	    {
+			Name = "USPS";
+            _userId = ConfigurationManager.AppSettings["USPSUserId"];
+	    }
+
 		///<summary>
 		///</summary>
 		///<param name="userId"></param>
@@ -29,6 +36,7 @@ namespace DotNetShipping.ShippingProviders
 		{
 			Name = "USPS";
 			_userId = userId;
+		    
 		}
 
 		#endregion
