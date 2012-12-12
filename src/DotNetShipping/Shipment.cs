@@ -28,7 +28,6 @@ namespace DotNetShipping
 			Packages = packages.AsReadOnly();
 			_rates = new List<Rate>();
 		}
-
 		#endregion
 
 		#region Properties

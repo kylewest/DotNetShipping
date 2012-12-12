@@ -42,6 +42,7 @@ namespace DotNetShipping
 			_providers.Add(provider);
 		}
 
+        
 		public void AddRateAdjuster(IRateAdjuster adjuster)
 		{
 			_adjusters.Add(adjuster);
