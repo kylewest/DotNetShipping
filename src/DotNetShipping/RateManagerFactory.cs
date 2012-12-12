@@ -2,34 +2,40 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 using DotNetShipping.ShippingProviders;
 
 namespace DotNetShipping
 {
-    public class RateManagerFactory
-    {
-        /// <summary>
-        /// Builds a Rate Manager and adds the providers
-        /// </summary>
-        /// <returns></returns>
-        public static RateManager Build()
-        {
-            var providers = Assembly.GetAssembly(typeof (IShippingProvider)).GetTypes().Where(x => x.BaseType == typeof (AbstractShippingProvider));
+	public class RateManagerFactory
+	{
+		#region Methods
 
-            var rateManager = new RateManager();
+		/// <summary>
+		/// Builds a Rate Manager and adds the providers
+		/// </summary>
+		/// <returns></returns>
+		public static RateManager Build()
+		{
+			IEnumerable<Type> providers = Assembly.GetAssembly(typeof (IShippingProvider)).GetTypes().Where(x => x.BaseType == typeof (AbstractShippingProvider));
 
-            foreach (var provider in providers)
-            {
-                var instance = Activator.CreateInstance(provider) as IShippingProvider;
+			var rateManager = new RateManager();
 
-                if (instance == null) continue;
+			foreach (Type provider in providers)
+			{
+				var instance = Activator.CreateInstance(provider) as IShippingProvider;
 
-                rateManager.AddProvider(instance);
-            }
+				if (instance == null)
+				{
+					continue;
+				}
 
-            return rateManager;
-        }
-    }
+				rateManager.AddProvider(instance);
+			}
+
+			return rateManager;
+		}
+
+		#endregion
+	}
 }

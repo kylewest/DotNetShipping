@@ -23,11 +23,11 @@ namespace DotNetShipping.ShippingProviders
 
 		#region .ctor
 
-	    public USPSProvider()
-	    {
+		public USPSProvider()
+		{
 			Name = "USPS";
-            _userId = ConfigurationManager.AppSettings["USPSUserId"];
-	    }
+			_userId = ConfigurationManager.AppSettings["USPSUserId"];
+		}
 
 		///<summary>
 		///</summary>
@@ -36,7 +36,6 @@ namespace DotNetShipping.ShippingProviders
 		{
 			Name = "USPS";
 			_userId = userId;
-		    
 		}
 
 		#endregion

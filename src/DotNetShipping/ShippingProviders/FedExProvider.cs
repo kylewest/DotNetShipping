@@ -15,7 +15,6 @@ namespace DotNetShipping.ShippingProviders
 	/// </summary>
 	public class FedexProvider : FedExProvider
 	{
-		
 	}
 
 	/// <summary>
@@ -46,19 +45,19 @@ namespace DotNetShipping.ShippingProviders
 		#endregion
 
 		#region .ctor
-	    /// <summary>
-	    /// Paramaterless constructor that loads settings from app.config
-	    /// </summary>
-	    public FedExProvider()
-	    {
-			Name = "FedEx";
-            NameValueCollection appSettings = ConfigurationManager.AppSettings;
-            _key = appSettings["FedExKey"];
-            _password = appSettings["FedExPassword"];
-             _accountNumber = appSettings["FedExAccountNumber"];
-            _meterNumber = appSettings["FedExMeterNumber"];
-	    }
 
+		/// <summary>
+		/// Paramaterless constructor that loads settings from app.config
+		/// </summary>
+		public FedExProvider()
+		{
+			Name = "FedEx";
+			NameValueCollection appSettings = ConfigurationManager.AppSettings;
+			_key = appSettings["FedExKey"];
+			_password = appSettings["FedExPassword"];
+			_accountNumber = appSettings["FedExAccountNumber"];
+			_meterNumber = appSettings["FedExMeterNumber"];
+		}
 
 		///<summary>
 		///</summary>
