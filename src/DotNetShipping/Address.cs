@@ -1,3 +1,5 @@
+using System;
+
 namespace DotNetShipping
 {
 	/// <summary>
@@ -33,6 +35,15 @@ namespace DotNetShipping
 		public string Line3 { get; set; }
 		public string PostalCode { get; set; }
 		public string State { get; set; }
+
+		#endregion
+
+		#region Methods
+
+		public bool IsUnitedStatesAddress()
+		{
+			return !string.IsNullOrEmpty(CountryCode) && string.Equals(CountryCode, "US", StringComparison.OrdinalIgnoreCase);
+		}
 
 		#endregion
 	}

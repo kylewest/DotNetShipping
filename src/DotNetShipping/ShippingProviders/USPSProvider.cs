@@ -44,6 +44,12 @@ namespace DotNetShipping.ShippingProviders
 
 		public override void GetRates()
 		{
+			// USPS only avaialble for domestic addresses. International is a different API.
+			if (!IsDomesticUSPSAvailable())
+			{
+				return;
+			}
+
 			var sb = new StringBuilder();
 
 			var settings = new XmlWriterSettings();
@@ -96,6 +102,11 @@ namespace DotNetShipping.ShippingProviders
 			{
 				Debug.WriteLine(ex);
 			}
+		}
+
+		public bool IsDomesticUSPSAvailable()
+		{
+			return Shipment.OriginAddress.IsUnitedStatesAddress() && Shipment.DestinationAddress.IsUnitedStatesAddress();
 		}
 
 		private void ParseResult(string response)
