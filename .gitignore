@@ -10,6 +10,7 @@ src/DotNetShipping.Tests/App.config
 
 #NuGet
 *.nupkgi
+*.nupkg
 packages/
 
 #Visual Studio files
