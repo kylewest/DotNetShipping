@@ -72,6 +72,14 @@ foreach (Rate rate in shipment.Rates)
 See the sample app in this repository for a working example.
 
 
+## 3rd Party Docs
+
+Developer documentation is often hard to find. The links below are provided as reference.
+
+* [FedEx](https://rpmware.box.com/s/e1i8dultmit9x16jo1m1)
+* [USPS](https://rpmware.box.com/s/cvrmikfhnpm25r4qmb3f)
+
+
 ## Credits
 
 Originally forked from [dotNETShipping](http://dotnetshipping.codeplex.com/).
