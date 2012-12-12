@@ -11,13 +11,6 @@ using DotNetShipping.RateServiceWebReference;
 namespace DotNetShipping.ShippingProviders
 {
 	/// <summary>
-	/// DEPRECIATION WARNING: This class will be removed in favor of FedExProvider (capital E) in a future release. Please update your code to use the correct class!
-	/// </summary>
-	public class FedexProvider : FedExProvider
-	{
-	}
-
-	/// <summary>
 	/// 	Provides rates from FedEx (Federal Express).
 	/// </summary>
 	public class FedExProvider : AbstractShippingProvider
