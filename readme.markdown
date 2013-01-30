@@ -78,7 +78,7 @@ Developer documentation is often hard to find. The links below are provided as r
 
 * [FedEx](https://rpmware.box.com/s/e1i8dultmit9x16jo1m1)
 * [USPS](https://rpmware.box.com/s/cvrmikfhnpm25r4qmb3f)
-
+* [UPS] (https://www.dropbox.com/sh/p4w81e6xi6eycsd/ei-QZHL0vI)
 
 ## Credits
 
