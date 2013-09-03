@@ -46,8 +46,6 @@
             <property name="version.build" value="${env.BUILD_NUMBER}" />
             <echo message="VERSION BUILD DETECTED ${version.build}" />
         </if>
-		<property name="version.revision" value="${datetime::get-month(datetime.buildtime)}${datetime::get-hour(datetime.buildtime)}${datetime::get-minute(datetime.buildtime)}" />
-		<property name="version.revision" value="${string::substring(version.revision, 0, 5)}" />
         <echo message="VERSION REVISION DETECTED ${version.revision}" />        
     </target>
 
