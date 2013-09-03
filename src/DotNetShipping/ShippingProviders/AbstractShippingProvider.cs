@@ -33,7 +33,7 @@ namespace DotNetShipping.ShippingProviders
 			{
 				rate = Shipment.RateAdjusters.Aggregate(rate, (current, adjuster) => adjuster.AdjustRate(current));
 			}
-			Shipment.rates.Add(rate);
+			Shipment.Rates.Add(rate);
 		}
 
 		#endregion

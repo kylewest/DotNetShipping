@@ -37,19 +37,15 @@ namespace DotNetShipping
 		{
 			get { return Packages.Count; }
 		}
-		public ReadOnlyCollection<Rate> Rates
+
+		public List<Rate> Rates
 		{
-			get { return _rates.AsReadOnly(); }
+			get { return _rates; }
 		}
 
 		public decimal TotalPackageWeight
 		{
 			get { return Packages.Sum(x => x.Weight); }
-		}
-
-		public List<Rate> rates
-		{
-			get { return _rates; }
 		}
 
 		#endregion
