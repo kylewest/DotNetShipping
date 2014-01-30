@@ -18,6 +18,7 @@ namespace DotNetShipping.ShippingProviders
 		private const string PRODUCTION_URL = "http://production.shippingapis.com/ShippingAPI.dll";
 		private const string REMOVE_FROM_RATE_NAME = "&lt;sup&gt;&amp;reg;&lt;/sup&gt;";
 		private readonly string _userId;
+	    private readonly string _service;
 
 		#endregion
 
@@ -27,15 +28,27 @@ namespace DotNetShipping.ShippingProviders
 		{
 			Name = "USPS";
 			_userId = ConfigurationManager.AppSettings["USPSUserId"];
+		    _service = "ALL";
 		}
+
+        ///<summary>
+        ///</summary>
+        ///<param name="userId"></param>
+        public USPSProvider(string userId)
+        {
+            Name = "USPS";
+            _userId = userId;
+            _service = "ALL";
+        }
 
 		///<summary>
 		///</summary>
 		///<param name="userId"></param>
-		public USPSProvider(string userId)
+		public USPSProvider(string userId, string service)
 		{
 			Name = "USPS";
 			_userId = userId;
+		    _service = service;
 		}
 
 		#endregion
@@ -66,7 +79,7 @@ namespace DotNetShipping.ShippingProviders
 				{
 					writer.WriteStartElement("Package");
 					writer.WriteAttributeString("ID", i.ToString());
-					writer.WriteElementString("Service", "ALL");
+					writer.WriteElementString("Service", _service);
 					writer.WriteElementString("ZipOrigination", Shipment.OriginAddress.PostalCode);
 					writer.WriteElementString("ZipDestination", Shipment.DestinationAddress.PostalCode);
 					writer.WriteElementString("Pounds", package.RoundedWeight.ToString());
