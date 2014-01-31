@@ -123,10 +123,7 @@ namespace DotNetShipping.ShippingProviders
                 string url = string.Concat(PRODUCTION_URL, "?API=IntlRateV2&XML=", sb.ToString());
 				var webClient = new WebClient();
 				string response = webClient.DownloadString(url);
-
-				Debug.WriteLine(url);
-				Debug.WriteLine(response);
-
+                
 				ParseResult(response);
 			}
 			catch (Exception ex)

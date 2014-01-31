@@ -1,7 +1,4 @@
-﻿using System.Configuration;
-using System.Linq;
-
-using DotNetShipping.ShippingProviders;
+﻿using System.Linq;
 
 using Xunit;
 
@@ -38,27 +35,5 @@ namespace DotNetShipping.Tests.Features
         }
 
         #endregion
-    }
-
-    
-    public class USPSInternationalRates
-    {
-        [Fact]
-        public void USPSInternationalReturnsRate()
-        {
-            string uspsUserId = ConfigurationManager.AppSettings["USPSUserId"];
-            
-            var package = new Package(4, 4, 4, 4, 0);
-
-            var origin = new Address("278 Buckley Jones Road", "", "", "Cleveland", "MS", "38732", "US");
-            var destination = new Address("Jubail", "Jubail", "31951", "Saudi Arabia");
-            var rateManager = new RateManager();
-            rateManager.AddProvider(new USPSInternationalProvider(uspsUserId, "Priority Mail International"));
-
-            Shipment response = rateManager.GetRates(origin, destination, package);
-
-            Assert.NotNull(response);
-            
-        }
     }
 }

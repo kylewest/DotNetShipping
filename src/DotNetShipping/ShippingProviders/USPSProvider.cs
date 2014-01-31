@@ -86,14 +86,14 @@ namespace DotNetShipping.ShippingProviders
 					writer.WriteElementString("ZipDestination", Shipment.DestinationAddress.PostalCode);
 					writer.WriteElementString("Pounds", package.RoundedWeight.ToString());
 					writer.WriteElementString("Ounces", "0");
-					writer.WriteElementString("Container", string.Empty);
-					writer.WriteElementString("Size", "REGULAR");
+                    writer.WriteElementString("Container", "VARIABLE");
+                    writer.WriteElementString("Size", "REGULAR");
 					//TODO: Figure out DIM Weights
-					//writer.WriteElementString("Size", package.IsOversize ? "LARGE" : "REGULAR");
-					//writer.WriteElementString("Length", package.RoundedLength.ToString());
-					//writer.WriteElementString("Width", package.RoundedWidth.ToString());
-					//writer.WriteElementString("Height", package.RoundedHeight.ToString());
-					//writer.WriteElementString("Girth", package.CalculatedGirth.ToString());
+                    //writer.WriteElementString("Size", package.IsOversize ? "LARGE" : "REGULAR");
+                    //writer.WriteElementString("Width", package.RoundedWidth.ToString());
+                    //writer.WriteElementString("Length", package.RoundedLength.ToString());
+                    //writer.WriteElementString("Height", package.RoundedHeight.ToString());
+                    //writer.WriteElementString("Girth", package.CalculatedGirth.ToString());
 					writer.WriteElementString("Machinable", "True");
 					writer.WriteEndElement();
 					i++;
@@ -107,9 +107,6 @@ namespace DotNetShipping.ShippingProviders
 				string url = string.Concat(PRODUCTION_URL, "?API=RateV4&XML=", sb.ToString());
 				var webClient = new WebClient();
 				string response = webClient.DownloadString(url);
-
-				Debug.WriteLine(url);
-				Debug.WriteLine(response);
 
 				ParseResult(response);
 			}
