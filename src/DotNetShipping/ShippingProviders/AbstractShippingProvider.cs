@@ -36,6 +36,11 @@ namespace DotNetShipping.ShippingProviders
 			Shipment.Rates.Add(rate);
 		}
 
+	    protected void AddError(USPSError error)
+	    {
+	        Shipment.ServerErrors.Add(error);
+	    }
+
 		#endregion
 	}
 }

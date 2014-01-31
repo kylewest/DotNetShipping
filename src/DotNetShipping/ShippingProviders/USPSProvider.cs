@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -74,6 +75,7 @@ namespace DotNetShipping.ShippingProviders
 			{
 				writer.WriteStartElement("RateV4Request");
 				writer.WriteAttributeString("USERID", _userId);
+			    writer.WriteElementString("Revision", "2");
 				int i = 0;
 				foreach (Package package in Shipment.Packages)
 				{
@@ -132,7 +134,8 @@ namespace DotNetShipping.ShippingProviders
 
 			foreach (var r in rates)
 			{
-				string name = r.Name.Replace(REMOVE_FROM_RATE_NAME, string.Empty);
+				//string name = r.Name.Replace(REMOVE_FROM_RATE_NAME, string.Empty);
+			    string name = Regex.Replace(r.Name, "&lt.*&gt;", "");
 
 				AddRate(name, string.Concat("USPS ", name), r.TotalCharges, DateTime.Now.AddDays(30));
 			}
