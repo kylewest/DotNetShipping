@@ -80,6 +80,10 @@ Developer documentation is often hard to find. The links below are provided as r
 * [USPS](https://rpmware.box.com/s/cvrmikfhnpm25r4qmb3f)
 * [UPS] (https://www.dropbox.com/sh/p4w81e6xi6eycsd/ei-QZHL0vI)
 
-## Credits
+## Credits & Contributors
 
-Originally forked from [dotNETShipping](http://dotnetshipping.codeplex.com/).
+Originally forked from [dotNETShipping](http://dotnetshipping.codeplex.com/) by [@rlaneve](https://github.com/rlaneve).
+
+* [@kylewest](https://github.com/kylewest)
+* [@brettallred](https://github.com/brettallred)
+
