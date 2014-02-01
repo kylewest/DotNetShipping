@@ -69,7 +69,20 @@ foreach (Rate rate in shipment.Rates)
 }
 ```
 
+DotNetShipping supports requesting a single rate from UPS and USPS.
+To do so, include the rate description as a parameter of the provider constructor.
+```CSHARP
+rateManager.AddProvider(new USPSProvider(uspsUserId, "UPS Ground"));
+rateManager.AddProvider(new UPSProvider(upsLicenseNumber, upsUserId, upsPassword, "Priority Mail"));
+````
+A list of valid shipping methods can be found in the documentation links below.
+
 See the sample app in this repository for a working example.
+
+#### International Rates
+USPS requires a separate API call for retrieving rates international services.
+
+The call works the same but use the USPSInternationalProvider instead. Your current USPS credentials will work with this and will return the available services between the origin and destination addresses.
 
 
 ## 3rd Party Docs
@@ -80,10 +93,10 @@ Developer documentation is often hard to find. The links below are provided as r
 * [USPS](https://rpmware.box.com/s/cvrmikfhnpm25r4qmb3f)
 * [UPS] (https://www.dropbox.com/sh/p4w81e6xi6eycsd/ei-QZHL0vI)
 
-## Credits & Contributors
+## Credits
 
-Originally forked from [dotNETShipping](http://dotnetshipping.codeplex.com/) by [@rlaneve](https://github.com/rlaneve).
+Originally forked from [dotNETShipping](http://dotnetshipping.codeplex.com/).
 
 * [@kylewest](https://github.com/kylewest)
 * [@brettallred](https://github.com/brettallred)
-
+* [@gkurts](https://github.com/gkurts)
