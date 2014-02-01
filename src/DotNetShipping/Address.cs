@@ -22,6 +22,7 @@ namespace DotNetShipping
 			State = state;
 			PostalCode = postalCode;
 			CountryCode = countryCode;
+			IsResidential = false;
 		}
 
 		#endregion
@@ -35,6 +36,7 @@ namespace DotNetShipping
 		public string Line3 { get; set; }
 		public string PostalCode { get; set; }
 		public string State { get; set; }
+		public bool IsResidential { get; set; }
 
 		#endregion
 
