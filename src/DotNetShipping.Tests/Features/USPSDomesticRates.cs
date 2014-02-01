@@ -29,7 +29,8 @@ namespace DotNetShipping.Tests.Features
         private Address DomesticAddress2;
         private Address InternationalAddress1;
 
-        private Package RealPackage;
+        private Package Package1;
+        private Package Package2;
 
         private string USPSUserId;
 
@@ -42,7 +43,8 @@ namespace DotNetShipping.Tests.Features
             DomesticAddress2 = new Address("One Microsoft Way", "", "", "Redmond", "WA", "98052", "US");
             InternationalAddress1 = new Address("Jubail", "Jubail", "31951", "Saudi Arabia");
 
-            RealPackage = new Package(4, 4, 4, 5, 0);
+            Package1 = new Package(4, 4, 4, 5, 0);
+            Package1 = new Package(6, 6, 6, 5, 100);
 
             USPSUserId = ConfigurationManager.AppSettings["USPSUserId"];
         }
@@ -53,14 +55,10 @@ namespace DotNetShipping.Tests.Features
         [Fact]
         public void USPS_Domestic_Returns_No_Rates_When_Using_Invalid_Addresses_For_All_Services()
         {
-            string uspsUserId = USPSUserId;
-            var package = RealPackage;
-            var origin = DomesticAddress1;
-            var destination = InternationalAddress1; //can't rate domestic with an intl address
             var rateManager = new RateManager();
-            rateManager.AddProvider(new USPSProvider(uspsUserId));
+            rateManager.AddProvider(new USPSProvider(USPSUserId));
 
-            Shipment response = rateManager.GetRates(origin, destination, package);
+            Shipment response = rateManager.GetRates(DomesticAddress1, InternationalAddress1, Package1);
 
             Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
 
@@ -72,14 +70,10 @@ namespace DotNetShipping.Tests.Features
         [Fact]
         public void USPS_Domestic_Returns_No_Rates_When_Using_Invalid_Addresses_For_Single_Service()
         {
-            string uspsUserId = USPSUserId;
-            var package = RealPackage;
-            var origin = DomesticAddress1; //can't rate intl with a domestic address
-            var destination = InternationalAddress1;
             var rateManager = new RateManager();
-            rateManager.AddProvider(new USPSProvider(uspsUserId, "Priority Mail"));
+            rateManager.AddProvider(new USPSProvider(USPSUserId, "Priority Mail"));
 
-            Shipment response = rateManager.GetRates(origin, destination, package);
+            Shipment response = rateManager.GetRates(DomesticAddress1, InternationalAddress1, Package1);
 
             Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
 
@@ -91,14 +85,10 @@ namespace DotNetShipping.Tests.Features
         [Fact]
         public void USPS_Domestic_Returns_Multiple_Rates_When_Using_Valid_Addresses_For_All_Services()
         {
-            string uspsUserId = USPSUserId;
-            var package = RealPackage;
-            var origin = DomesticAddress1;
-            var destination = DomesticAddress2;
             var rateManager = new RateManager();
-            rateManager.AddProvider(new USPSProvider(uspsUserId));
+            rateManager.AddProvider(new USPSProvider(USPSUserId));
 
-            Shipment response = rateManager.GetRates(origin, destination, package);
+            Shipment response = rateManager.GetRates(DomesticAddress1, DomesticAddress2, Package1);
 
             Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
 
@@ -117,16 +107,36 @@ namespace DotNetShipping.Tests.Features
         }
 
         [Fact]
+        public void USPS_Domestic_Returns_Multiple_Rates_When_Using_Valid_Addresses_For_All_Services_And_Multiple_Packages()
+        {
+            var rateManager = new RateManager();
+            rateManager.AddProvider(new USPSProvider(USPSUserId));
+
+            Shipment response = rateManager.GetRates(DomesticAddress1, DomesticAddress2, Package1);
+
+            Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
+
+            Assert.NotNull(response);
+            Assert.NotEmpty(response.Rates);
+            Assert.Empty(response.ServerErrors);
+
+            foreach (var rate in response.Rates)
+            {
+                Assert.NotNull(rate);
+                Assert.True(rate.TotalCharges > 0);
+
+                Debug.WriteLine(rate.Name + ": " + rate.TotalCharges);
+            }
+
+        }
+
+        [Fact]
         public void USPS_Domestic_Returns_Single_Rate_When_Using_Valid_Addresses_For_Single_Service()
         {
-            string uspsUserId = USPSUserId;
-            var package = RealPackage;
-            var origin = DomesticAddress1;
-            var destination = DomesticAddress2;
             var rateManager = new RateManager();
-            rateManager.AddProvider(new USPSProvider(uspsUserId, "Priority Mail"));
+            rateManager.AddProvider(new USPSProvider(USPSUserId, "Priority Mail"));
 
-            Shipment response = rateManager.GetRates(origin, destination, package);
+            Shipment response = rateManager.GetRates(DomesticAddress1, DomesticAddress2, Package1);
 
             Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
 

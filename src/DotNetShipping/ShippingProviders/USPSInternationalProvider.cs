@@ -71,6 +71,8 @@ namespace DotNetShipping.ShippingProviders
 			{
                 writer.WriteStartElement("IntlRateV2Request");
 				writer.WriteAttributeString("USERID", _userId);
+
+                writer.WriteElementString("Revision", "2");
 				int i = 0;
 				foreach (Package package in Shipment.Packages)
 				{
@@ -89,7 +91,6 @@ namespace DotNetShipping.ShippingProviders
                       //  <CommercialFlag>N</CommercialFlag>
                       //</Package>
 
-                    writer.WriteElementString("Revision", "2");
 					writer.WriteStartElement("Package");
 					writer.WriteAttributeString("ID", i.ToString());
 					writer.WriteElementString("Pounds", package.RoundedWeight.ToString());
@@ -111,8 +112,8 @@ namespace DotNetShipping.ShippingProviders
 					//writer.WriteElementString("Width", package.RoundedWidth.ToString());
 					//writer.WriteElementString("Height", package.RoundedHeight.ToString());
 					//writer.WriteElementString("Girth", package.CalculatedGirth.ToString());
-					writer.WriteEndElement();
 					i++;
+                    writer.WriteEndElement();
 				}
 				writer.WriteEndElement();
 				writer.Flush();
