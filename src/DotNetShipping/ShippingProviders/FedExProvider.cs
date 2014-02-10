@@ -31,7 +31,7 @@ namespace DotNetShipping.ShippingProviders
 		                                                            		{"FIRST_OVERNIGHT", "FedEx First Overnight"},
 		                                                            		{"FEDEX_EXPRESS_SAVER", "FedEx Express Saver"},
 		                                                            		{"FEDEX_GROUND", "FedEx Ground"},
-		                                                            		{"FEDEX_INTERNATIONAL_GROUND", "FedEx International Ground"},
+                                                                            {"GROUND_HOME_DELIVERY","FedEx Ground Home Delivery"},
 		                                                            		{"INTERNATIONAL_ECONOMY", "FedEx International Economy"},
 		                                                            		{"INTERNATIONAL_PRIORITY", "FedEx International Priority"}
 		                                                            	};
@@ -157,6 +157,8 @@ namespace DotNetShipping.ShippingProviders
 			request.RequestedShipment.Recipient.Address.StateOrProvinceCode = "";
 			request.RequestedShipment.Recipient.Address.PostalCode = Shipment.DestinationAddress.PostalCode;
 			request.RequestedShipment.Recipient.Address.CountryCode = Shipment.DestinationAddress.CountryCode;
+            request.RequestedShipment.Recipient.Address.Residential = Shipment.DestinationAddress.IsResidential;
+            request.RequestedShipment.Recipient.Address.ResidentialSpecified = true;
 		}
 
 		private void SetOrigin(RateRequest request)
@@ -204,19 +206,18 @@ namespace DotNetShipping.ShippingProviders
 			request.RequestedShipment = new RequestedShipment();
 			request.RequestedShipment.ShipTimestamp = DateTime.Now; // Shipping date and time
 			request.RequestedShipment.ShipTimestampSpecified = true;
-			request.RequestedShipment.DropoffType = DropoffType.REGULAR_PICKUP; //Drop off types are BUSINESS_SERVICE_CENTER, DROP_BOX, REGULAR_PICKUP, REQUEST_COURIER, STATION
+            request.RequestedShipment.DropoffType = DropoffType.REQUEST_COURIER; //Drop off types are BUSINESS_SERVICE_CENTER, DROP_BOX, REGULAR_PICKUP, REQUEST_COURIER, STATION
 			request.RequestedShipment.DropoffTypeSpecified = true;
 			request.RequestedShipment.PackagingType = PackagingType.YOUR_PACKAGING;
 			request.RequestedShipment.PackagingTypeSpecified = true;
-
+            request.RequestedShipment.RateRequestTypes = new RateRequestType[2];
+            request.RequestedShipment.RateRequestTypes[0] = RateRequestType.ACCOUNT;
+            request.RequestedShipment.RateRequestTypes[1] = RateRequestType.LIST;
 			SetOrigin(request);
 
 			SetDestination(request);
 
 			SetPackageLineItems(request);
-
-			request.RequestedShipment.RateRequestTypes = new RateRequestType[1];
-			request.RequestedShipment.RateRequestTypes[0] = RateRequestType.LIST;
 			request.RequestedShipment.PackageCount = Shipment.PackageCount.ToString();
 		}
 
