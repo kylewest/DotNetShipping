@@ -67,6 +67,7 @@
       <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Address.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="IRateAdjuster.cs" />
     <Compile Include="Package.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
@@ -82,7 +83,9 @@
     <Compile Include="ShippingProviders\FedExProvider.cs" />
     <Compile Include="ShippingProviders\IShippingProvider.cs" />
     <Compile Include="ShippingProviders\UPSProvider.cs" />
+    <Compile Include="ShippingProviders\USPSInternationalProvider.cs" />
     <Compile Include="ShippingProviders\USPSProvider.cs" />
+    <Compile Include="USPSError.cs" />
     <Compile Include="Web References\RateServiceWebReference\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

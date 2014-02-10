@@ -33,6 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -54,12 +55,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Features\FedExShipRates.cs" />
+    <Compile Include="Features\UPSRates.cs" />
+    <Compile Include="Features\USPSDomesticRates.cs" />
+    <Compile Include="Features\USPSInternationalRates.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Units\RateManagerFactoryTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="AppSample.config" />
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

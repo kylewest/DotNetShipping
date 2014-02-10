@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -18,6 +19,7 @@ namespace DotNetShipping.ShippingProviders
 		private const string PRODUCTION_URL = "http://production.shippingapis.com/ShippingAPI.dll";
 		private const string REMOVE_FROM_RATE_NAME = "&lt;sup&gt;&amp;reg;&lt;/sup&gt;";
 		private readonly string _userId;
+	    private readonly string _service;
 
 		#endregion
 
@@ -27,15 +29,27 @@ namespace DotNetShipping.ShippingProviders
 		{
 			Name = "USPS";
 			_userId = ConfigurationManager.AppSettings["USPSUserId"];
+		    _service = "ALL";
 		}
+
+        ///<summary>
+        ///</summary>
+        ///<param name="userId"></param>
+        public USPSProvider(string userId)
+        {
+            Name = "USPS";
+            _userId = userId;
+            _service = "ALL";
+        }
 
 		///<summary>
 		///</summary>
 		///<param name="userId"></param>
-		public USPSProvider(string userId)
+		public USPSProvider(string userId, string service)
 		{
 			Name = "USPS";
 			_userId = userId;
+		    _service = service;
 		}
 
 		#endregion
@@ -61,24 +75,25 @@ namespace DotNetShipping.ShippingProviders
 			{
 				writer.WriteStartElement("RateV4Request");
 				writer.WriteAttributeString("USERID", _userId);
+			    writer.WriteElementString("Revision", "2");
 				int i = 0;
 				foreach (Package package in Shipment.Packages)
 				{
 					writer.WriteStartElement("Package");
 					writer.WriteAttributeString("ID", i.ToString());
-					writer.WriteElementString("Service", "ALL");
+					writer.WriteElementString("Service", _service);
 					writer.WriteElementString("ZipOrigination", Shipment.OriginAddress.PostalCode);
 					writer.WriteElementString("ZipDestination", Shipment.DestinationAddress.PostalCode);
 					writer.WriteElementString("Pounds", package.RoundedWeight.ToString());
 					writer.WriteElementString("Ounces", "0");
-					writer.WriteElementString("Container", string.Empty);
-					writer.WriteElementString("Size", "REGULAR");
+                    writer.WriteElementString("Container", "VARIABLE");
+                    writer.WriteElementString("Size", "REGULAR");
 					//TODO: Figure out DIM Weights
-					//writer.WriteElementString("Size", package.IsOversize ? "LARGE" : "REGULAR");
-					//writer.WriteElementString("Length", package.RoundedLength.ToString());
-					//writer.WriteElementString("Width", package.RoundedWidth.ToString());
-					//writer.WriteElementString("Height", package.RoundedHeight.ToString());
-					//writer.WriteElementString("Girth", package.CalculatedGirth.ToString());
+                    //writer.WriteElementString("Size", package.IsOversize ? "LARGE" : "REGULAR");
+                    //writer.WriteElementString("Width", package.RoundedWidth.ToString());
+                    //writer.WriteElementString("Length", package.RoundedLength.ToString());
+                    //writer.WriteElementString("Height", package.RoundedHeight.ToString());
+                    //writer.WriteElementString("Girth", package.CalculatedGirth.ToString());
 					writer.WriteElementString("Machinable", "True");
 					writer.WriteEndElement();
 					i++;
@@ -92,9 +107,6 @@ namespace DotNetShipping.ShippingProviders
 				string url = string.Concat(PRODUCTION_URL, "?API=RateV4&XML=", sb.ToString());
 				var webClient = new WebClient();
 				string response = webClient.DownloadString(url);
-
-				Debug.WriteLine(url);
-				Debug.WriteLine(response);
 
 				ParseResult(response);
 			}
@@ -119,7 +131,8 @@ namespace DotNetShipping.ShippingProviders
 
 			foreach (var r in rates)
 			{
-				string name = r.Name.Replace(REMOVE_FROM_RATE_NAME, string.Empty);
+				//string name = r.Name.Replace(REMOVE_FROM_RATE_NAME, string.Empty);
+			    string name = Regex.Replace(r.Name, "&lt.*&gt;", "");
 
 				AddRate(name, string.Concat("USPS ", name), r.TotalCharges, DateTime.Now.AddDays(30));
 			}

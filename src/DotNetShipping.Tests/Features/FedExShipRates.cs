@@ -12,7 +12,7 @@ namespace DotNetShipping.Tests.Features
 
         #region Methods
 
-        [Fact]
+        
         public void FedExReturnsRates()
         {
             RateManager rateManager = RateManagerFactory.Build();

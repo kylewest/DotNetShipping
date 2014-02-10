@@ -26,6 +26,7 @@ namespace DotNetShipping.ShippingProviders
 		private readonly int _timeout;
 		private readonly string _userID;
 		private AvailableServices _services = AvailableServices.All;
+	    private string _serviceDescription;
 
 		#endregion
 
@@ -42,6 +43,7 @@ namespace DotNetShipping.ShippingProviders
 			_userID = appSettings["UPSUserId"];
 			_password = appSettings["UPSPassword"];
 			_timeout = defaultTimeout;
+		    _serviceDescription = "";
 		}
 
 		public UPSProvider(string licenseNumber, string userID, string password) : this(licenseNumber, userID, password, defaultTimeout)
@@ -55,9 +57,31 @@ namespace DotNetShipping.ShippingProviders
 			_userID = userID;
 			_password = password;
 			_timeout = timeout;
-
+		    _serviceDescription = "";
 			loadServiceCodes();
 		}
+
+        public UPSProvider(string licenseNumber, string userID, string password, string serviceDescription)
+        {
+            Name = "UPS";
+            _licenseNumber = licenseNumber;
+            _userID = userID;
+            _password = password;
+            _timeout = defaultTimeout;
+            _serviceDescription = serviceDescription;
+            loadServiceCodes();
+        }
+
+	    public UPSProvider(string licenseNumber, string userID, string password, int timeout, string serviceDescription)
+	    {
+            Name = "UPS";
+            _licenseNumber = licenseNumber;
+            _userID = userID;
+            _password = password;
+            _timeout = timeout;
+            _serviceDescription = serviceDescription;
+            loadServiceCodes();
+	    }
 
 		#endregion
 
@@ -88,7 +112,6 @@ namespace DotNetShipping.ShippingProviders
 			Stream stream = request.GetRequestStream();
 			stream.Write(bytes, 0, bytes.Length);
 			stream.Close();
-			Debug.WriteLine("Request Sent!", "UPS");
 			var response = (HttpWebResponse) request.GetResponse();
 			parseRatesResponseMessage(new StreamReader(response.GetResponseStream()).ReadToEnd());
 			response.Close();
@@ -96,9 +119,7 @@ namespace DotNetShipping.ShippingProviders
 
 		private byte[] buildRatesRequestMessage()
 		{
-			Debug.WriteLine("Building Request...", "UPS");
-
-			Encoding utf8 = new UTF8Encoding(false);
+            Encoding utf8 = new UTF8Encoding(false);
 			var writer = new XmlTextWriter(new MemoryStream(2000), utf8);
 			writer.WriteStartDocument();
 			writer.WriteStartElement("AccessRequest");
@@ -116,7 +137,7 @@ namespace DotNetShipping.ShippingProviders
 			writer.WriteElementString("XpciVersion", "1.0001");
 			writer.WriteEndElement(); // </TransactionReference>
 			writer.WriteElementString("RequestAction", "Rate");
-			writer.WriteElementString("RequestOption", "Shop");
+			writer.WriteElementString("RequestOption", string.IsNullOrWhiteSpace(_serviceDescription) ? "Shop" : _serviceDescription);
 			writer.WriteEndElement(); // </Request>
 			writer.WriteStartElement("PickupType");
 			writer.WriteElementString("Code", "03");
@@ -129,15 +150,22 @@ namespace DotNetShipping.ShippingProviders
 			writer.WriteEndElement(); // </Shipper>
 			writer.WriteStartElement("ShipTo");
 			writer.WriteStartElement("Address");
-			writer.WriteElementString("PostalCode", Shipment.DestinationAddress.PostalCode);
+            if (Shipment.DestinationAddress.IsUnitedStatesAddress())
+			    writer.WriteElementString("PostalCode", Shipment.DestinationAddress.PostalCode);
 			writer.WriteElementString("CountryCode", Shipment.DestinationAddress.CountryCode);
 			writer.WriteEndElement(); // </Address>
 			writer.WriteEndElement(); // </ShipTo>
+		    if (!string.IsNullOrWhiteSpace(_serviceDescription))
+		    {
+		        writer.WriteStartElement("Service");
+                writer.WriteElementString("Code", _serviceDescription.ToUpsShipCode());
+                writer.WriteEndElement(); //</Service>
+		    }
 			for (int i = 0; i < Shipment.Packages.Count; i++)
 			{
 				writer.WriteStartElement("Package");
 				writer.WriteStartElement("PackagingType");
-				writer.WriteElementString("Code", "00");
+				writer.WriteElementString("Code", "02");
 				writer.WriteEndElement(); //</PackagingType>
 				writer.WriteStartElement("PackageWeight");
 				writer.WriteElementString("Weight", Shipment.Packages[i].RoundedWeight.ToString());
@@ -173,12 +201,11 @@ namespace DotNetShipping.ShippingProviders
 			_serviceCodes.Add("54", new AvailableService("UPS Worldwide Express Plus", 512));
 			_serviceCodes.Add("59", new AvailableService("UPS 2nd Day Air AM", 1024));
 			_serviceCodes.Add("65", new AvailableService("UPS Express Saver", 2048));
+            _serviceCodes.Add("93", new AvailableService("UPS Sure Post", 4096));
 		}
 
 		private void parseRatesResponseMessage(string response)
 		{
-			Debug.WriteLine("UPS Response Received!");
-			Debug.WriteLine(response);
 			var xDoc = new XmlDocument();
 			xDoc.LoadXml(response);
 			XmlNodeList ratedShipment = xDoc.SelectNodes("/RatingServiceSelectionResponse/RatedShipment");
@@ -250,7 +277,8 @@ namespace DotNetShipping.ShippingProviders
 			WorldwideExpressPlus = 512,
 			SecondDayAirAM = 1024,
 			ExpressSaver = 2048,
-			All = 4095
+            SurePost = 4096,
+			All = 8191
 		}
 
 		private struct AvailableService

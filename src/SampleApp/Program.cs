@@ -37,7 +37,7 @@ namespace DotNetShipping.SampleApp
 			var origin = new Address("", "", "06405", "US");
 			var destination = new Address("", "", "20852", "US"); // US Address
 			//var destination = new Address("", "", "L4W 1S2", "CA"); // Canada Address
-			//var destination = new Address("", "", "BA11HX", "GB"); // European Address
+		    //var destination = new Address("80-100 Victoria St", "", "", "London SW1E 5JL", "", "", "United Kingdom"); // UK Address
 
 			// Create RateManager
 			var rateManager = new RateManager();
@@ -46,7 +46,8 @@ namespace DotNetShipping.SampleApp
 			rateManager.AddProvider(new UPSProvider(upsLicenseNumber, upsUserId, upsPassword));
 			rateManager.AddProvider(new FedExProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber));
 			rateManager.AddProvider(new USPSProvider(uspsUserId));
-
+            //rateManager.AddProvider(new USPSInternationalProvider(uspsUserId));
+            
 			// (Optional) Add RateAdjusters
 			rateManager.AddRateAdjuster(new PercentageRateAdjuster(.9M));
 
