@@ -9,122 +9,120 @@ using System.Xml.Linq;
 
 namespace DotNetShipping.ShippingProviders
 {
-	///<summary>
-	///</summary>
-	public class USPSProvider : AbstractShippingProvider
-	{
-		#region Fields
+    /// <summary>
+    /// </summary>
+    public class USPSProvider : AbstractShippingProvider
+    {
+        #region Fields
 
-		private const string PRODUCTION_URL = "http://production.shippingapis.com/ShippingAPI.dll";
-		private const string REMOVE_FROM_RATE_NAME = "&lt;sup&gt;&amp;reg;&lt;/sup&gt;";
-		private readonly string _userId;
+        private const string PRODUCTION_URL = "http://production.shippingapis.com/ShippingAPI.dll";
+        private const string REMOVE_FROM_RATE_NAME = "&";
+        private readonly string _userId;
 
-		#endregion
+        #endregion
 
-		#region .ctor
+        #region .ctor
 
-		public USPSProvider()
-		{
-			Name = "USPS";
-			_userId = ConfigurationManager.AppSettings["USPSUserId"];
-		}
+        public USPSProvider()
+        {
+            Name = "USPS";
+            _userId = ConfigurationManager.AppSettings["USPSUserId"];
+        }
 
-		///<summary>
-		///</summary>
-		///<param name="userId"></param>
-		public USPSProvider(string userId)
-		{
-			Name = "USPS";
-			_userId = userId;
-		}
+        /// <summary>
+        /// </summary>
+        /// <param name="userId"></param>
+        public USPSProvider(string userId)
+        {
+            Name = "USPS";
+            _userId = userId;
+        }
 
-		#endregion
+        #endregion
 
-		#region Methods
+        #region Methods
 
-		public override void GetRates()
-		{
-			// USPS only avaialble for domestic addresses. International is a different API.
-			if (!IsDomesticUSPSAvailable())
-			{
-				return;
-			}
+        public override void GetRates()
+        {
+            // USPS only avaialble for domestic addresses. International is a different API.
+            if (!IsDomesticUSPSAvailable())
+            {
+                return;
+            }
 
-			var sb = new StringBuilder();
+            var sb = new StringBuilder();
 
-			var settings = new XmlWriterSettings();
-			settings.Indent = false;
-			settings.OmitXmlDeclaration = true;
-			settings.NewLineHandling = NewLineHandling.None;
+            var settings = new XmlWriterSettings();
+            settings.Indent = false;
+            settings.OmitXmlDeclaration = true;
+            settings.NewLineHandling = NewLineHandling.None;
 
-			using (XmlWriter writer = XmlWriter.Create(sb, settings))
-			{
-				writer.WriteStartElement("RateV4Request");
-				writer.WriteAttributeString("USERID", _userId);
-				int i = 0;
-				foreach (Package package in Shipment.Packages)
-				{
-					writer.WriteStartElement("Package");
-					writer.WriteAttributeString("ID", i.ToString());
-					writer.WriteElementString("Service", "ALL");
-					writer.WriteElementString("ZipOrigination", Shipment.OriginAddress.PostalCode);
-					writer.WriteElementString("ZipDestination", Shipment.DestinationAddress.PostalCode);
-					writer.WriteElementString("Pounds", package.RoundedWeight.ToString());
-					writer.WriteElementString("Ounces", "0");
-					writer.WriteElementString("Container", string.Empty);
-					writer.WriteElementString("Size", "REGULAR");
-					//TODO: Figure out DIM Weights
-					//writer.WriteElementString("Size", package.IsOversize ? "LARGE" : "REGULAR");
-					//writer.WriteElementString("Length", package.RoundedLength.ToString());
-					//writer.WriteElementString("Width", package.RoundedWidth.ToString());
-					//writer.WriteElementString("Height", package.RoundedHeight.ToString());
-					//writer.WriteElementString("Girth", package.CalculatedGirth.ToString());
-					writer.WriteElementString("Machinable", "True");
-					writer.WriteEndElement();
-					i++;
-				}
-				writer.WriteEndElement();
-				writer.Flush();
-			}
+            using (XmlWriter writer = XmlWriter.Create(sb, settings))
+            {
+                writer.WriteStartElement("RateV4Request");
+                writer.WriteAttributeString("USERID", _userId);
+                int i = 0;
+                foreach (Package package in Shipment.Packages)
+                {
+                    writer.WriteStartElement("Package");
+                    writer.WriteAttributeString("ID", i.ToString());
+                    writer.WriteElementString("Service", "ALL");
+                    writer.WriteElementString("ZipOrigination", Shipment.OriginAddress.PostalCode);
+                    writer.WriteElementString("ZipDestination", Shipment.DestinationAddress.PostalCode);
+                    writer.WriteElementString("Pounds", package.RoundedWeight.ToString());
+                    writer.WriteElementString("Ounces", "0");
+                    writer.WriteElementString("Container", string.Empty);
+                    writer.WriteElementString("Size", "REGULAR");
+                    //TODO: Figure out DIM Weights
+                    //writer.WriteElementString("Size", package.IsOversize ? "LARGE" : "REGULAR");
+                    //writer.WriteElementString("Length", package.RoundedLength.ToString());
+                    //writer.WriteElementString("Width", package.RoundedWidth.ToString());
+                    //writer.WriteElementString("Height", package.RoundedHeight.ToString());
+                    //writer.WriteElementString("Girth", package.CalculatedGirth.ToString());
+                    writer.WriteElementString("Machinable", "True");
+                    writer.WriteEndElement();
+                    i++;
+                }
+                writer.WriteEndElement();
+                writer.Flush();
+            }
 
-			try
-			{
-				string url = string.Concat(PRODUCTION_URL, "?API=RateV4&XML=", sb.ToString());
-				var webClient = new WebClient();
-				string response = webClient.DownloadString(url);
+            try
+            {
+                string url = string.Concat(PRODUCTION_URL, "?API=RateV4&XML=", sb.ToString());
+                var webClient = new WebClient();
+                string response = webClient.DownloadString(url);
 
-				Debug.WriteLine(url);
-				Debug.WriteLine(response);
+                Debug.WriteLine(url);
+                Debug.WriteLine(response);
 
-				ParseResult(response);
-			}
-			catch (Exception ex)
-			{
-				Debug.WriteLine(ex);
-			}
-		}
+                ParseResult(response);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+        }
 
-		public bool IsDomesticUSPSAvailable()
-		{
-			return Shipment.OriginAddress.IsUnitedStatesAddress() && Shipment.DestinationAddress.IsUnitedStatesAddress();
-		}
+        public bool IsDomesticUSPSAvailable()
+        {
+            return Shipment.OriginAddress.IsUnitedStatesAddress() && Shipment.DestinationAddress.IsUnitedStatesAddress();
+        }
 
-		private void ParseResult(string response)
-		{
-			XElement document = XElement.Parse(response, LoadOptions.None);
+        private void ParseResult(string response)
+        {
+            XElement document = XElement.Parse(response, LoadOptions.None);
 
-			var rates = from item in document.Descendants("Postage")
-			            group item by (string) item.Element("MailService")
-			            into g select new {Name = g.Key, TotalCharges = g.Sum(x => Decimal.Parse((string) x.Element("Rate")))};
+            var rates = from item in document.Descendants("Postage") group item by (string) item.Element("MailService") into g select new {Name = g.Key, TotalCharges = g.Sum(x => Decimal.Parse((string) x.Element("Rate")))};
 
-			foreach (var r in rates)
-			{
-				string name = r.Name.Replace(REMOVE_FROM_RATE_NAME, string.Empty);
+            foreach (var r in rates)
+            {
+                int position = r.Name.IndexOf(REMOVE_FROM_RATE_NAME, StringComparison.Ordinal);
+                string name = position > 0 ? r.Name.Remove(position) : r.Name;
+                AddRate(name, string.Concat("USPS ", name), r.TotalCharges, DateTime.Now.AddDays(30));
+            }
+        }
 
-				AddRate(name, string.Concat("USPS ", name), r.TotalCharges, DateTime.Now.AddDays(30));
-			}
-		}
-
-		#endregion
-	}
+        #endregion
+    }
 }
