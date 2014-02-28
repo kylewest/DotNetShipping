@@ -47,6 +47,11 @@ namespace DotNetShipping
 			return !string.IsNullOrEmpty(CountryCode) && string.Equals(CountryCode, "US", StringComparison.OrdinalIgnoreCase);
 		}
 
+        public bool IsCanadaAddress()
+        {
+            return !string.IsNullOrEmpty(CountryCode) && string.Equals(CountryCode, "CA", StringComparison.OrdinalIgnoreCase);
+        }
+
 		#endregion
 	}
 }

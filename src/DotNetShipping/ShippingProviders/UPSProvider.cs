@@ -150,7 +150,7 @@ namespace DotNetShipping.ShippingProviders
 			writer.WriteEndElement(); // </Shipper>
 			writer.WriteStartElement("ShipTo");
 			writer.WriteStartElement("Address");
-            if (Shipment.DestinationAddress.IsUnitedStatesAddress())
+            if (Shipment.DestinationAddress.IsUnitedStatesAddress() || Shipment.DestinationAddress.IsCanadaAddress())
 			    writer.WriteElementString("PostalCode", Shipment.DestinationAddress.PostalCode);
 			writer.WriteElementString("CountryCode", Shipment.DestinationAddress.CountryCode);
 			writer.WriteEndElement(); // </Address>
@@ -194,7 +194,7 @@ namespace DotNetShipping.ShippingProviders
 			_serviceCodes.Add("03", new AvailableService("UPS Ground", 4));
 			_serviceCodes.Add("07", new AvailableService("UPS Worldwide Express", 8));
 			_serviceCodes.Add("08", new AvailableService("UPS Worldwide Expedited", 16));
-			_serviceCodes.Add("11", new AvailableService("UPS Standard", 32));
+            _serviceCodes.Add("11", new AvailableService("UPS Standard", 32));
 			_serviceCodes.Add("12", new AvailableService("UPS 3-Day Select", 64));
 			_serviceCodes.Add("13", new AvailableService("UPS Next Day Air Saver", 128));
 			_serviceCodes.Add("14", new AvailableService("UPS Next Day Air Early AM", 256));
