@@ -175,12 +175,12 @@ namespace DotNetShipping.ShippingProviders
 		    }
 
 		    //check for errors
-		    if (document.Elements("Error").Any())
+            if (document.Descendants("Error").Any())
 		    {
 		        var errors = from item in document.Descendants("Error")
 		            select new USPSError()
 		            {
-		                Description = item.Element("Number").ToString(),
+                        Description = item.Element("Description").ToString(),
                         Source = item.Element("Source").ToString(),
                         HelpContext = item.Element("HelpContext").ToString(),
                         HelpFile = item.Element("HelpFile").ToString(),
