@@ -17,7 +17,8 @@ namespace DotNetShipping
 		/// <param name = "height">The height of the package, in inches.</param>
 		/// <param name = "weight">The weight of the package, in pounds.</param>
 		/// <param name = "insuredValue">The insured-value of the package, in dollars.</param>
-		public Package(int length, int width, int height, int weight, decimal insuredValue) : this(length, width, height, (decimal) weight, insuredValue)
+        /// <param name = "container">A specific packaging from a shipping provider. E.g. "LG FLAT RATE BOX" for USPS</param>
+		public Package(int length, int width, int height, int weight, decimal insuredValue, string container = null) : this(length, width, height, (decimal) weight, insuredValue, container)
 		{
 		}
 
@@ -29,13 +30,15 @@ namespace DotNetShipping
 		/// <param name = "height">The height of the package, in inches.</param>
 		/// <param name = "weight">The weight of the package, in pounds.</param>
 		/// <param name = "insuredValue">The insured-value of the package, in dollars.</param>
-		public Package(decimal length, decimal width, decimal height, decimal weight, decimal insuredValue)
+        /// <param name = "container">A specific packaging from a shipping provider. E.g. "LG FLAT RATE BOX" for USPS</param>
+        public Package(decimal length, decimal width, decimal height, decimal weight, decimal insuredValue, string container = null)
 		{
 			Length = length;
 			Width = width;
 			Height = height;
 			Weight = weight;
 			InsuredValue = insuredValue;
+            Container = container;
 		}
 
 		#endregion
@@ -73,6 +76,7 @@ namespace DotNetShipping
 		}
 		public decimal Weight { get; set; }
 		public decimal Width { get; set; }
+        public string Container { get; set; }
 
 		#endregion
 	}

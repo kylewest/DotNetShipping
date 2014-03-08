@@ -56,9 +56,14 @@ namespace DotNetShipping.ShippingProviders
 
 		#region Methods
 
-		public override void GetRates()
+        public override void GetRates()
+        {
+            GetRates(false);
+        }
+        
+        public void GetRates(bool baseRatesOnly)
 		{
-			// USPS only avaialble for domestic addresses. International is a different API.
+			// USPS only available for domestic addresses. International is a different API.
 			if (!IsDomesticUSPSAvailable())
 			{
 				return;
@@ -75,26 +80,48 @@ namespace DotNetShipping.ShippingProviders
 			{
 				writer.WriteStartElement("RateV4Request");
 				writer.WriteAttributeString("USERID", _userId);
-			    writer.WriteElementString("Revision", "2");
+                if (!baseRatesOnly)
+                {
+                    writer.WriteElementString("Revision", "2");
+                }
 				int i = 0;
 				foreach (Package package in Shipment.Packages)
 				{
-					writer.WriteStartElement("Package");
+                    string size;
+                    string container = package.Container;
+                    if (IsPackageLarge(package))
+                    {
+                        size = "LARGE";
+                        // Container must be RECTANGULAR or NONRECTANGULAR when SIZE is LARGE
+                        if (container == null || container.ToUpperInvariant() != "NONRECTANGULAR")
+                        {
+                            container = "RECTANGULAR";
+                        }
+                    }
+                    else
+                    {
+                        size = "REGULAR";
+                        if (container == null)
+                        {
+                            container = string.Empty;
+                        }
+                    }
+
+                    writer.WriteStartElement("Package");
 					writer.WriteAttributeString("ID", i.ToString());
 					writer.WriteElementString("Service", _service);
 					writer.WriteElementString("ZipOrigination", Shipment.OriginAddress.PostalCode);
 					writer.WriteElementString("ZipDestination", Shipment.DestinationAddress.PostalCode);
 					writer.WriteElementString("Pounds", package.RoundedWeight.ToString());
 					writer.WriteElementString("Ounces", "0");
-                    writer.WriteElementString("Container", "VARIABLE");
-                    writer.WriteElementString("Size", "REGULAR");
-					//TODO: Figure out DIM Weights
-                    //writer.WriteElementString("Size", package.IsOversize ? "LARGE" : "REGULAR");
-                    //writer.WriteElementString("Width", package.RoundedWidth.ToString());
-                    //writer.WriteElementString("Length", package.RoundedLength.ToString());
-                    //writer.WriteElementString("Height", package.RoundedHeight.ToString());
-                    //writer.WriteElementString("Girth", package.CalculatedGirth.ToString());
-					writer.WriteElementString("Machinable", "True");
+
+                    writer.WriteElementString("Container", container);
+                    writer.WriteElementString("Size", size);
+                    writer.WriteElementString("Width", package.RoundedWidth.ToString());
+                    writer.WriteElementString("Length", package.RoundedLength.ToString());
+                    writer.WriteElementString("Height", package.RoundedHeight.ToString());
+                    writer.WriteElementString("Girth", package.CalculatedGirth.ToString());
+					writer.WriteElementString("Machinable", IsPackageMachinable(package).ToString());
 					writer.WriteEndElement();
 					i++;
 				}
@@ -121,6 +148,24 @@ namespace DotNetShipping.ShippingProviders
 			return Shipment.OriginAddress.IsUnitedStatesAddress() && Shipment.DestinationAddress.IsUnitedStatesAddress();
 		}
 
+        public bool IsPackageLarge(Package package)
+        {
+            return (package.IsOversize || package.Width > 12 || package.Length > 12 || package.Height > 12);
+        }
+
+        public bool IsPackageMachinable(Package package)
+        {
+            // Machinable parcels cannot be larger than 27 x 17 x 17 and cannot weight more than 25 lbs.
+            if (package.Weight > 25)
+            {
+                return false;
+            }
+
+            return (package.Width <= 27 && package.Height <= 17 && package.Length <= 17)
+                || (package.Width <= 17 && package.Height <= 27 && package.Length <= 17)
+                || (package.Width <= 17 && package.Height <= 17 && package.Length <= 27);
+        }
+
 		private void ParseResult(string response)
 		{
 			XElement document = XElement.Parse(response, LoadOptions.None);
@@ -136,8 +181,27 @@ namespace DotNetShipping.ShippingProviders
 
 				AddRate(name, string.Concat("USPS ", name), r.TotalCharges, DateTime.Now.AddDays(30));
 			}
+
+            //check for errors
+            if (document.Descendants("Error").Any())
+            {
+                var errors = from item in document.Descendants("Error")
+                             select new USPSError()
+                             {
+                                 Description = item.Element("Description").ToString(),
+                                 Source = item.Element("Source").ToString(),
+                                 HelpContext = item.Element("HelpContext").ToString(),
+                                 HelpFile = item.Element("HelpFile").ToString(),
+                                 Number = item.Element("Number").ToString()
+                             };
+
+                foreach (var err in errors)
+                {
+                    AddError(err);
+                }
+            }
 		}
 
 		#endregion
-	}
+    }
 }
