@@ -62,11 +62,7 @@
     <Compile Include="Units\RateManagerFactoryTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="AppSample.config" />
-    <None Include="App.config">
-      <SubType>
-      </SubType>
-    </None>
+    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
