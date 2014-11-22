@@ -1,5 +1,7 @@
 # DotNetShipping
 
+[![Build status](https://ci.appveyor.com/api/projects/status/lom3p3jvvf4e9j3r?svg=true)](https://ci.appveyor.com/project/kylewest/dotnetshipping)
+
 .NET wrapper to UPS, FedEx, and USPS APIs. Use it to retrieve shipping rates from these carriers.
 
 
@@ -9,15 +11,6 @@ Available in the [NuGet Gallery](http://nuget.org/packages/DotNetShipping):
 
 ```
 PM> Install-Package DotNetShipping
-```
-
-
-## How to Build
-
-```
-git clone https://github.com/kylewest/DotNetShipping.git
-cd DotNetShipping
-./build.bat
 ```
 
 

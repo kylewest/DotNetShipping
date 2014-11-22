@@ -54,17 +54,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Features\FedExShipRates.cs" />
     <Compile Include="Features\UPSRates.cs" />
     <Compile Include="Features\USPSDomesticRates.cs" />
     <Compile Include="Features\USPSInternationalRates.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Units\RateManagerFactoryTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="AppSample.config" />
     <None Include="App.config">
-      <SubType>Designer</SubType>
+      <SubType>
+      </SubType>
     </None>
     <None Include="packages.config" />
   </ItemGroup>
