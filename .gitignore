@@ -3,8 +3,6 @@
 *.DS_Store
 ~$*
 
-
-src/AssemblyInfo.cs
 src/SampleApp/App.config
 src/DotNetShipping.Tests/App.config
 
