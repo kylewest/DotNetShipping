@@ -5,11 +5,11 @@
 // associated with an assembly.
 
 [assembly: AssemblyTitle("DotNetShipping")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription(".NET wrapper to UPS, FedEx, and USPS APIs. Use it to retrieve shipping rates from these carriers.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Kyle West")]
 [assembly: AssemblyProduct("DotNetShipping")]
-[assembly: AssemblyCopyright("Copyright ©  2014")]
+[assembly: AssemblyCopyright("Copyright © 2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
