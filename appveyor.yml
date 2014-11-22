@@ -49,7 +49,7 @@ before_build:
   - ps: $xml.SelectSingleNode('//appSettings/add[@key="UPSPassword"]/@value').'#text' = $env:UPS_USER_ID
   - ps: $xml.SelectSingleNode('//appSettings/add[@key="FedExKey"]/@value').'#text' = $env:FEDEX_KEY
   - ps: $xml.SelectSingleNode('//appSettings/add[@key="FedExPassword"]/@value').'#text' = $env:FEDEX_PASSWORD
-  - ps: $xml.SelectSingleNode('//appSettings/add[@key="FedExAccountNumber"]/@value').'#text' = $env:FEDEX_ACCOUNT_NUMBER
-  - ps: $xml.SelectSingleNode('//appSettings/add[@key="FedExMeterNumber"]/@value').'#text' = $env:FEDEX_METER_NUMBER
+  - ps: $xml.SelectSingleNode('//appSettings/add[@key="FedExAccountNumber"]/@value').'#text' = $env:FEDEX_ACCOUNT_NUMBER.ToString()
+  - ps: $xml.SelectSingleNode('//appSettings/add[@key="FedExMeterNumber"]/@value').'#text' = $env:FEDEX_METER_NUMBER.ToString()
   - ps: $xml.SelectSingleNode('//appSettings/add[@key="USPSUserId"]/@value').'#text' = $env:USPS_USER_ID
   - ps: set-content src\DotNetShipping.Tests\App.config $xml.InnerXml
