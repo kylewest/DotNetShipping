@@ -55,7 +55,7 @@ before_build:
   - ps: set-content src\DotNetShipping.Tests\App.config $xml.InnerXml
 
 # deployment 
-deploy:
-  provider: NuGet
-  api_key:
-    secure: D7KgmBhT/48u2T2OPwnNzlwQbZmZYGf7RE3nFRbHBiDpF/ApKC5AhtQjbpfQ1Qr2
+#deploy:
+#  provider: NuGet
+#  api_key:
+#    secure: D7KgmBhT/48u2T2OPwnNzlwQbZmZYGf7RE3nFRbHBiDpF/ApKC5AhtQjbpfQ1Qr2
