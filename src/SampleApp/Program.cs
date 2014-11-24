@@ -36,6 +36,7 @@ namespace DotNetShipping.SampleApp
 
 			var origin = new Address("", "", "06405", "US");
 			var destination = new Address("", "", "20852", "US"); // US Address
+			//var destination = new Address("", "", "00907", "PR"); // Puerto Rico Address
 			//var destination = new Address("", "", "L4W 1S2", "CA"); // Canada Address
 		    //var destination = new Address("80-100 Victoria St", "", "", "London SW1E 5JL", "", "", "United Kingdom"); // UK Address
 

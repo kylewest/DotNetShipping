@@ -1,10 +1,8 @@
 using System;
+using System.Collections.Generic;
 
 namespace DotNetShipping
 {
-	/// <summary>
-	/// 	Summary description for Address.
-	/// </summary>
 	public class Address
 	{
 		#region .ctor
@@ -42,9 +40,16 @@ namespace DotNetShipping
 
 		#region Methods
 
+		/// <summary>
+		/// Returns true if the CountryCode matches US or one of the US territories.
+		/// </summary>
+		/// <returns></returns>
 		public bool IsUnitedStatesAddress()
 		{
-			return !string.IsNullOrEmpty(CountryCode) && string.Equals(CountryCode, "US", StringComparison.OrdinalIgnoreCase);
+		    var usAndTerritories = new List<string> {"AS", "GU", "MP", "PR", "UM", "VI", "US"};
+
+		    return usAndTerritories.Contains(CountryCode);
+		    
 		}
 
         public bool IsCanadaAddress()
