@@ -45,7 +45,7 @@ namespace DotNetShipping.SampleApp
 
 			// Add desired DotNetShippingProviders
 			rateManager.AddProvider(new UPSProvider(upsLicenseNumber, upsUserId, upsPassword));
-			rateManager.AddProvider(new FedExProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber));
+			rateManager.AddProvider(new FedExProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber, true));
 			rateManager.AddProvider(new USPSProvider(uspsUserId));
             //rateManager.AddProvider(new USPSInternationalProvider(uspsUserId));
             
