@@ -87,7 +87,6 @@ namespace DotNetShipping.Tests.Features
 
             Assert.NotNull(response);
             Assert.Empty(response.Rates);
-            Assert.Empty(response.ServerErrors);
         }
 
         [Fact]
@@ -104,7 +103,6 @@ namespace DotNetShipping.Tests.Features
 
             Assert.NotNull(response);
             Assert.Empty(response.Rates);
-            Assert.Empty(response.ServerErrors);
         }
 
         [Fact]
