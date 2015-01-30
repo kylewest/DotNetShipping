@@ -112,8 +112,8 @@ namespace DotNetShipping.ShippingProviders
 					writer.WriteElementString("Service", _service);
 					writer.WriteElementString("ZipOrigination", Shipment.OriginAddress.PostalCode);
 					writer.WriteElementString("ZipDestination", Shipment.DestinationAddress.PostalCode);
-					writer.WriteElementString("Pounds", package.RoundedWeight.ToString());
-					writer.WriteElementString("Ounces", "0");
+					writer.WriteElementString("Pounds", package.PoundsAndOunces.Pounds.ToString());
+                    writer.WriteElementString("Ounces", package.PoundsAndOunces.Ounces.ToString());
 
                     writer.WriteElementString("Container", container);
                     writer.WriteElementString("Size", size);

@@ -78,6 +78,25 @@ namespace DotNetShipping
 		public decimal Width { get; set; }
         public string Container { get; set; }
 
-		#endregion
+	    public PoundsAndOunces PoundsAndOunces
+	    {
+	        get
+	        {
+	            var poundsAndOunces = new PoundsAndOunces();
+	            if (Weight <= 0)
+	            {
+	                return poundsAndOunces;
+	            }
+
+	            poundsAndOunces.Pounds = (int) Math.Truncate(Weight);
+                decimal decimalPart = (Weight - poundsAndOunces.Pounds) * 16;
+
+	            poundsAndOunces.Ounces = (int) Math.Ceiling(decimalPart);
+
+	            return poundsAndOunces;
+	        }
+	    }
+
+	    #endregion
 	}
 }

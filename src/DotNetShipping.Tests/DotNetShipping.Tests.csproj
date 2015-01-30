@@ -61,6 +61,7 @@
     <Compile Include="Features\UPSRates.cs" />
     <Compile Include="Features\USPSDomesticRates.cs" />
     <Compile Include="Features\USPSInternationalRates.cs" />
+    <Compile Include="Units\PackageTests.cs" />
     <Compile Include="Units\RateManagerFactoryTests.cs" />
   </ItemGroup>
   <ItemGroup>
