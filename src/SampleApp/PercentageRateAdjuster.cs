@@ -1,30 +1,30 @@
 namespace DotNetShipping.SampleApp
 {
-	public class PercentageRateAdjuster : IRateAdjuster
-	{
-		#region Fields
+    public class PercentageRateAdjuster : IRateAdjuster
+    {
+        #region Fields
 
-		private readonly decimal _amount;
+        private readonly decimal _amount;
 
-		#endregion
+        #endregion
 
-		#region .ctor
+        #region .ctor
 
-		public PercentageRateAdjuster(decimal amount)
-		{
-			_amount = amount;
-		}
+        public PercentageRateAdjuster(decimal amount)
+        {
+            _amount = amount;
+        }
 
-		#endregion
+        #endregion
 
-		#region Methods
+        #region Methods
 
-		public Rate AdjustRate(Rate rate)
-		{
-			rate.TotalCharges = rate.TotalCharges * _amount;
-			return rate;
-		}
+        public Rate AdjustRate(Rate rate)
+        {
+            rate.TotalCharges = rate.TotalCharges * _amount;
+            return rate;
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

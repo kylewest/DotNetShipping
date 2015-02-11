@@ -4,57 +4,57 @@ using System.Linq;
 
 namespace DotNetShipping
 {
-	/// <summary>
-	/// 	Summary description for Shipment.
-	/// </summary>
-	public class Shipment
-	{
-		#region Fields
+    /// <summary>
+    ///     Summary description for Shipment.
+    /// </summary>
+    public class Shipment
+    {
+        #region .ctor
 
-		public readonly Address DestinationAddress;
-		public readonly Address OriginAddress;
-		public ReadOnlyCollection<Package> Packages;
-		public ICollection<IRateAdjuster> RateAdjusters;
-		private readonly List<Rate> _rates;
-	    private readonly List<USPSError> _serverErrors; 
-
-		#endregion
-
-		#region .ctor
-
-		public Shipment(Address originAddress, Address destinationAddress, List<Package> packages)
-		{
-			OriginAddress = originAddress;
-			DestinationAddress = destinationAddress;
-			Packages = packages.AsReadOnly();
-			_rates = new List<Rate>();
+        public Shipment(Address originAddress, Address destinationAddress, List<Package> packages)
+        {
+            OriginAddress = originAddress;
+            DestinationAddress = destinationAddress;
+            Packages = packages.AsReadOnly();
+            _rates = new List<Rate>();
             _serverErrors = new List<USPSError>();
-		}
+        }
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Fields
 
-		public int PackageCount
-		{
-			get { return Packages.Count; }
-		}
+        public readonly Address DestinationAddress;
+        public readonly Address OriginAddress;
+        public ReadOnlyCollection<Package> Packages;
+        public ICollection<IRateAdjuster> RateAdjusters;
+        private readonly List<Rate> _rates;
+        private readonly List<USPSError> _serverErrors;
 
-		public List<Rate> Rates
-		{
-			get { return _rates; }
-		}
+        #endregion
 
-		public decimal TotalPackageWeight
-		{
-			get { return Packages.Sum(x => x.Weight); }
-		}
+        #region Properties
+
+        public int PackageCount
+        {
+            get { return Packages.Count; }
+        }
+
+        public List<Rate> Rates
+        {
+            get { return _rates; }
+        }
+
+        public decimal TotalPackageWeight
+        {
+            get { return Packages.Sum(x => x.Weight); }
+        }
 
         public List<USPSError> ServerErrors
-	    {
+        {
             get { return _serverErrors; }
-	    } 
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

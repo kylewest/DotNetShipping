@@ -10,53 +10,8 @@ namespace DotNetShipping.Tests.Features
 {
     public class UPSRates
     {
-        #region Notes - READ ME!
-        /*
-        * Valid domestic values:
-        * 14 = Next Day Air Early AM,
-        * 01 = Next Day Air,
-        * 13 = Next Day Air Saver,
-        * 59 = 2nd Day Air AM,
-        * 02 = 2nd Day Air,
-        * 12 = 3 Day Select,
-        * 03 = Ground
-        * 
-        * Specialty Codes:
-        * 93 = UPS Sure Post. (UPS)Customer must register for this service before the API will return a response for it.
-        * 
-        * Valid international values:
-        * 11 = Standard,  //Canada, US, & Mexico only
-        * 07 = Worldwide Express,
-        * 54 = Worldwide Express Plus,
-        * 08 = Worldwide Expedited,
-        * 65 = Saver. Required for Rating and Ignored for Shopping.
-        * 
-        * Valid Poland to Poland Same Day values:
-        * 82 = UPS Today Standard,
-        * 83 = UPS Today Dedicated Courier,
-        * 84 = UPS Today Intercity,
-        * 85 = UPS Today Express,
-        * 86 = UPS Today Express Saver
-        * 96 = UPS World Wide Express Freight
-        */
-        #endregion
-
-        #region properties
-        private Address DomesticAddress1;
-        private Address DomesticAddress2;
-        private Address InternationalAddress1;
-        private Address InternationalAddress2;
-
-        private Package Package1;
-        private Package Package2;
-
-        private string UPSUserId;
-        private string UPSPassword;
-        private string UPSLicenseNumber;
-
-        #endregion
-
         #region ctor
+
         public UPSRates()
         {
             DomesticAddress1 = new Address("278 Buckley Jones Road", "", "", "Cleveland", "MS", "38732", "US");
@@ -71,6 +26,56 @@ namespace DotNetShipping.Tests.Features
             UPSPassword = ConfigurationManager.AppSettings["UPSPassword"];
             UPSLicenseNumber = ConfigurationManager.AppSettings["UPSLicenseNumber"];
         }
+
+        #endregion
+
+        #region Notes - READ ME!
+
+        /*
+        * Valid domestic values:
+        * 14 = Next Day Air Early AM,
+        * 01 = Next Day Air,
+        * 13 = Next Day Air Saver,
+        * 59 = 2nd Day Air AM,
+        * 02 = 2nd Day Air,
+        * 12 = 3 Day Select,
+        * 03 = Ground
+        *
+        * Specialty Codes:
+        * 93 = UPS Sure Post. (UPS)Customer must register for this service before the API will return a response for it.
+        *
+        * Valid international values:
+        * 11 = Standard,  //Canada, US, & Mexico only
+        * 07 = Worldwide Express,
+        * 54 = Worldwide Express Plus,
+        * 08 = Worldwide Expedited,
+        * 65 = Saver. Required for Rating and Ignored for Shopping.
+        *
+        * Valid Poland to Poland Same Day values:
+        * 82 = UPS Today Standard,
+        * 83 = UPS Today Dedicated Courier,
+        * 84 = UPS Today Intercity,
+        * 85 = UPS Today Express,
+        * 86 = UPS Today Express Saver
+        * 96 = UPS World Wide Express Freight
+        */
+
+        #endregion
+
+        #region properties
+
+        private readonly Address DomesticAddress1;
+        private readonly Address DomesticAddress2;
+        private readonly Address InternationalAddress1;
+        private Address InternationalAddress2;
+
+        private readonly Package Package1;
+        private Package Package2;
+
+        private readonly string UPSUserId;
+        private readonly string UPSPassword;
+        private readonly string UPSLicenseNumber;
+
         #endregion
 
         #region test methods
@@ -142,7 +147,6 @@ namespace DotNetShipping.Tests.Features
 
                 Debug.WriteLine(rate.Name + ": " + rate.TotalCharges);
             }
-            
         }
 
         [Fact]
@@ -185,7 +189,6 @@ namespace DotNetShipping.Tests.Features
 
                 Debug.WriteLine(rate.Name + ": " + rate.TotalCharges);
             }
-
         }
 
         #endregion

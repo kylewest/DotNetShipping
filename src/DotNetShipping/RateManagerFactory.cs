@@ -7,35 +7,35 @@ using DotNetShipping.ShippingProviders;
 
 namespace DotNetShipping
 {
-	public class RateManagerFactory
-	{
-		#region Methods
+    public class RateManagerFactory
+    {
+        #region Methods
 
-		/// <summary>
-		/// Builds a Rate Manager and adds the providers
-		/// </summary>
-		/// <returns></returns>
-		public static RateManager Build()
-		{
-			IEnumerable<Type> providers = Assembly.GetAssembly(typeof (IShippingProvider)).GetTypes().Where(x => x.BaseType == typeof (AbstractShippingProvider));
+        /// <summary>
+        ///     Builds a Rate Manager and adds the providers
+        /// </summary>
+        /// <returns></returns>
+        public static RateManager Build()
+        {
+            IEnumerable<Type> providers = Assembly.GetAssembly(typeof (IShippingProvider)).GetTypes().Where(x => x.BaseType == typeof (AbstractShippingProvider));
 
-			var rateManager = new RateManager();
+            var rateManager = new RateManager();
 
-			foreach (Type provider in providers)
-			{
-				var instance = Activator.CreateInstance(provider) as IShippingProvider;
+            foreach (Type provider in providers)
+            {
+                var instance = Activator.CreateInstance(provider) as IShippingProvider;
 
-				if (instance == null)
-				{
-					continue;
-				}
+                if (instance == null)
+                {
+                    continue;
+                }
 
-				rateManager.AddProvider(instance);
-			}
+                rateManager.AddProvider(instance);
+            }
 
-			return rateManager;
-		}
+            return rateManager;
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

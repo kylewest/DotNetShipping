@@ -13,6 +13,6 @@ namespace DotNetShipping.Tests.Units
             Package package = new Package(1, 2, 3, weight, 100);
             Assert.Equal(package.PoundsAndOunces.Pounds, pounds);
             Assert.Equal(package.PoundsAndOunces.Ounces, ounces);
-        }         
+        }
     }
 }

@@ -1,11 +1,11 @@
 namespace DotNetShipping
 {
-	public interface IRateAdjuster
-	{
-		#region Methods
+    public interface IRateAdjuster
+    {
+        #region Methods
 
-		Rate AdjustRate(Rate rate);
+        Rate AdjustRate(Rate rate);
 
-		#endregion
-	}
+        #endregion
+    }
 }

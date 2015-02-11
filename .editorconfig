@@ -1,0 +1,14 @@
+﻿root = true
+
+[*]
+end_of_line = CRLF
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.csproj]
+indent_size = 2
+
+[*.resx]
+indent_size = 2

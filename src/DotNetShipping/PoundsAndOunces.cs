@@ -1,7 +1,7 @@
 ﻿namespace DotNetShipping
 {
     /// <summary>
-    /// Pounds and ounces are used for the USPS provider.
+    ///     Pounds and ounces are used for the USPS provider.
     /// </summary>
     public struct PoundsAndOunces
     {

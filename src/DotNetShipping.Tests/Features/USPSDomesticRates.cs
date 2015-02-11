@@ -10,33 +10,8 @@ namespace DotNetShipping.Tests.Features
 {
     public class USPSDomesticRates
     {
-        /*
-         * These tests are for basic functionality only. There are several restrictions
-         * for USPS Domestic mail that limit sizes, weights, and services allowed
-         * by country. A full list of restrictions can be cound on the USPS web site
-         * at: https://www.usps.com/ship/compare-domestic-services.htm
-         * 
-         * Also, USPS did away with the Priority Mail "bucket" name and break it into 
-         * Priority Mail 1-Day, Priority Mail 2-Day, and Priority Mail 3-Day. The rates
-         * are supposed to be the same but the names are different and are chosen based
-         * on the zip codes provided. Express Mail was changed to Priority Mail Express
-         * and has the same N-Day names as regular Priority Mail. Info on it is at:
-         * https://www.usps.com/priority-mail/
-         */
-
-        #region properties
-        private Address DomesticAddress1;
-        private Address DomesticAddress2;
-        private Address InternationalAddress1;
-
-        private Package Package1;
-        private Package Package2;
-
-        private string USPSUserId;
-
-        #endregion
-
         #region ctor
+
         public USPSDomesticRates()
         {
             DomesticAddress1 = new Address("278 Buckley Jones Road", "", "", "Cleveland", "MS", "38732", "US");
@@ -48,6 +23,34 @@ namespace DotNetShipping.Tests.Features
 
             USPSUserId = ConfigurationManager.AppSettings["USPSUserId"];
         }
+
+        #endregion
+
+        /*
+         * These tests are for basic functionality only. There are several restrictions
+         * for USPS Domestic mail that limit sizes, weights, and services allowed
+         * by country. A full list of restrictions can be cound on the USPS web site
+         * at: https://www.usps.com/ship/compare-domestic-services.htm
+         *
+         * Also, USPS did away with the Priority Mail "bucket" name and break it into
+         * Priority Mail 1-Day, Priority Mail 2-Day, and Priority Mail 3-Day. The rates
+         * are supposed to be the same but the names are different and are chosen based
+         * on the zip codes provided. Express Mail was changed to Priority Mail Express
+         * and has the same N-Day names as regular Priority Mail. Info on it is at:
+         * https://www.usps.com/priority-mail/
+         */
+
+        #region properties
+
+        private readonly Address DomesticAddress1;
+        private readonly Address DomesticAddress2;
+        private readonly Address InternationalAddress1;
+
+        private readonly Package Package1;
+        private Package Package2;
+
+        private readonly string USPSUserId;
+
         #endregion
 
         #region test methods
@@ -103,7 +106,6 @@ namespace DotNetShipping.Tests.Features
 
                 Debug.WriteLine(rate.Name + ": " + rate.TotalCharges);
             }
-            
         }
 
         [Fact]
@@ -127,7 +129,6 @@ namespace DotNetShipping.Tests.Features
 
                 Debug.WriteLine(rate.Name + ": " + rate.TotalCharges);
             }
-
         }
 
         [Fact]

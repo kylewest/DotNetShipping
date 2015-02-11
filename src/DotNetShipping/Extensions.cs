@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.IO;
 
 namespace DotNetShipping
 {
@@ -57,9 +53,9 @@ namespace DotNetShipping
                 case "UPS Sure Post":
                     return "93";
 
-                default: throw new InvalidDataException("Invalid ship code!");
+                default:
+                    throw new InvalidDataException("Invalid ship code!");
             }
         }
-
     }
 }

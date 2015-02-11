@@ -11,6 +11,23 @@ namespace DotNetShipping.Tests.Features
 {
     public class USPSInternationalRates
     {
+        #region ctor
+
+        public USPSInternationalRates()
+        {
+            DomesticAddress1 = new Address("278 Buckley Jones Road", "", "", "Cleveland", "MS", "38732", "US");
+            DomesticAddress2 = new Address("One Microsoft Way", "", "", "Redmond", "WA", "98052", "US");
+            InternationalAddress1 = new Address("Jubail", "Jubail", "31951", "Saudi Arabia"); //has limited intl services available
+            InternationalAddress2 = new Address("80-100 Victoria St", "", "", "London SW1E 5JL", "", "", "United Kingdom");
+
+            Package1 = new Package(4, 4, 4, 5, 0);
+            Package2 = new Package(6, 6, 6, 5, 100);
+
+            USPSUserId = ConfigurationManager.AppSettings["USPSUserId"];
+        }
+
+        #endregion
+
         /*
          * These tests are for basic functionality only. There are several restrictions
          * for USPS International mail that limit sizes, weights, and services allowed
@@ -19,31 +36,17 @@ namespace DotNetShipping.Tests.Features
          */
 
         #region properties
-        private Address DomesticAddress1;
-        private Address DomesticAddress2;
-        private Address InternationalAddress1;
-        private Address InternationalAddress2;
 
-        private Package Package1;
-        private Package Package2;
+        private readonly Address DomesticAddress1;
+        private readonly Address DomesticAddress2;
+        private readonly Address InternationalAddress1;
+        private readonly Address InternationalAddress2;
 
-        private string USPSUserId;
+        private readonly Package Package1;
+        private readonly Package Package2;
 
-        #endregion
+        private readonly string USPSUserId;
 
-        #region ctor
-        public USPSInternationalRates()
-        {
-            DomesticAddress1 = new Address("278 Buckley Jones Road", "", "", "Cleveland", "MS", "38732", "US");
-            DomesticAddress2 = new Address("One Microsoft Way", "", "", "Redmond", "WA", "98052", "US");
-            InternationalAddress1 = new Address("Jubail", "Jubail", "31951", "Saudi Arabia"); //has limited intl services available
-            InternationalAddress2 = new Address("80-100 Victoria St", "", "", "London SW1E 5JL", "", "", "United Kingdom");
-            
-            Package1 = new Package(4, 4, 4, 5, 0);
-            Package2 = new Package(6, 6, 6, 5, 100);
-
-            USPSUserId = ConfigurationManager.AppSettings["USPSUserId"];
-        }
         #endregion
 
         #region test methods
@@ -93,7 +96,7 @@ namespace DotNetShipping.Tests.Features
         public void USPS_Intl_Returns_No_Rates_When_Using_Invalid_Addresses_For_Single_Service()
         {
             //can't rate intl with a domestic address
-            
+
             var rateManager = new RateManager();
             rateManager.AddProvider(new USPSInternationalProvider(USPSUserId, "Priority Mail International"));
 

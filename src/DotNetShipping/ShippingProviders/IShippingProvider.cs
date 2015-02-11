@@ -1,31 +1,31 @@
 namespace DotNetShipping.ShippingProviders
 {
-	/// <summary>
-	/// 	Defines a standard interface for all shipping providers.
-	/// </summary>
-	public interface IShippingProvider
-	{
-		#region Properties
+    /// <summary>
+    ///     Defines a standard interface for all shipping providers.
+    /// </summary>
+    public interface IShippingProvider
+    {
+        #region Methods
 
-		/// <summary>
-		/// 	The name of the provider.
-		/// </summary>
-		string Name { get; }
+        /// <summary>
+        ///     Retrieves rates from the provider.
+        /// </summary>
+        void GetRates();
 
-		/// <summary>
-		/// 	The shipment which contains rates from the provider after calling <see cref = "GetRates" />.
-		/// </summary>
-		Shipment Shipment { get; }
+        #endregion
 
-		#endregion
+        #region Properties
 
-		#region Methods
+        /// <summary>
+        ///     The name of the provider.
+        /// </summary>
+        string Name { get; }
 
-		/// <summary>
-		/// 	Retrieves rates from the provider.
-		/// </summary>
-		void GetRates();
+        /// <summary>
+        ///     The shipment which contains rates from the provider after calling <see cref="GetRates" />.
+        /// </summary>
+        Shipment Shipment { get; }
 
-		#endregion
-	}
+        #endregion
+    }
 }
