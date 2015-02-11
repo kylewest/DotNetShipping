@@ -17,8 +17,9 @@ namespace DotNetShipping.ShippingProviders
 	{
 		#region Fields
 
-		private const int defaultTimeout = 10;
-		private const string ratesUrl = "https://www.ups.com/ups.app/xml/Rate";
+		private const int DEFAULT_TIMEOUT = 10;
+		private const string DEVELOPMENT_RATES_URL = "https://wwwcie.ups.com/ups.app/xml/Rate";
+	    private const string PRODUCTION_RATES_URL = "https://onlinetools.ups.com/ups.app/xml/Rate";
 
 		private readonly string _licenseNumber;
 		private readonly string _password;
@@ -27,6 +28,7 @@ namespace DotNetShipping.ShippingProviders
 		private readonly string _userID;
 		private AvailableServices _services = AvailableServices.All;
 	    private string _serviceDescription;
+	    private bool _useProduction = true;
 
 		#endregion
 
@@ -42,11 +44,11 @@ namespace DotNetShipping.ShippingProviders
 			_licenseNumber = appSettings["UPSLicenseNumber"];
 			_userID = appSettings["UPSUserId"];
 			_password = appSettings["UPSPassword"];
-			_timeout = defaultTimeout;
+			_timeout = DEFAULT_TIMEOUT;
 		    _serviceDescription = "";
 		}
 
-		public UPSProvider(string licenseNumber, string userID, string password) : this(licenseNumber, userID, password, defaultTimeout)
+		public UPSProvider(string licenseNumber, string userID, string password) : this(licenseNumber, userID, password, DEFAULT_TIMEOUT)
 		{
 		}
 
@@ -67,7 +69,7 @@ namespace DotNetShipping.ShippingProviders
             _licenseNumber = licenseNumber;
             _userID = userID;
             _password = password;
-            _timeout = defaultTimeout;
+            _timeout = DEFAULT_TIMEOUT;
             _serviceDescription = serviceDescription;
             loadServiceCodes();
         }
@@ -92,14 +94,23 @@ namespace DotNetShipping.ShippingProviders
 			get { return _services; }
 			set { _services = value; }
 		}
+	    private string RatesUrl
+	    {
+	        get { return UseProduction ? PRODUCTION_RATES_URL : DEVELOPMENT_RATES_URL; }
+	    }
+	    public bool UseProduction
+	    {
+	        get { return _useProduction; }
+	        set { _useProduction = value; }
+	    }
 
-		#endregion
+	    #endregion
 
 		#region Methods
 
 		public override void GetRates()
 		{
-			var request = (HttpWebRequest) WebRequest.Create(ratesUrl);
+			var request = (HttpWebRequest) WebRequest.Create(RatesUrl);
 			request.Method = "POST";
 			request.Timeout = _timeout * 1000;
 			// Per the UPS documentation, the "ContentType" should be "application/x-www-form-urlencoded".
