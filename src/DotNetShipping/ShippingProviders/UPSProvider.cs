@@ -235,6 +235,12 @@ namespace DotNetShipping.ShippingProviders
                 writer.WriteElementString("Width", Shipment.Packages[i].RoundedWidth.ToString());
                 writer.WriteElementString("Height", Shipment.Packages[i].RoundedHeight.ToString());
                 writer.WriteEndElement(); // </Dimensions>
+                writer.WriteStartElement("PackageServiceOptions");
+                writer.WriteStartElement("InsuredValue");
+                writer.WriteElementString("CurrencyCode", "USD");
+                writer.WriteElementString("MonetaryValue", Shipment.Packages[i].InsuredValue.ToString());
+                writer.WriteEndElement(); // </InsuredValue>
+                writer.WriteEndElement(); // </PackageServiceOptions>
                 writer.WriteEndElement(); // </Package>
             }
             writer.WriteEndDocument();
