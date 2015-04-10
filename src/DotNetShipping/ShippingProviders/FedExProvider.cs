@@ -21,6 +21,7 @@ namespace DotNetShipping.ShippingProviders
         private readonly string _key;
         private readonly string _meterNumber;
         private readonly string _password;
+        private readonly bool _production;
 
         private readonly Dictionary<string, string> _serviceCodes = new Dictionary<string, string>
         {
@@ -51,6 +52,7 @@ namespace DotNetShipping.ShippingProviders
             _password = appSettings["FedExPassword"];
             _accountNumber = appSettings["FedExAccountNumber"];
             _meterNumber = appSettings["FedExMeterNumber"];
+            _production = true;
         }
 
         /// <summary>
@@ -67,6 +69,25 @@ namespace DotNetShipping.ShippingProviders
             _password = password;
             _accountNumber = accountNumber;
             _meterNumber = meterNumber;
+            _production = true;
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="password"></param>
+        /// <param name="accountNumber"></param>
+        /// <param name="meterNumber"></param>
+        /// <param name="useProduction">Set to false to use the FedEx testing webservice endpoints</param>
+        public FedExProvider(string key, string password, string accountNumber, string meterNumber, bool useProduction)
+        {
+            Name = "FedEx";
+
+            _key = key;
+            _password = password;
+            _accountNumber = accountNumber;
+            _meterNumber = meterNumber;
+            _production = useProduction;
         }
 
         #endregion
@@ -76,7 +97,7 @@ namespace DotNetShipping.ShippingProviders
         public override void GetRates()
         {
             RateRequest request = CreateRateRequest();
-            var service = new RateService();
+            var service = new RateService(_production);
             try
             {
                 // Call the web service passing in a RateRequest and returning a RateReply
@@ -152,7 +173,7 @@ namespace DotNetShipping.ShippingProviders
         {
             request.RequestedShipment.Recipient = new Party();
             request.RequestedShipment.Recipient.Address = new RateServiceWebReference.Address();
-            request.RequestedShipment.Recipient.Address.StreetLines = new string[1] {""};
+            request.RequestedShipment.Recipient.Address.StreetLines = new string[1] { "" };
             request.RequestedShipment.Recipient.Address.City = "";
             request.RequestedShipment.Recipient.Address.StateOrProvinceCode = "";
             request.RequestedShipment.Recipient.Address.PostalCode = Shipment.DestinationAddress.PostalCode;
@@ -163,7 +184,7 @@ namespace DotNetShipping.ShippingProviders
         {
             request.RequestedShipment.Shipper = new Party();
             request.RequestedShipment.Shipper.Address = new RateServiceWebReference.Address();
-            request.RequestedShipment.Shipper.Address.StreetLines = new string[1] {""};
+            request.RequestedShipment.Shipper.Address.StreetLines = new string[1] { "" };
             request.RequestedShipment.Shipper.Address.City = "";
             request.RequestedShipment.Shipper.Address.StateOrProvinceCode = "";
             request.RequestedShipment.Shipper.Address.PostalCode = Shipment.OriginAddress.PostalCode;
