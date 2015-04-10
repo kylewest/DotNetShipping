@@ -173,7 +173,7 @@ namespace DotNetShipping.ShippingProviders
         {
             request.RequestedShipment.Recipient = new Party();
             request.RequestedShipment.Recipient.Address = new RateServiceWebReference.Address();
-            request.RequestedShipment.Recipient.Address.StreetLines = new string[1] { "" };
+            request.RequestedShipment.Recipient.Address.StreetLines = new string[1] {""};
             request.RequestedShipment.Recipient.Address.City = "";
             request.RequestedShipment.Recipient.Address.StateOrProvinceCode = "";
             request.RequestedShipment.Recipient.Address.PostalCode = Shipment.DestinationAddress.PostalCode;
@@ -184,7 +184,7 @@ namespace DotNetShipping.ShippingProviders
         {
             request.RequestedShipment.Shipper = new Party();
             request.RequestedShipment.Shipper.Address = new RateServiceWebReference.Address();
-            request.RequestedShipment.Shipper.Address.StreetLines = new string[1] { "" };
+            request.RequestedShipment.Shipper.Address.StreetLines = new string[1] {""};
             request.RequestedShipment.Shipper.Address.City = "";
             request.RequestedShipment.Shipper.Address.StateOrProvinceCode = "";
             request.RequestedShipment.Shipper.Address.PostalCode = Shipment.OriginAddress.PostalCode;
