@@ -21,6 +21,7 @@ namespace DotNetShipping.ShippingProviders
         private readonly string _key;
         private readonly string _meterNumber;
         private readonly string _password;
+        private readonly bool _useProduction = true;
 
         private readonly Dictionary<string, string> _serviceCodes = new Dictionary<string, string>
         {
@@ -51,6 +52,7 @@ namespace DotNetShipping.ShippingProviders
             _password = appSettings["FedExPassword"];
             _accountNumber = appSettings["FedExAccountNumber"];
             _meterNumber = appSettings["FedExMeterNumber"];
+            _useProduction = true;
         }
 
         /// <summary>
@@ -67,6 +69,25 @@ namespace DotNetShipping.ShippingProviders
             _password = password;
             _accountNumber = accountNumber;
             _meterNumber = meterNumber;
+            _useProduction = true;
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="password"></param>
+        /// <param name="accountNumber"></param>
+        /// <param name="meterNumber"></param>
+        /// <param name="useProduction"></param>
+        public FedExProvider(string key, string password, string accountNumber, string meterNumber, bool useProduction)
+        {
+            Name = "FedEx";
+
+            _key = key;
+            _password = password;
+            _accountNumber = accountNumber;
+            _meterNumber = meterNumber;
+            _useProduction = useProduction;
         }
 
         #endregion
@@ -76,7 +97,7 @@ namespace DotNetShipping.ShippingProviders
         public override void GetRates()
         {
             RateRequest request = CreateRateRequest();
-            var service = new RateService();
+            var service = new RateService(_useProduction);
             try
             {
                 // Call the web service passing in a RateRequest and returning a RateReply
