@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace DotNetShipping
 {
@@ -54,6 +55,16 @@ namespace DotNetShipping
         public bool IsCanadaAddress()
         {
             return !string.IsNullOrEmpty(CountryCode) && string.Equals(CountryCode, "CA", StringComparison.OrdinalIgnoreCase);
+        }
+
+        public string GetCountryName()
+        {
+            if (string.IsNullOrEmpty(CountryCode))
+            {
+                return string.Empty;
+            }
+            var regionInfo = new RegionInfo(CountryCode);
+            return regionInfo.EnglishName;
         }
 
         #endregion

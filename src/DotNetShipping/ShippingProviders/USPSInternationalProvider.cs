@@ -96,7 +96,7 @@ namespace DotNetShipping.ShippingProviders
                     writer.WriteElementString("Ounces", "0");
                     writer.WriteElementString("MailType", "Package");
                     writer.WriteElementString("ValueOfContents", package.InsuredValue < 0 ? package.InsuredValue.ToString() : "100"); //todo: figure out best way to come up with insured value
-                    writer.WriteElementString("Country", Shipment.DestinationAddress.CountryCode);
+                    writer.WriteElementString("Country", Shipment.DestinationAddress.GetCountryName());
                     writer.WriteElementString("Container", "RECTANGULAR");
                     writer.WriteElementString("Size", "REGULAR");
                     writer.WriteElementString("Width", package.RoundedWidth.ToString());
