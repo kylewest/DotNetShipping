@@ -11,7 +11,8 @@ namespace DotNetShipping
     /// </summary>
     public class RateManager
     {
-        #region .ctor
+        private readonly IList<IRateAdjuster> _adjusters;
+        private readonly ArrayList _providers;
 
         /// <summary>
         ///     Creates a new RateManager instance.
@@ -21,17 +22,6 @@ namespace DotNetShipping
             _providers = new ArrayList();
             _adjusters = new List<IRateAdjuster>();
         }
-
-        #endregion
-
-        #region Fields
-
-        private readonly IList<IRateAdjuster> _adjusters;
-        private readonly ArrayList _providers;
-
-        #endregion
-
-        #region Methods
 
         /// <summary>
         ///     Adds the specified provider to be rated when <see cref="GetRates" /> is called.
@@ -45,31 +35,6 @@ namespace DotNetShipping
         public void AddRateAdjuster(IRateAdjuster adjuster)
         {
             _adjusters.Add(adjuster);
-        }
-
-        /// <summary>
-        ///     Retrieves rates for all of the specified providers using the specified address and package information.
-        /// </summary>
-        /// <param name="originAddress">An instance of <see cref="Address" /> specifying the origin of the shipment.</param>
-        /// <param name="destinationAddress">An instance of <see cref="Address" /> specifying the destination of the shipment.</param>
-        /// <param name="package">An instance of <see cref="Package" /> specifying the package to be rated.</param>
-        /// <returns>A <see cref="Shipment" /> instance containing all returned rates.</returns>
-        public Shipment GetRates(Address originAddress, Address destinationAddress, Package package)
-        {
-            return GetRates(originAddress, destinationAddress, new List<Package> {package});
-        }
-
-        /// <summary>
-        ///     Retrieves rates for all of the specified providers using the specified address and packages information.
-        /// </summary>
-        /// <param name="originAddress">An instance of <see cref="Address" /> specifying the origin of the shipment.</param>
-        /// <param name="destinationAddress">An instance of <see cref="Address" /> specifying the destination of the shipment.</param>
-        /// <param name="packages">An instance of <see cref="PackageCollection" /> specifying the packages to be rated.</param>
-        /// <returns>A <see cref="Shipment" /> instance containing all returned rates.</returns>
-        public Shipment GetRates(Address originAddress, Address destinationAddress, List<Package> packages)
-        {
-            var shipment = new Shipment(originAddress, destinationAddress, packages) {RateAdjusters = _adjusters};
-            return getRates(ref shipment);
         }
 
         private Shipment getRates(ref Shipment shipment)
@@ -97,7 +62,7 @@ namespace DotNetShipping
             while (threads.Count > 0)
             {
                 // loop through the threads (we can't use an iterator since we'll be deleting from the ArrayList).
-                for (int x = (threads.Count - 1); x > -1; x--)
+                for (var x = (threads.Count - 1); x > -1; x--)
                 {
                     // check the ThreadState to see if it's Stopped.
                     if (((Thread) threads[x]).ThreadState == ThreadState.Stopped)
@@ -114,6 +79,29 @@ namespace DotNetShipping
             return shipment;
         }
 
-        #endregion
+        /// <summary>
+        ///     Retrieves rates for all of the specified providers using the specified address and package information.
+        /// </summary>
+        /// <param name="originAddress">An instance of <see cref="Address" /> specifying the origin of the shipment.</param>
+        /// <param name="destinationAddress">An instance of <see cref="Address" /> specifying the destination of the shipment.</param>
+        /// <param name="package">An instance of <see cref="Package" /> specifying the package to be rated.</param>
+        /// <returns>A <see cref="Shipment" /> instance containing all returned rates.</returns>
+        public Shipment GetRates(Address originAddress, Address destinationAddress, Package package)
+        {
+            return GetRates(originAddress, destinationAddress, new List<Package> {package});
+        }
+
+        /// <summary>
+        ///     Retrieves rates for all of the specified providers using the specified address and packages information.
+        /// </summary>
+        /// <param name="originAddress">An instance of <see cref="Address" /> specifying the origin of the shipment.</param>
+        /// <param name="destinationAddress">An instance of <see cref="Address" /> specifying the destination of the shipment.</param>
+        /// <param name="packages">An instance of <see cref="PackageCollection" /> specifying the packages to be rated.</param>
+        /// <returns>A <see cref="Shipment" /> instance containing all returned rates.</returns>
+        public Shipment GetRates(Address originAddress, Address destinationAddress, List<Package> packages)
+        {
+            var shipment = new Shipment(originAddress, destinationAddress, packages) {RateAdjusters = _adjusters};
+            return getRates(ref shipment);
+        }
     }
 }

@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Specialized;
 using System.Configuration;
 using System.IO;
 using System.Net;
@@ -33,53 +32,17 @@ namespace DotNetShipping.ShippingProviders
             SurePost = 4096,
             All = 8191
         }
-        private struct AvailableService
-        {
-            #region .ctor
-
-            public AvailableService(string name, int enumValue)
-            {
-                Name = name;
-                EnumValue = enumValue;
-            }
-
-            #endregion
-
-            #region Methods
-
-            public override string ToString()
-            {
-                return Name;
-            }
-
-            #endregion
-
-            #region Fields
-
-            public readonly int EnumValue;
-            public readonly string Name;
-
-            #endregion
-        }
-
-        #region Fields
-
         private const int DEFAULT_TIMEOUT = 10;
         private const string DEVELOPMENT_RATES_URL = "https://wwwcie.ups.com/ups.app/xml/Rate";
         private const string PRODUCTION_RATES_URL = "https://onlinetools.ups.com/ups.app/xml/Rate";
-
+        private AvailableServices _services = AvailableServices.All;
+        private bool _useProduction = true;
         private readonly string _licenseNumber;
         private readonly string _password;
         private readonly Hashtable _serviceCodes = new Hashtable(12);
+        private readonly string _serviceDescription;
         private readonly int _timeout;
         private readonly string _userId;
-        private AvailableServices _services = AvailableServices.All;
-        private readonly string _serviceDescription;
-        private bool _useProduction = true;
-
-        #endregion
-
-        #region .ctor
 
         /// <summary>
         ///     Parameterless construction that pulls data directly from app.config
@@ -87,7 +50,7 @@ namespace DotNetShipping.ShippingProviders
         public UPSProvider()
         {
             Name = "UPS";
-            NameValueCollection appSettings = ConfigurationManager.AppSettings;
+            var appSettings = ConfigurationManager.AppSettings;
             _licenseNumber = appSettings["UPSLicenseNumber"];
             _userId = appSettings["UPSUserId"];
             _password = appSettings["UPSPassword"];
@@ -132,10 +95,6 @@ namespace DotNetShipping.ShippingProviders
             LoadServiceCodes();
         }
 
-        #endregion
-
-        #region Properties
-
         public AvailableServices Services
         {
             get { return _services; }
@@ -149,30 +108,6 @@ namespace DotNetShipping.ShippingProviders
         {
             get { return _useProduction; }
             set { _useProduction = value; }
-        }
-
-        #endregion
-
-        #region Methods
-
-        public override void GetRates()
-        {
-            var request = (HttpWebRequest) WebRequest.Create(RatesUrl);
-            request.Method = "POST";
-            request.Timeout = _timeout * 1000;
-            // Per the UPS documentation, the "ContentType" should be "application/x-www-form-urlencoded".
-            // However, using "text/xml; encoding=UTF-8" lets us avoid converting the byte array returned by
-            // the buildRatesRequestMessage method and (so far) works just fine.
-            request.ContentType = "text/xml; encoding=UTF-8"; //"application/x-www-form-urlencoded";
-            byte[] bytes = BuildRatesRequestMessage();
-            //System.Text.Encoding.Convert(Encoding.UTF8, Encoding.ASCII, this.buildRatesRequestMessage());
-            request.ContentLength = bytes.Length;
-            Stream stream = request.GetRequestStream();
-            stream.Write(bytes, 0, bytes.Length);
-            stream.Close();
-            var response = (HttpWebResponse) request.GetResponse();
-            ParseRatesResponseMessage(new StreamReader(response.GetResponseStream()).ReadToEnd());
-            response.Close();
         }
 
         private byte[] BuildRatesRequestMessage()
@@ -221,7 +156,7 @@ namespace DotNetShipping.ShippingProviders
                 writer.WriteElementString("Code", _serviceDescription.ToUpsShipCode());
                 writer.WriteEndElement(); //</Service>
             }
-            for (int i = 0; i < Shipment.Packages.Count; i++)
+            for (var i = 0; i < Shipment.Packages.Count; i++)
             {
                 writer.WriteStartElement("Package");
                 writer.WriteStartElement("PackagingType");
@@ -253,6 +188,26 @@ namespace DotNetShipping.ShippingProviders
             return buffer;
         }
 
+        public override void GetRates()
+        {
+            var request = (HttpWebRequest) WebRequest.Create(RatesUrl);
+            request.Method = "POST";
+            request.Timeout = _timeout * 1000;
+            // Per the UPS documentation, the "ContentType" should be "application/x-www-form-urlencoded".
+            // However, using "text/xml; encoding=UTF-8" lets us avoid converting the byte array returned by
+            // the buildRatesRequestMessage method and (so far) works just fine.
+            request.ContentType = "text/xml; encoding=UTF-8"; //"application/x-www-form-urlencoded";
+            var bytes = BuildRatesRequestMessage();
+            //System.Text.Encoding.Convert(Encoding.UTF8, Encoding.ASCII, this.buildRatesRequestMessage());
+            request.ContentLength = bytes.Length;
+            var stream = request.GetRequestStream();
+            stream.Write(bytes, 0, bytes.Length);
+            stream.Close();
+            var response = (HttpWebResponse) request.GetResponse();
+            ParseRatesResponseMessage(new StreamReader(response.GetResponseStream()).ReadToEnd());
+            response.Close();
+        }
+
         private void LoadServiceCodes()
         {
             _serviceCodes.Add("01", new AvailableService("UPS Next Day Air", 1));
@@ -274,10 +229,10 @@ namespace DotNetShipping.ShippingProviders
         {
             var xDoc = new XmlDocument();
             xDoc.LoadXml(response);
-            XmlNodeList ratedShipment = xDoc.SelectNodes("/RatingServiceSelectionResponse/RatedShipment");
+            var ratedShipment = xDoc.SelectNodes("/RatingServiceSelectionResponse/RatedShipment");
             foreach (XmlNode rateNode in ratedShipment)
             {
-                string name = rateNode.SelectSingleNode("Service/Code").InnerText;
+                var name = rateNode.SelectSingleNode("Service/Code").InnerText;
                 AvailableService service;
                 if (_serviceCodes.ContainsKey(name))
                 {
@@ -291,14 +246,14 @@ namespace DotNetShipping.ShippingProviders
                 {
                     continue;
                 }
-                string description = "";
+                var description = "";
                 if (_serviceCodes.ContainsKey(name))
                 {
                     description = _serviceCodes[name].ToString();
                 }
-                decimal totalCharges = Convert.ToDecimal(rateNode.SelectSingleNode("TotalCharges/MonetaryValue").InnerText);
-                DateTime delivery = DateTime.Parse("1/1/1900 12:00 AM");
-                string date = rateNode.SelectSingleNode("GuaranteedDaysToDelivery").InnerText;
+                var totalCharges = Convert.ToDecimal(rateNode.SelectSingleNode("TotalCharges/MonetaryValue").InnerText);
+                var delivery = DateTime.Parse("1/1/1900 12:00 AM");
+                var date = rateNode.SelectSingleNode("GuaranteedDaysToDelivery").InnerText;
                 if (date == "") // no gauranteed delivery date, so use MaxDate to ensure correct sorting
                 {
                     date = DateTime.MaxValue.ToShortDateString();
@@ -307,7 +262,7 @@ namespace DotNetShipping.ShippingProviders
                 {
                     date = DateTime.Now.AddDays(Convert.ToDouble(date)).ToShortDateString();
                 }
-                string deliveryTime = rateNode.SelectSingleNode("ScheduledDeliveryTime").InnerText;
+                var deliveryTime = rateNode.SelectSingleNode("ScheduledDeliveryTime").InnerText;
                 if (deliveryTime == "") // no scheduled delivery time, so use 11:59:00 PM to ensure correct sorting
                 {
                     date += " 11:59:00 PM";
@@ -325,6 +280,21 @@ namespace DotNetShipping.ShippingProviders
             }
         }
 
-        #endregion
+        private struct AvailableService
+        {
+            public readonly int EnumValue;
+            public readonly string Name;
+
+            public AvailableService(string name, int enumValue)
+            {
+                Name = name;
+                EnumValue = enumValue;
+            }
+
+            public override string ToString()
+            {
+                return Name;
+            }
+        }
     }
 }

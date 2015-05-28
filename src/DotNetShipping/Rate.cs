@@ -7,8 +7,6 @@ namespace DotNetShipping
     /// </summary>
     public class Rate : IComparable
     {
-        #region .ctor
-
         /// <summary>
         ///     Creates a new instance of the <see cref="Rate" /> class.
         /// </summary>
@@ -26,10 +24,6 @@ namespace DotNetShipping
             GuaranteedDelivery = delivery;
         }
 
-        #endregion
-
-        #region Properties
-
         /// <summary>
         ///     The guaranteed date and time of delivery for this rate.
         /// </summary>
@@ -38,7 +32,6 @@ namespace DotNetShipping
         ///     A Name of the rate, as specified by the provider.
         /// </summary>
         public string Name { get; set; }
-
         /// <summary>
         ///     The <see cref="ShippingProviders.IShippingProvider" /> implementation which provided this rate.
         /// </summary>
@@ -47,20 +40,10 @@ namespace DotNetShipping
         ///     The ProviderCode of the rate, as specified by the provider.
         /// </summary>
         public string ProviderCode { get; set; }
-
         /// <summary>
         ///     The total cost of this rate.
         /// </summary>
         public decimal TotalCharges { get; set; }
-
-        #endregion
-
-        #region Methods
-
-        public override string ToString()
-        {
-            return Provider + Environment.NewLine + "\t" + ProviderCode + Environment.NewLine + "\t" + Name + Environment.NewLine + "\t" + TotalCharges + Environment.NewLine + "\t" + GuaranteedDelivery;
-        }
 
         public int CompareTo(object obj)
         {
@@ -68,6 +51,9 @@ namespace DotNetShipping
             return GuaranteedDelivery.CompareTo(rateB.GuaranteedDelivery);
         }
 
-        #endregion
+        public override string ToString()
+        {
+            return Provider + Environment.NewLine + "\t" + ProviderCode + Environment.NewLine + "\t" + Name + Environment.NewLine + "\t" + TotalCharges + Environment.NewLine + "\t" + GuaranteedDelivery;
+        }
     }
 }

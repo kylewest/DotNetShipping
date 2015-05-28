@@ -7,8 +7,6 @@ namespace DotNetShipping
     /// </summary>
     public class Package
     {
-        #region .ctor
-
         /// <summary>
         ///     Creates a new package object.
         /// </summary>
@@ -41,19 +39,14 @@ namespace DotNetShipping
             Container = container;
         }
 
-        #endregion
-
-        #region Properties
-
         public decimal CalculatedGirth
         {
             get
             {
-                decimal result = (Width * 2) + (Height * 2);
+                var result = (Width * 2) + (Height * 2);
                 return Math.Ceiling(result);
             }
         }
-
         public decimal Height { get; set; }
         public decimal InsuredValue { get; set; }
         public bool IsOversize { get; set; }
@@ -77,7 +70,6 @@ namespace DotNetShipping
         public decimal Weight { get; set; }
         public decimal Width { get; set; }
         public string Container { get; set; }
-
         public PoundsAndOunces PoundsAndOunces
         {
             get
@@ -89,14 +81,12 @@ namespace DotNetShipping
                 }
 
                 poundsAndOunces.Pounds = (int) Math.Truncate(Weight);
-                decimal decimalPart = (Weight - poundsAndOunces.Pounds) * 16;
+                var decimalPart = (Weight - poundsAndOunces.Pounds) * 16;
 
                 poundsAndOunces.Ounces = (int) Math.Ceiling(decimalPart);
 
                 return poundsAndOunces;
             }
         }
-
-        #endregion
     }
 }

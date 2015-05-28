@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Configuration;
 
 using DotNetShipping.ShippingProviders;
@@ -9,25 +8,23 @@ namespace DotNetShipping.SampleApp
 {
     internal class Program
     {
-        #region Methods
-
         private static void Main()
         {
-            NameValueCollection appSettings = ConfigurationManager.AppSettings;
+            var appSettings = ConfigurationManager.AppSettings;
 
             // You will need a license #, userid and password to utilize the UPS provider.
-            string upsLicenseNumber = appSettings["UPSLicenseNumber"];
-            string upsUserId = appSettings["UPSUserId"];
-            string upsPassword = appSettings["UPSPassword"];
+            var upsLicenseNumber = appSettings["UPSLicenseNumber"];
+            var upsUserId = appSettings["UPSUserId"];
+            var upsPassword = appSettings["UPSPassword"];
 
             // You will need an account # and meter # to utilize the FedEx provider.
-            string fedexKey = appSettings["FedExKey"];
-            string fedexPassword = appSettings["FedExPassword"];
-            string fedexAccountNumber = appSettings["FedExAccountNumber"];
-            string fedexMeterNumber = appSettings["FedExMeterNumber"];
+            var fedexKey = appSettings["FedExKey"];
+            var fedexPassword = appSettings["FedExPassword"];
+            var fedexAccountNumber = appSettings["FedExAccountNumber"];
+            var fedexMeterNumber = appSettings["FedExMeterNumber"];
 
             // You will need a userId to use the USPS provider. Your account will also need access to the production servers.
-            string uspsUserId = appSettings["USPSUserId"];
+            var uspsUserId = appSettings["USPSUserId"];
 
             // Setup package and destination/origin addresses
             var packages = new List<Package>();
@@ -53,15 +50,13 @@ namespace DotNetShipping.SampleApp
             rateManager.AddRateAdjuster(new PercentageRateAdjuster(.9M));
 
             // Call GetRates()
-            Shipment shipment = rateManager.GetRates(origin, destination, packages);
+            var shipment = rateManager.GetRates(origin, destination, packages);
 
             // Iterate through the rates returned
-            foreach (Rate rate in shipment.Rates)
+            foreach (var rate in shipment.Rates)
             {
                 Console.WriteLine(rate);
             }
         }
-
-        #endregion
     }
 }

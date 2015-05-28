@@ -10,7 +10,7 @@ namespace DotNetShipping.Tests.Units
         [InlineData(6.2, 6, 4)]
         public void PoundsAndOuncesCalculatedCorrectly(decimal weight, int pounds, int ounces)
         {
-            Package package = new Package(1, 2, 3, weight, 100);
+            var package = new Package(1, 2, 3, weight, 100);
             Assert.Equal(package.PoundsAndOunces.Pounds, pounds);
             Assert.Equal(package.PoundsAndOunces.Ounces, ounces);
         }

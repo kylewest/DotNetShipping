@@ -9,17 +9,16 @@ namespace DotNetShipping.ShippingProviders
     /// </summary>
     public abstract class AbstractShippingProvider : IShippingProvider
     {
-        #region Properties
+        public virtual void GetRates()
+        {
+        }
 
         public string Name { get; set; }
         public Shipment Shipment { get; set; }
 
-        #endregion
-
-        #region Methods
-
-        public virtual void GetRates()
+        protected void AddError(USPSError error)
         {
+            Shipment.ServerErrors.Add(error);
         }
 
         protected void AddRate(string providerCode, string name, decimal totalCharges, DateTime delivery)
@@ -35,12 +34,5 @@ namespace DotNetShipping.ShippingProviders
             }
             Shipment.Rates.Add(rate);
         }
-
-        protected void AddError(USPSError error)
-        {
-            Shipment.ServerErrors.Add(error);
-        }
-
-        #endregion
     }
 }

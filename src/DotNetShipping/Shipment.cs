@@ -9,7 +9,12 @@ namespace DotNetShipping
     /// </summary>
     public class Shipment
     {
-        #region .ctor
+        public ReadOnlyCollection<Package> Packages;
+        public ICollection<IRateAdjuster> RateAdjusters;
+        private readonly List<Rate> _rates;
+        private readonly List<USPSError> _serverErrors;
+        public readonly Address DestinationAddress;
+        public readonly Address OriginAddress;
 
         public Shipment(Address originAddress, Address destinationAddress, List<Package> packages)
         {
@@ -20,41 +25,21 @@ namespace DotNetShipping
             _serverErrors = new List<USPSError>();
         }
 
-        #endregion
-
-        #region Fields
-
-        public readonly Address DestinationAddress;
-        public readonly Address OriginAddress;
-        public ReadOnlyCollection<Package> Packages;
-        public ICollection<IRateAdjuster> RateAdjusters;
-        private readonly List<Rate> _rates;
-        private readonly List<USPSError> _serverErrors;
-
-        #endregion
-
-        #region Properties
-
         public int PackageCount
         {
             get { return Packages.Count; }
         }
-
         public List<Rate> Rates
         {
             get { return _rates; }
         }
-
         public decimal TotalPackageWeight
         {
             get { return Packages.Sum(x => x.Weight); }
         }
-
         public List<USPSError> ServerErrors
         {
             get { return _serverErrors; }
         }
-
-        #endregion
     }
 }

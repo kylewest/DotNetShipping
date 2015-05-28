@@ -10,7 +10,15 @@ namespace DotNetShipping.Tests.Features
 {
     public class UPSRates
     {
-        #region ctor
+        private Address InternationalAddress2;
+        private Package Package2;
+        private readonly Address DomesticAddress1;
+        private readonly Address DomesticAddress2;
+        private readonly Address InternationalAddress1;
+        private readonly Package Package1;
+        private readonly string UPSLicenseNumber;
+        private readonly string UPSPassword;
+        private readonly string UPSUserId;
 
         public UPSRates()
         {
@@ -27,89 +35,13 @@ namespace DotNetShipping.Tests.Features
             UPSLicenseNumber = ConfigurationManager.AppSettings["UPSLicenseNumber"];
         }
 
-        #endregion
-
-        #region Notes - READ ME!
-
-        /*
-        * Valid domestic values:
-        * 14 = Next Day Air Early AM,
-        * 01 = Next Day Air,
-        * 13 = Next Day Air Saver,
-        * 59 = 2nd Day Air AM,
-        * 02 = 2nd Day Air,
-        * 12 = 3 Day Select,
-        * 03 = Ground
-        *
-        * Specialty Codes:
-        * 93 = UPS Sure Post. (UPS)Customer must register for this service before the API will return a response for it.
-        *
-        * Valid international values:
-        * 11 = Standard,  //Canada, US, & Mexico only
-        * 07 = Worldwide Express,
-        * 54 = Worldwide Express Plus,
-        * 08 = Worldwide Expedited,
-        * 65 = Saver. Required for Rating and Ignored for Shopping.
-        *
-        * Valid Poland to Poland Same Day values:
-        * 82 = UPS Today Standard,
-        * 83 = UPS Today Dedicated Courier,
-        * 84 = UPS Today Intercity,
-        * 85 = UPS Today Express,
-        * 86 = UPS Today Express Saver
-        * 96 = UPS World Wide Express Freight
-        */
-
-        #endregion
-
-        #region properties
-
-        private readonly Address DomesticAddress1;
-        private readonly Address DomesticAddress2;
-        private readonly Address InternationalAddress1;
-        private Address InternationalAddress2;
-
-        private readonly Package Package1;
-        private Package Package2;
-
-        private readonly string UPSUserId;
-        private readonly string UPSPassword;
-        private readonly string UPSLicenseNumber;
-
-        #endregion
-
-        #region test methods
-
-        [Fact]
-        public void UPS_Returns_Rates_When_Using_International_Destination_Addresses_For_All_Services()
-        {
-            var rateManager = new RateManager();
-            rateManager.AddProvider(new UPSProvider(UPSLicenseNumber, UPSUserId, UPSPassword));
-
-            Shipment response = rateManager.GetRates(DomesticAddress1, InternationalAddress1, Package1);
-
-            Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
-
-            Assert.NotNull(response);
-            Assert.NotEmpty(response.Rates);
-            Assert.Empty(response.ServerErrors);
-
-            foreach (var rate in response.Rates)
-            {
-                Assert.NotNull(rate);
-                Assert.True(rate.TotalCharges > 0);
-
-                Debug.WriteLine(rate.Name + ": " + rate.TotalCharges);
-            }
-        }
-
         [Fact]
         public void UPS_Domestic_Returns_Rates_When_Using_International_Addresses_For_Single_Service()
         {
             var rateManager = new RateManager();
             rateManager.AddProvider(new UPSProvider(UPSLicenseNumber, UPSUserId, UPSPassword, "UPS Worldwide Express"));
 
-            Shipment response = rateManager.GetRates(DomesticAddress1, InternationalAddress1, Package1);
+            var response = rateManager.GetRates(DomesticAddress1, InternationalAddress1, Package1);
 
             Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
 
@@ -132,7 +64,53 @@ namespace DotNetShipping.Tests.Features
             var rateManager = new RateManager();
             rateManager.AddProvider(new UPSProvider(UPSLicenseNumber, UPSUserId, UPSPassword));
 
-            Shipment response = rateManager.GetRates(DomesticAddress1, DomesticAddress2, Package1);
+            var response = rateManager.GetRates(DomesticAddress1, DomesticAddress2, Package1);
+
+            Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
+
+            Assert.NotNull(response);
+            Assert.NotEmpty(response.Rates);
+            Assert.Empty(response.ServerErrors);
+
+            foreach (var rate in response.Rates)
+            {
+                Assert.NotNull(rate);
+                Assert.True(rate.TotalCharges > 0);
+
+                Debug.WriteLine(rate.Name + ": " + rate.TotalCharges);
+            }
+        }
+
+        [Fact]
+        public void UPS_Returns_Multiple_Rates_When_Using_Valid_Addresses_For_All_Services_And_Multple_Packages()
+        {
+            var rateManager = new RateManager();
+            rateManager.AddProvider(new UPSProvider(UPSLicenseNumber, UPSUserId, UPSPassword));
+
+            var response = rateManager.GetRates(DomesticAddress1, DomesticAddress2, Package1);
+
+            Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
+
+            Assert.NotNull(response);
+            Assert.NotEmpty(response.Rates);
+            Assert.Empty(response.ServerErrors);
+
+            foreach (var rate in response.Rates)
+            {
+                Assert.NotNull(rate);
+                Assert.True(rate.TotalCharges > 0);
+
+                Debug.WriteLine(rate.Name + ": " + rate.TotalCharges);
+            }
+        }
+
+        [Fact]
+        public void UPS_Returns_Rates_When_Using_International_Destination_Addresses_For_All_Services()
+        {
+            var rateManager = new RateManager();
+            rateManager.AddProvider(new UPSProvider(UPSLicenseNumber, UPSUserId, UPSPassword));
+
+            var response = rateManager.GetRates(DomesticAddress1, InternationalAddress1, Package1);
 
             Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
 
@@ -155,7 +133,7 @@ namespace DotNetShipping.Tests.Features
             var rateManager = new RateManager();
             rateManager.AddProvider(new UPSProvider(UPSLicenseNumber, UPSUserId, UPSPassword, "UPS Ground"));
 
-            Shipment response = rateManager.GetRates(DomesticAddress1, DomesticAddress2, Package1);
+            var response = rateManager.GetRates(DomesticAddress1, DomesticAddress2, Package1);
 
             Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
 
@@ -167,30 +145,5 @@ namespace DotNetShipping.Tests.Features
 
             Debug.WriteLine(response.Rates.First().Name + ": " + response.Rates.First().TotalCharges);
         }
-
-        [Fact]
-        public void UPS_Returns_Multiple_Rates_When_Using_Valid_Addresses_For_All_Services_And_Multple_Packages()
-        {
-            var rateManager = new RateManager();
-            rateManager.AddProvider(new UPSProvider(UPSLicenseNumber, UPSUserId, UPSPassword));
-
-            Shipment response = rateManager.GetRates(DomesticAddress1, DomesticAddress2, Package1);
-
-            Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
-
-            Assert.NotNull(response);
-            Assert.NotEmpty(response.Rates);
-            Assert.Empty(response.ServerErrors);
-
-            foreach (var rate in response.Rates)
-            {
-                Assert.NotNull(rate);
-                Assert.True(rate.TotalCharges > 0);
-
-                Debug.WriteLine(rate.Name + ": " + rate.TotalCharges);
-            }
-        }
-
-        #endregion
     }
 }

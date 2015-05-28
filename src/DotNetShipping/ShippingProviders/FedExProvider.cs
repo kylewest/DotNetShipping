@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
@@ -15,14 +14,10 @@ namespace DotNetShipping.ShippingProviders
     /// </summary>
     public class FedExProvider : AbstractShippingProvider
     {
-        #region Fields
-
         private readonly string _accountNumber;
         private readonly string _key;
         private readonly string _meterNumber;
         private readonly string _password;
-        private readonly bool _useProduction = true;
-
         private readonly Dictionary<string, string> _serviceCodes = new Dictionary<string, string>
         {
             {"PRIORITY_OVERNIGHT", "FedEx Priority Overnight"},
@@ -36,10 +31,7 @@ namespace DotNetShipping.ShippingProviders
             {"INTERNATIONAL_ECONOMY", "FedEx International Economy"},
             {"INTERNATIONAL_PRIORITY", "FedEx International Priority"}
         };
-
-        #endregion
-
-        #region .ctor
+        private readonly bool _useProduction = true;
 
         /// <summary>
         ///     Paramaterless constructor that loads settings from app.config
@@ -47,7 +39,7 @@ namespace DotNetShipping.ShippingProviders
         public FedExProvider()
         {
             Name = "FedEx";
-            NameValueCollection appSettings = ConfigurationManager.AppSettings;
+            var appSettings = ConfigurationManager.AppSettings;
             _key = appSettings["FedExKey"];
             _password = appSettings["FedExPassword"];
             _accountNumber = appSettings["FedExAccountNumber"];
@@ -90,49 +82,6 @@ namespace DotNetShipping.ShippingProviders
             _useProduction = useProduction;
         }
 
-        #endregion
-
-        #region Methods
-
-        public override void GetRates()
-        {
-            RateRequest request = CreateRateRequest();
-            var service = new RateService(_useProduction);
-            try
-            {
-                // Call the web service passing in a RateRequest and returning a RateReply
-                RateReply reply = service.getRates(request);
-                //
-                if (reply.HighestSeverity == NotificationSeverityType.SUCCESS || reply.HighestSeverity == NotificationSeverityType.NOTE || reply.HighestSeverity == NotificationSeverityType.WARNING)
-                {
-                    ProcessReply(reply);
-                }
-                ShowNotifications(reply);
-            }
-            catch (SoapException e)
-            {
-                Debug.WriteLine(e.Detail.InnerText);
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e.Message);
-            }
-        }
-
-        private static void ShowNotifications(RateReply reply)
-        {
-            Debug.WriteLine("Notifications");
-            for (int i = 0; i < reply.Notifications.Length; i++)
-            {
-                Notification notification = reply.Notifications[i];
-                Debug.WriteLine("Notification no. {0}", i);
-                Debug.WriteLine(" Severity: {0}", notification.Severity);
-                Debug.WriteLine(" Code: {0}", notification.Code);
-                Debug.WriteLine(" Message: {0}", notification.Message);
-                Debug.WriteLine(" Source: {0}", notification.Source);
-            }
-        }
-
         private RateRequest CreateRateRequest()
         {
             // Build the RateRequest
@@ -157,14 +106,39 @@ namespace DotNetShipping.ShippingProviders
             return request;
         }
 
+        public override void GetRates()
+        {
+            var request = CreateRateRequest();
+            var service = new RateService(_useProduction);
+            try
+            {
+                // Call the web service passing in a RateRequest and returning a RateReply
+                var reply = service.getRates(request);
+                //
+                if (reply.HighestSeverity == NotificationSeverityType.SUCCESS || reply.HighestSeverity == NotificationSeverityType.NOTE || reply.HighestSeverity == NotificationSeverityType.WARNING)
+                {
+                    ProcessReply(reply);
+                }
+                ShowNotifications(reply);
+            }
+            catch (SoapException e)
+            {
+                Debug.WriteLine(e.Detail.InnerText);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.Message);
+            }
+        }
+
         private void ProcessReply(RateReply reply)
         {
-            foreach (RateReplyDetail rateReplyDetail in reply.RateReplyDetails)
+            foreach (var rateReplyDetail in reply.RateReplyDetails)
             {
-                decimal netCharge = rateReplyDetail.RatedShipmentDetails.Max(x => x.ShipmentRateDetail.TotalNetCharge.Amount);
+                var netCharge = rateReplyDetail.RatedShipmentDetails.Max(x => x.ShipmentRateDetail.TotalNetCharge.Amount);
 
-                string key = rateReplyDetail.ServiceType.ToString();
-                DateTime deliveryDate = rateReplyDetail.DeliveryTimestampSpecified ? rateReplyDetail.DeliveryTimestamp : DateTime.Now.AddDays(30);
+                var key = rateReplyDetail.ServiceType.ToString();
+                var deliveryDate = rateReplyDetail.DeliveryTimestampSpecified ? rateReplyDetail.DeliveryTimestamp : DateTime.Now.AddDays(30);
                 AddRate(key, _serviceCodes[key], netCharge, deliveryDate);
             }
         }
@@ -195,8 +169,8 @@ namespace DotNetShipping.ShippingProviders
         {
             request.RequestedShipment.RequestedPackageLineItems = new RequestedPackageLineItem[Shipment.PackageCount];
 
-            int i = 0;
-            foreach (Package package in Shipment.Packages)
+            var i = 0;
+            foreach (var package in Shipment.Packages)
             {
                 request.RequestedShipment.RequestedPackageLineItems[i] = new RequestedPackageLineItem();
                 request.RequestedShipment.RequestedPackageLineItems[i].SequenceNumber = (i + 1).ToString();
@@ -241,6 +215,18 @@ namespace DotNetShipping.ShippingProviders
             request.RequestedShipment.PackageCount = Shipment.PackageCount.ToString();
         }
 
-        #endregion
+        private static void ShowNotifications(RateReply reply)
+        {
+            Debug.WriteLine("Notifications");
+            for (var i = 0; i < reply.Notifications.Length; i++)
+            {
+                var notification = reply.Notifications[i];
+                Debug.WriteLine("Notification no. {0}", i);
+                Debug.WriteLine(" Severity: {0}", notification.Severity);
+                Debug.WriteLine(" Code: {0}", notification.Code);
+                Debug.WriteLine(" Message: {0}", notification.Message);
+                Debug.WriteLine(" Source: {0}", notification.Source);
+            }
+        }
     }
 }

@@ -15,16 +15,9 @@ namespace DotNetShipping.ShippingProviders
     /// </summary>
     public class USPSInternationalProvider : AbstractShippingProvider
     {
-        #region Fields
-
         private const string PRODUCTION_URL = "http://production.shippingapis.com/ShippingAPI.dll";
-        private readonly string _userId;
         private readonly string _service;
-        public bool Commercial { get; set; }
-
-        #endregion
-
-        #region .ctor
+        private readonly string _userId;
 
         public USPSInternationalProvider()
         {
@@ -53,9 +46,7 @@ namespace DotNetShipping.ShippingProviders
             _service = service;
         }
 
-        #endregion
-
-        #region Methods
+        public bool Commercial { get; set; }
 
         public override void GetRates()
         {
@@ -66,14 +57,14 @@ namespace DotNetShipping.ShippingProviders
             settings.OmitXmlDeclaration = true;
             settings.NewLineHandling = NewLineHandling.None;
 
-            using (XmlWriter writer = XmlWriter.Create(sb, settings))
+            using (var writer = XmlWriter.Create(sb, settings))
             {
                 writer.WriteStartElement("IntlRateV2Request");
                 writer.WriteAttributeString("USERID", _userId);
 
                 writer.WriteElementString("Revision", "2");
-                int i = 0;
-                foreach (Package package in Shipment.Packages)
+                var i = 0;
+                foreach (var package in Shipment.Packages)
                 {
                     //<Package ID="2ND">
                     //  <Pounds>0</Pounds>
@@ -120,9 +111,9 @@ namespace DotNetShipping.ShippingProviders
 
             try
             {
-                string url = string.Concat(PRODUCTION_URL, "?API=IntlRateV2&XML=", sb.ToString());
+                var url = string.Concat(PRODUCTION_URL, "?API=IntlRateV2&XML=", sb.ToString());
                 var webClient = new WebClient();
-                string response = webClient.DownloadString(url);
+                var response = webClient.DownloadString(url);
 
                 ParseResult(response);
             }
@@ -139,7 +130,7 @@ namespace DotNetShipping.ShippingProviders
 
         private void ParseResult(string response)
         {
-            XDocument document = XDocument.Load(new StringReader(response));
+            var document = XDocument.Load(new StringReader(response));
 
             var rates = document.Descendants("Service").GroupBy(item => (string) item.Element("SvcDescription")).Select(g => new {Name = g.Key, TotalCharges = g.Sum(x => Decimal.Parse((string) x.Element("Postage")))});
 
@@ -147,7 +138,7 @@ namespace DotNetShipping.ShippingProviders
             {
                 foreach (var r in rates)
                 {
-                    string name = Regex.Replace(r.Name, "&lt.*gt;", "");
+                    var name = Regex.Replace(r.Name, "&lt.*gt;", "");
 
                     AddRate(name, string.Concat("USPS ", name), r.TotalCharges, DateTime.Now.AddDays(30));
                 }
@@ -156,7 +147,7 @@ namespace DotNetShipping.ShippingProviders
             {
                 foreach (var r in rates)
                 {
-                    string name = Regex.Replace(r.Name, "&lt.*gt;", "");
+                    var name = Regex.Replace(r.Name, "&lt.*gt;", "");
 
                     if (_service == name)
                     {
@@ -185,7 +176,5 @@ namespace DotNetShipping.ShippingProviders
                 }
             }
         }
-
-        #endregion
     }
 }

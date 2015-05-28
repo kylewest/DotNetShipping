@@ -1,10 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<definitions xmlns:ns="http://fedex.com/ws/rate/v13" xmlns:s1="http://schemas.xmlsoap.org/wsdl/soap/"
-             name="RateServiceDefinitions" targetNamespace="http://fedex.com/ws/rate/v13"
-             xmlns="http://schemas.xmlsoap.org/wsdl/">
+<definitions xmlns:ns="http://fedex.com/ws/rate/v13" xmlns:s1="http://schemas.xmlsoap.org/wsdl/soap/" name="RateServiceDefinitions" targetNamespace="http://fedex.com/ws/rate/v13" xmlns="http://schemas.xmlsoap.org/wsdl/">
     <types>
-        <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified"
-                   targetNamespace="http://fedex.com/ws/rate/v13" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+        <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://fedex.com/ws/rate/v13" xmlns:xs="http://www.w3.org/2001/XMLSchema">
             <xs:element name="RateReply" type="ns:RateReply" />
             <xs:element name="RateRequest" type="ns:RateRequest" />
             <xs:complexType name="AdditionalLabelsDetail">
@@ -186,8 +183,7 @@
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element minOccurs="0" maxOccurs="unbounded" name="CustomerImageUsages"
-                                type="ns:CustomerImageUsage">
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="CustomerImageUsages" type="ns:CustomerImageUsage">
                         <xs:annotation>
                             <xs:documentation>
                                 Specifies the usage and identification of customer supplied images to be used on this document.
@@ -301,8 +297,7 @@
                 </xs:annotation>
                 <xs:sequence>
                     <xs:element minOccurs="0" name="CodCollectionAmount" type="ns:Money" />
-                    <xs:element minOccurs="0" name="AddTransportationChargesDetail"
-                                type="ns:CodAddTransportationChargesDetail">
+                    <xs:element minOccurs="0" name="AddTransportationChargesDetail" type="ns:CodAddTransportationChargesDetail">
                         <xs:annotation>
                             <xs:documentation>
                                 Specifies the details of the charges are to be added to the COD collect amount.
@@ -394,8 +389,7 @@
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element minOccurs="0" name="TaxesOrMiscellaneousChargeType"
-                                type="ns:TaxesOrMiscellaneousChargeType">
+                    <xs:element minOccurs="0" name="TaxesOrMiscellaneousChargeType" type="ns:TaxesOrMiscellaneousChargeType">
                         <xs:annotation>
                             <xs:documentation>
                                 Specifies which kind of charge is being recorded in the preceding field.
@@ -462,8 +456,7 @@
                 </xs:annotation>
                 <xs:sequence>
                     <xs:element minOccurs="0" name="Format" type="ns:ShippingDocumentFormat" />
-                    <xs:element minOccurs="0" maxOccurs="unbounded" name="CustomerImageUsages"
-                                type="ns:CustomerImageUsage">
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="CustomerImageUsages" type="ns:CustomerImageUsage">
                         <xs:annotation>
                             <xs:documentation>
                                 Specifies the usage and identification of a customer supplied image to be used on this document.
@@ -613,8 +606,7 @@
                         </xs:annotation>
                     </xs:element>
                     <xs:element minOccurs="0" name="DocumentContent" type="ns:InternationalDocumentContentType" />
-                    <xs:element minOccurs="0" maxOccurs="unbounded" name="RequiredDocuments"
-                                type="ns:RequiredShippingDocumentType">
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="RequiredDocuments" type="ns:RequiredShippingDocumentType">
                         <xs:annotation>
                             <xs:documentation>
                                 Required documentation for this shipment.
@@ -681,8 +673,7 @@
                     </xs:element>
                     <xs:element minOccurs="0" name="UnitPrice" type="ns:Money" />
                     <xs:element minOccurs="0" name="CustomsValue" type="ns:Money" />
-                    <xs:element minOccurs="0" maxOccurs="unbounded" name="ExciseConditions"
-                                type="ns:EdtExciseCondition">
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="ExciseConditions" type="ns:EdtExciseCondition">
                         <xs:annotation>
                             <xs:documentation>
                                 Defines additional characteristic of commodity used to calculate duties and taxes
@@ -957,11 +948,9 @@
                 <xs:sequence>
                     <xs:element minOccurs="0" name="CoordinateUnits" type="ns:CustomLabelCoordinateUnits" />
                     <xs:element minOccurs="0" maxOccurs="unbounded" name="TextEntries" type="ns:CustomLabelTextEntry" />
-                    <xs:element minOccurs="0" maxOccurs="unbounded" name="GraphicEntries"
-                                type="ns:CustomLabelGraphicEntry" />
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="GraphicEntries" type="ns:CustomLabelGraphicEntry" />
                     <xs:element minOccurs="0" maxOccurs="unbounded" name="BoxEntries" type="ns:CustomLabelBoxEntry" />
-                    <xs:element minOccurs="0" maxOccurs="unbounded" name="BarcodeEntries"
-                                type="ns:CustomLabelBarcodeEntry" />
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="BarcodeEntries" type="ns:CustomLabelBarcodeEntry" />
                 </xs:sequence>
             </xs:complexType>
             <xs:complexType name="CustomLabelGraphicEntry">
@@ -1092,8 +1081,7 @@
                         </xs:annotation>
                     </xs:element>
                     <xs:element minOccurs="0" name="CustomContent" type="ns:CustomLabelDetail" />
-                    <xs:element minOccurs="0" maxOccurs="unbounded" name="ConfigurableReferenceEntries"
-                                type="ns:ConfigurableLabelReferenceEntry" />
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="ConfigurableReferenceEntries" type="ns:ConfigurableLabelReferenceEntry" />
                     <xs:element minOccurs="0" maxOccurs="unbounded" name="MaskedData" type="ns:LabelMaskableDataType">
                         <xs:annotation>
                             <xs:documentation>
@@ -1109,8 +1097,7 @@
                         </xs:annotation>
                     </xs:element>
                     <xs:element minOccurs="0" name="TermsAndConditionsLocalization" type="ns:Localization" />
-                    <xs:element minOccurs="0" maxOccurs="unbounded" name="AdditionalLabels"
-                                type="ns:AdditionalLabelsDetail">
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="AdditionalLabels" type="ns:AdditionalLabelsDetail">
                         <xs:annotation>
                             <xs:documentation>
                                 Controls the number of additional copies of supplemental labels.
@@ -1173,8 +1160,7 @@
                         </xs:annotation>
                     </xs:element>
                     <xs:element minOccurs="0" name="ExportDetail" type="ns:ExportDetail" />
-                    <xs:element minOccurs="0" maxOccurs="unbounded" name="RegulatoryControls"
-                                type="ns:RegulatoryControlType" />
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="RegulatoryControls" type="ns:RegulatoryControlType" />
                 </xs:sequence>
             </xs:complexType>
             <xs:complexType name="CustomsOptionDetail">
@@ -1249,8 +1235,7 @@
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element minOccurs="0" maxOccurs="unbounded" name="HazardousCommodities"
-                                type="ns:HazardousCommodityContent">
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="HazardousCommodities" type="ns:HazardousCommodityContent">
                         <xs:annotation>
                             <xs:documentation>
                                 Documents the kinds and quantities of all hazardous commodities in the current container.
@@ -1274,8 +1259,7 @@
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element minOccurs="0" maxOccurs="unbounded" name="Options"
-                                type="ns:HazardousCommodityOptionType">
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="Options" type="ns:HazardousCommodityOptionType">
                         <xs:annotation>
                             <xs:documentation>
                                 Indicates which kinds of hazardous content are in the current package.
@@ -1373,8 +1357,7 @@
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element minOccurs="0" maxOccurs="unbounded" name="CustomerImageUsages"
-                                type="ns:CustomerImageUsage">
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="CustomerImageUsages" type="ns:CustomerImageUsage">
                         <xs:annotation>
                             <xs:documentation>
                                 Specifies the usage and identification of customer supplied images to be used on this document.
@@ -1510,8 +1493,7 @@
                     </xs:documentation>
                 </xs:annotation>
                 <xs:sequence>
-                    <xs:element minOccurs="0" maxOccurs="unbounded" name="StatementTypes"
-                                type="ns:DestinationControlStatementType" />
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="StatementTypes" type="ns:DestinationControlStatementType" />
                     <xs:element minOccurs="0" name="DestinationCountries" type="xs:string">
                         <xs:annotation>
                             <xs:documentation>
@@ -1604,8 +1586,7 @@
             </xs:simpleType>
             <xs:complexType name="DocTabContentZone001">
                 <xs:sequence>
-                    <xs:element minOccurs="1" maxOccurs="12" name="DocTabZoneSpecifications"
-                                type="ns:DocTabZoneSpecification" />
+                    <xs:element minOccurs="1" maxOccurs="12" name="DocTabZoneSpecifications" type="ns:DocTabZoneSpecification" />
                 </xs:sequence>
             </xs:complexType>
             <xs:simpleType name="DocTabZoneJustificationType">
@@ -1702,8 +1683,7 @@
                     </xs:documentation>
                 </xs:annotation>
                 <xs:sequence>
-                    <xs:element minOccurs="1" name="EMailNotificationRecipientType"
-                                type="ns:EMailNotificationRecipientType">
+                    <xs:element minOccurs="1" name="EMailNotificationRecipientType" type="ns:EMailNotificationRecipientType">
                         <xs:annotation>
                             <xs:documentation>
                                 Identifies the relationship this email recipient has to the shipment.
@@ -1717,8 +1697,7 @@
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element minOccurs="0" maxOccurs="unbounded" name="NotificationEventsRequested"
-                                type="ns:EMailNotificationEventType">
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="NotificationEventsRequested" type="ns:EMailNotificationEventType">
                         <xs:annotation>
                             <xs:documentation>
                                 The types of email notifications being requested for this recipient.
@@ -1820,8 +1799,7 @@
                     </xs:documentation>
                 </xs:annotation>
                 <xs:sequence>
-                    <xs:element minOccurs="0" maxOccurs="unbounded" name="RequestedDocumentCopies"
-                                type="ns:RequestedShippingDocumentType">
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="RequestedDocumentCopies" type="ns:RequestedShippingDocumentType">
                         <xs:annotation>
                             <xs:documentation>
                                 Indicates the types of shipping documents produced for the shipper by FedEx (see ShippingDocumentSpecification) which should be copied back to the shipper in the shipment result data.
@@ -1829,8 +1807,7 @@
                         </xs:annotation>
                     </xs:element>
                     <xs:element minOccurs="0" maxOccurs="unbounded" name="Documents" type="ns:UploadDocumentDetail" />
-                    <xs:element minOccurs="0" maxOccurs="unbounded" name="DocumentReferences"
-                                type="ns:UploadDocumentReferenceDetail" />
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="DocumentReferences" type="ns:UploadDocumentReferenceDetail" />
                 </xs:sequence>
             </xs:complexType>
             <xs:complexType name="ExportDetail">
@@ -2371,8 +2348,7 @@
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element minOccurs="0" maxOccurs="unbounded" name="SpecialServicePayments"
-                                type="ns:FreightSpecialServicePayment">
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="SpecialServicePayments" type="ns:FreightSpecialServicePayment">
                         <xs:annotation>
                             <xs:documentation>
                                 Specifies which party will pay surcharges for any special services which support split billing.
@@ -2545,8 +2521,7 @@
                     <xs:element minOccurs="0" name="HazardClass" type="xs:string" />
                     <xs:element minOccurs="0" maxOccurs="unbounded" name="SubsidiaryClasses" type="xs:string" />
                     <xs:element minOccurs="0" name="LabelText" type="xs:string" />
-                    <xs:element minOccurs="0" maxOccurs="unbounded" name="ProcessingOptions"
-                                type="ns:HazardousCommodityDescriptionProcessingOptionType">
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="ProcessingOptions" type="ns:HazardousCommodityDescriptionProcessingOptionType">
                         <xs:annotation>
                             <xs:documentation>
                                 Indicates any special processing options to be applied to the description of the dangerous goods commodity.
@@ -3051,8 +3026,7 @@
                     </xs:element>
                     <xs:element minOccurs="0" name="ProducerSpecification" type="ns:NaftaProducerSpecificationType" />
                     <xs:element minOccurs="0" maxOccurs="unbounded" name="Producers" type="ns:NaftaProducer" />
-                    <xs:element minOccurs="0" maxOccurs="unbounded" name="CustomerImageUsages"
-                                type="ns:CustomerImageUsage" />
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="CustomerImageUsages" type="ns:CustomerImageUsage" />
                 </xs:sequence>
             </xs:complexType>
             <xs:complexType name="NaftaCommodityDetail">
@@ -3192,8 +3166,7 @@
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element minOccurs="0" maxOccurs="unbounded" name="MessageParameters"
-                                type="ns:NotificationParameter">
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="MessageParameters" type="ns:NotificationParameter">
                         <xs:annotation>
                             <xs:documentation>
                                 A collection of name/value pairs that provide specific data to help the client determine the nature of an error (or warning, etc.) witout having to parse the message string.
@@ -3255,8 +3228,7 @@
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element minOccurs="0" maxOccurs="unbounded" name="CustomerImageUsages"
-                                type="ns:CustomerImageUsage">
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="CustomerImageUsages" type="ns:CustomerImageUsage">
                         <xs:annotation>
                             <xs:documentation>
                                 Specifies the usage and identification of customer supplied images to be used on this document.
@@ -3430,8 +3402,7 @@
                     </xs:documentation>
                 </xs:annotation>
                 <xs:sequence>
-                    <xs:element minOccurs="0" maxOccurs="unbounded" name="SpecialServiceTypes"
-                                type="ns:PackageSpecialServiceType">
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="SpecialServiceTypes" type="ns:PackageSpecialServiceType">
                         <xs:annotation>
                             <xs:documentation>
                                 The types of all special services requested for the enclosing shipment or package.
@@ -3628,8 +3599,7 @@
                     <xs:documentation>Currently not supported.</xs:documentation>
                 </xs:annotation>
                 <xs:sequence>
-                    <xs:element minOccurs="0" maxOccurs="unbounded" name="EnhancementTypes"
-                                type="ns:PriorityAlertEnhancementType" />
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="EnhancementTypes" type="ns:PriorityAlertEnhancementType" />
                     <xs:element minOccurs="0" maxOccurs="3" name="Content" type="xs:string" />
                 </xs:sequence>
             </xs:complexType>
@@ -3862,8 +3832,7 @@
                         </xs:annotation>
                     </xs:element>
                     <xs:element minOccurs="0" name="ActualRateType" type="ns:ReturnedRateType" />
-                    <xs:element minOccurs="0" maxOccurs="unbounded" name="RatedShipmentDetails"
-                                type="ns:RatedShipmentDetail">
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="RatedShipmentDetails" type="ns:RatedShipmentDetail">
                         <xs:annotation>
                             <xs:documentation>
                                 Each element contains all rate data for a single rate type.
@@ -4157,8 +4126,7 @@
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element minOccurs="0" name="VariableHandlingChargeDetail"
-                                type="ns:VariableHandlingChargeDetail" />
+                    <xs:element minOccurs="0" name="VariableHandlingChargeDetail" type="ns:VariableHandlingChargeDetail" />
                     <xs:element minOccurs="0" name="InsuredValue" type="ns:Money">
                         <xs:annotation>
                             <xs:documentation>
@@ -4242,8 +4210,7 @@
                         </xs:annotation>
                     </xs:element>
                     <xs:element minOccurs="0" name="ShippingChargesPayment" type="ns:Payment" />
-                    <xs:element minOccurs="0" name="SpecialServicesRequested"
-                                type="ns:ShipmentSpecialServicesRequested" />
+                    <xs:element minOccurs="0" name="SpecialServicesRequested" type="ns:ShipmentSpecialServicesRequested" />
                     <xs:element minOccurs="0" name="ExpressFreightDetail" type="ns:ExpressFreightDetail" />
                     <xs:element minOccurs="0" name="FreightShipmentDetail" type="ns:FreightShipmentDetail">
                         <xs:annotation>
@@ -4259,8 +4226,7 @@
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element minOccurs="0" name="VariableHandlingChargeDetail"
-                                type="ns:VariableHandlingChargeDetail" />
+                    <xs:element minOccurs="0" name="VariableHandlingChargeDetail" type="ns:VariableHandlingChargeDetail" />
                     <xs:element minOccurs="0" name="CustomsClearanceDetail" type="ns:CustomsClearanceDetail">
                         <xs:annotation>
                             <xs:documentation>
@@ -4290,8 +4256,7 @@
                         </xs:annotation>
                     </xs:element>
                     <xs:element minOccurs="0" name="LabelSpecification" type="ns:LabelSpecification" />
-                    <xs:element minOccurs="0" name="ShippingDocumentSpecification"
-                                type="ns:ShippingDocumentSpecification">
+                    <xs:element minOccurs="0" name="ShippingDocumentSpecification" type="ns:ShippingDocumentSpecification">
                         <xs:annotation>
                             <xs:documentation>
                                 Contains data used to create additional (non-label) shipping documents.
@@ -4319,8 +4284,7 @@
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element minOccurs="0" maxOccurs="unbounded" name="ShipmentOnlyFields"
-                                type="ns:ShipmentOnlyFieldsType">
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="ShipmentOnlyFields" type="ns:ShipmentOnlyFieldsType">
                         <xs:annotation>
                             <xs:documentation>
                                 Specifies which package-level data values are provided at the shipment-level only. The package-level data values types specified here will not be provided at the package-level.
@@ -4334,8 +4298,7 @@
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element minOccurs="0" maxOccurs="999" name="RequestedPackageLineItems"
-                                type="ns:RequestedPackageLineItem">
+                    <xs:element minOccurs="0" maxOccurs="999" name="RequestedPackageLineItems" type="ns:RequestedPackageLineItem">
                         <xs:annotation>
                             <xs:documentation>
                                 One or more package-attribute descriptions, each of which describes an individual package, a group of identical packages, or (for the total-piece-total-weight case) common characteristics all packages in the shipment.
@@ -4393,8 +4356,7 @@
             <xs:complexType name="ReturnEMailDetail">
                 <xs:sequence>
                     <xs:element minOccurs="0" name="MerchantPhoneNumber" type="xs:string" />
-                    <xs:element minOccurs="0" maxOccurs="unbounded" name="AllowedSpecialServices"
-                                type="ns:ReturnEMailAllowedSpecialServiceType">
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="AllowedSpecialServices" type="ns:ReturnEMailAllowedSpecialServiceType">
                         <xs:annotation>
                             <xs:documentation>
                                 Identifies the allowed (merchant-authorized) special services which may be selected when the subsequent shipment is created. Only services represented in EMailLabelAllowedSpecialServiceType will be controlled by this list.
@@ -4570,8 +4532,7 @@
                     </xs:documentation>
                 </xs:annotation>
                 <xs:sequence>
-                    <xs:element minOccurs="0" maxOccurs="unbounded" name="DangerousGoodsPackageConfigurations"
-                                type="ns:DangerousGoodsDetail">
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="DangerousGoodsPackageConfigurations" type="ns:DangerousGoodsDetail">
                         <xs:annotation>
                             <xs:documentation>
                                 Specifies the data that is common to dangerous goods packages in the shipment. This is populated when the shipment contains packages with identical dangerous goods commodities.
@@ -4682,8 +4643,7 @@
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element minOccurs="0" maxOccurs="unbounded" name="SpecialRatingApplied"
-                                type="ns:SpecialRatingAppliedType">
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="SpecialRatingApplied" type="ns:SpecialRatingAppliedType">
                         <xs:annotation>
                             <xs:documentation>
                                 Indicates which special rating cases applied to this shipment.
@@ -4859,8 +4819,7 @@
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element minOccurs="0" maxOccurs="unbounded" name="SpecialRatingApplied"
-                                type="ns:SpecialRatingAppliedType">
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="SpecialRatingApplied" type="ns:SpecialRatingAppliedType">
                         <xs:annotation>
                             <xs:documentation>
                                 Indicates which special rating cases applied to this shipment.
@@ -4918,8 +4877,7 @@
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element minOccurs="0" maxOccurs="unbounded" name="ShipmentLegRateDetails"
-                                type="ns:ShipmentLegRateDetail">
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="ShipmentLegRateDetails" type="ns:ShipmentLegRateDetail">
                         <xs:annotation>
                             <xs:documentation>
                                 Identifies the Rate Details per each leg in a Freight Shipment
@@ -5033,8 +4991,7 @@
                     </xs:documentation>
                 </xs:annotation>
                 <xs:sequence>
-                    <xs:element minOccurs="0" maxOccurs="unbounded" name="SpecialServiceTypes"
-                                type="ns:ShipmentSpecialServiceType">
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="SpecialServiceTypes" type="ns:ShipmentSpecialServiceType">
                         <xs:annotation>
                             <xs:documentation>
                                 The types of all special services requested for the enclosing shipment (or other shipment-level transaction).
@@ -5042,8 +4999,7 @@
                         </xs:annotation>
                     </xs:element>
                     <xs:element minOccurs="0" name="CodDetail" type="ns:CodDetail" />
-                    <xs:element minOccurs="0" name="DeliveryOnInvoiceAcceptanceDetail"
-                                type="ns:DeliveryOnInvoiceAcceptanceDetail" />
+                    <xs:element minOccurs="0" name="DeliveryOnInvoiceAcceptanceDetail" type="ns:DeliveryOnInvoiceAcceptanceDetail" />
                     <xs:element minOccurs="0" name="HoldAtLocationDetail" type="ns:HoldAtLocationDetail" />
                     <xs:element minOccurs="0" name="EMailNotificationDetail" type="ns:EMailNotificationDetail" />
                     <xs:element minOccurs="0" name="ReturnShipmentDetail" type="ns:ReturnShipmentDetail" />
@@ -5054,10 +5010,8 @@
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element minOccurs="0" name="InternationalControlledExportDetail"
-                                type="ns:InternationalControlledExportDetail" />
-                    <xs:element minOccurs="0" name="InternationalTrafficInArmsRegulationsDetail"
-                                type="ns:InternationalTrafficInArmsRegulationsDetail" />
+                    <xs:element minOccurs="0" name="InternationalControlledExportDetail" type="ns:InternationalControlledExportDetail" />
+                    <xs:element minOccurs="0" name="InternationalTrafficInArmsRegulationsDetail" type="ns:InternationalTrafficInArmsRegulationsDetail" />
                     <xs:element minOccurs="0" name="ShipmentDryIceDetail" type="ns:ShipmentDryIceDetail" />
                     <xs:element minOccurs="0" name="HomeDeliveryPremiumDetail" type="ns:HomeDeliveryPremiumDetail" />
                     <xs:element minOccurs="0" name="FlatbedTrailerDetail" type="ns:FlatbedTrailerDetail" />
@@ -5138,8 +5092,7 @@
                     </xs:documentation>
                 </xs:annotation>
                 <xs:sequence>
-                    <xs:element minOccurs="0" maxOccurs="unbounded" name="EMailRecipients"
-                                type="ns:ShippingDocumentEMailRecipient">
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="EMailRecipients" type="ns:ShippingDocumentEMailRecipient">
                         <xs:annotation>
                             <xs:documentation>
                                 Provides the roles and email addresses for e-mail recipients.
@@ -5191,8 +5144,7 @@
                     </xs:documentation>
                 </xs:annotation>
                 <xs:sequence>
-                    <xs:element minOccurs="0" maxOccurs="unbounded" name="Dispositions"
-                                type="ns:ShippingDocumentDispositionDetail">
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="Dispositions" type="ns:ShippingDocumentDispositionDetail">
                         <xs:annotation>
                             <xs:documentation>
                                 Specifies how to create, organize, and return the document.
@@ -5272,8 +5224,7 @@
                     </xs:documentation>
                 </xs:annotation>
                 <xs:sequence>
-                    <xs:element minOccurs="0" maxOccurs="unbounded" name="ShippingDocumentTypes"
-                                type="ns:RequestedShippingDocumentType">
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="ShippingDocumentTypes" type="ns:RequestedShippingDocumentType">
                         <xs:annotation>
                             <xs:documentation>
                                 Indicates the types of shipping documents requested by the shipper.
@@ -5282,26 +5233,22 @@
                     </xs:element>
                     <xs:element minOccurs="0" name="CertificateOfOrigin" type="ns:CertificateOfOriginDetail" />
                     <xs:element minOccurs="0" name="CommercialInvoiceDetail" type="ns:CommercialInvoiceDetail" />
-                    <xs:element minOccurs="0" maxOccurs="unbounded" name="CustomPackageDocumentDetail"
-                                type="ns:CustomDocumentDetail">
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="CustomPackageDocumentDetail" type="ns:CustomDocumentDetail">
                         <xs:annotation>
                             <xs:documentation>
                                 Specifies the production of each package-level custom document (the same specification is used for all packages).
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element minOccurs="0" maxOccurs="unbounded" name="CustomShipmentDocumentDetail"
-                                type="ns:CustomDocumentDetail">
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="CustomShipmentDocumentDetail" type="ns:CustomDocumentDetail">
                         <xs:annotation>
                             <xs:documentation>
                                 Specifies the production of a shipment-level custom document.
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element minOccurs="0" name="GeneralAgencyAgreementDetail"
-                                type="ns:GeneralAgencyAgreementDetail" />
-                    <xs:element minOccurs="0" name="NaftaCertificateOfOriginDetail"
-                                type="ns:NaftaCertificateOfOriginDetail" />
+                    <xs:element minOccurs="0" name="GeneralAgencyAgreementDetail" type="ns:GeneralAgencyAgreementDetail" />
+                    <xs:element minOccurs="0" name="NaftaCertificateOfOriginDetail" type="ns:NaftaCertificateOfOriginDetail" />
                     <xs:element minOccurs="0" name="Op900Detail" type="ns:Op900Detail">
                         <xs:annotation>
                             <xs:documentation>
@@ -5309,8 +5256,7 @@
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element minOccurs="0" name="DangerousGoodsShippersDeclarationDetail"
-                                type="ns:DangerousGoodsShippersDeclarationDetail">
+                    <xs:element minOccurs="0" name="DangerousGoodsShippersDeclarationDetail" type="ns:DangerousGoodsShippersDeclarationDetail">
                         <xs:annotation>
                             <xs:documentation>
                                 Specifies the production of the 1421c document for dangerous goods shipment.
