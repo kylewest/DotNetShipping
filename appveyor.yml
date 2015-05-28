@@ -53,7 +53,7 @@ before_build:
   - ps: $xml.SelectSingleNode('//appSettings/add[@key="FedExAccountNumber"]/@value').'#text' = $env:FEDEX_ACCOUNT_NUMBER
   - ps: $xml.SelectSingleNode('//appSettings/add[@key="FedExMeterNumber"]/@value').'#text' = $env:FEDEX_METER_NUMBER
   - ps: $xml.SelectSingleNode('//appSettings/add[@key="USPSUserId"]/@value').'#text' = $env:USPS_USER_ID
-  - ps: set-content src\DotNetShipping.Tests\App.config $xml.InnerXml
+  - ps: set-content DotNetShipping.Tests\App.config $xml.InnerXml
 
 # deployment
 #deploy:
