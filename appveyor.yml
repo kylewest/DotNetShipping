@@ -1,5 +1,5 @@
 # version format
-version: 0.9.3.{build}
+version: 0.9.4.{build}
 
 # environment variables
 environment:
@@ -35,15 +35,15 @@ nuget:
 
 # build configuration
 build:
-  project: src/DotNetShipping.sln # path to Visual Studio solution or project
+  project: DotNetShipping.sln     # path to Visual Studio solution or project
   publish_nuget: true             # package projects with .nuspec files and push to artifacts
 
   # MSBuild verbosity level
   verbosity: normal
-  
+
 # scripts to run before build
 before_build:
-  - nuget restore src\DotNetShipping.sln
+  - nuget restore DotNetShipping.sln
   - ps: $xml = [xml](Get-Content src\DotNetShipping.Tests\App.config)
   - ps: $xml.SelectSingleNode('//appSettings/add[@key="UPSLicenseNumber"]/@value').'#text' = $env:UPS_LICENSE_NUMBER
   - ps: $xml.SelectSingleNode('//appSettings/add[@key="UPSUserId"]/@value').'#text' = $env:UPS_PASSWORD
@@ -55,7 +55,7 @@ before_build:
   - ps: $xml.SelectSingleNode('//appSettings/add[@key="USPSUserId"]/@value').'#text' = $env:USPS_USER_ID
   - ps: set-content src\DotNetShipping.Tests\App.config $xml.InnerXml
 
-# deployment 
+# deployment
 #deploy:
 #  provider: NuGet
 #  api_key:
