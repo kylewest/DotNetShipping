@@ -44,7 +44,7 @@ build:
 # scripts to run before build
 before_build:
   - nuget restore DotNetShipping.sln
-  - ps: $xml = [xml](Get-Content src\DotNetShipping.Tests\App.config)
+  - ps: $xml = [xml](Get-Content DotNetShipping.Tests\App.config)
   - ps: $xml.SelectSingleNode('//appSettings/add[@key="UPSLicenseNumber"]/@value').'#text' = $env:UPS_LICENSE_NUMBER
   - ps: $xml.SelectSingleNode('//appSettings/add[@key="UPSUserId"]/@value').'#text' = $env:UPS_PASSWORD
   - ps: $xml.SelectSingleNode('//appSettings/add[@key="UPSPassword"]/@value').'#text' = $env:UPS_USER_ID
