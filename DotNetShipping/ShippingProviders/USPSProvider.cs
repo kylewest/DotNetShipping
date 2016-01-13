@@ -17,6 +17,7 @@ namespace DotNetShipping.ShippingProviders
         private const string PRODUCTION_URL = "http://production.shippingapis.com/ShippingAPI.dll";
         private const string REMOVE_FROM_RATE_NAME = "&lt;sup&gt;&amp;reg;&lt;/sup&gt;";
         private readonly string _service;
+        private readonly string _shipDate;
         private readonly string _userId;
 
         public USPSProvider()
@@ -44,6 +45,14 @@ namespace DotNetShipping.ShippingProviders
             Name = "USPS";
             _userId = userId;
             _service = service;
+        }
+
+        public USPSProvider(string userId, string service, string shipDate)
+        {
+            Name = "USPS";
+            _userId = userId;
+            _service = service;
+            _shipDate = shipDate;
         }
 
         public override void GetRates()
@@ -112,6 +121,10 @@ namespace DotNetShipping.ShippingProviders
                     writer.WriteElementString("Height", package.RoundedHeight.ToString());
                     writer.WriteElementString("Girth", package.CalculatedGirth.ToString());
                     writer.WriteElementString("Machinable", IsPackageMachinable(package).ToString());
+                    if (!string.IsNullOrWhiteSpace(_shipDate))
+                    {
+                        writer.WriteElementString("ShipDate", _shipDate);
+                    }
                     writer.WriteEndElement();
                     i++;
                 }
@@ -161,14 +174,21 @@ namespace DotNetShipping.ShippingProviders
             var rates = from item in document.Descendants("Postage")
                 group item by (string) item.Element("MailService")
                 into g
-                select new {Name = g.Key, TotalCharges = g.Sum(x => Decimal.Parse((string) x.Element("Rate")))};
+                select new {Name = g.Key, TotalCharges = g.Sum(x => Decimal.Parse((string) x.Element("Rate"))), DeliveryDate = g.Select(x => (string) x.Element("CommitmentDate")).FirstOrDefault()};
 
             foreach (var r in rates)
             {
                 //string name = r.Name.Replace(REMOVE_FROM_RATE_NAME, string.Empty);
                 var name = Regex.Replace(r.Name, "&lt.*&gt;", "");
 
-                AddRate(name, string.Concat("USPS ", name), r.TotalCharges, DateTime.Now.AddDays(30));
+                if (r.DeliveryDate != null)
+                {
+                    AddRate(name, string.Concat("USPS ", name), r.TotalCharges, DateTime.Parse(r.DeliveryDate));
+                }
+                else
+                {
+                    AddRate(name, string.Concat("USPS ", name), r.TotalCharges, DateTime.Now.AddDays(30));
+                }
             }
 
             //check for errors
