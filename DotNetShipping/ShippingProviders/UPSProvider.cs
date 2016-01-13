@@ -37,12 +37,14 @@ namespace DotNetShipping.ShippingProviders
         private const string PRODUCTION_RATES_URL = "https://onlinetools.ups.com/ups.app/xml/Rate";
         private AvailableServices _services = AvailableServices.All;
         private bool _useProduction = true;
+        private bool _useNegotiatedRates = false;
         private readonly string _licenseNumber;
         private readonly string _password;
         private readonly Hashtable _serviceCodes = new Hashtable(12);
         private readonly string _serviceDescription;
         private readonly int _timeout;
         private readonly string _userId;
+        private readonly string _shipperNumber;
 
         /// <summary>
         ///     Parameterless construction that pulls data directly from app.config
@@ -56,6 +58,7 @@ namespace DotNetShipping.ShippingProviders
             _password = appSettings["UPSPassword"];
             _timeout = DEFAULT_TIMEOUT;
             _serviceDescription = "";
+            _shipperNumber = "";
         }
 
         public UPSProvider(string licenseNumber, string userId, string password) : this(licenseNumber, userId, password, DEFAULT_TIMEOUT)
@@ -70,6 +73,7 @@ namespace DotNetShipping.ShippingProviders
             _password = password;
             _timeout = timeout;
             _serviceDescription = "";
+            _shipperNumber = "";
             LoadServiceCodes();
         }
 
@@ -81,6 +85,7 @@ namespace DotNetShipping.ShippingProviders
             _password = password;
             _timeout = DEFAULT_TIMEOUT;
             _serviceDescription = serviceDescription;
+            _shipperNumber = "";
             LoadServiceCodes();
         }
 
@@ -92,6 +97,19 @@ namespace DotNetShipping.ShippingProviders
             _password = password;
             _timeout = timeout;
             _serviceDescription = serviceDescription;
+            _shipperNumber = "";
+            LoadServiceCodes();
+        }
+
+        public UPSProvider(string licenseNumber, string userId, string password, int timeout, string serviceDescription, string shipperNumber)
+        {
+            Name = "UPS";
+            _licenseNumber = licenseNumber;
+            _userId = userId;
+            _password = password;
+            _timeout = timeout;
+            _serviceDescription = serviceDescription;
+            _shipperNumber = shipperNumber;
             LoadServiceCodes();
         }
 
@@ -108,6 +126,11 @@ namespace DotNetShipping.ShippingProviders
         {
             get { return _useProduction; }
             set { _useProduction = value; }
+        }
+        public bool UseNegotiatedRates
+        {
+            get { return _useNegotiatedRates; }
+            set { _useNegotiatedRates = value; }
         }
 
         private byte[] BuildRatesRequestMessage()
@@ -135,21 +158,37 @@ namespace DotNetShipping.ShippingProviders
             writer.WriteStartElement("PickupType");
             writer.WriteElementString("Code", "03");
             writer.WriteEndElement(); // </PickupType>
+            writer.WriteStartElement("CustomerClassification");
+            writer.WriteElementString("Code", string.IsNullOrWhiteSpace(_shipperNumber) ? "01" : "00"); // 00 gets shipper number rates, 01 for daily rates
+            writer.WriteEndElement(); // </CustomerClassification
             writer.WriteStartElement("Shipment");
             writer.WriteStartElement("Shipper");
+            if (!string.IsNullOrWhiteSpace(_shipperNumber))
+            {
+                writer.WriteElementString("ShipperNumber", _shipperNumber);
+            }
             writer.WriteStartElement("Address");
+            writer.WriteElementString("StateProvinceCode", Shipment.OriginAddress.State);
             writer.WriteElementString("PostalCode", Shipment.OriginAddress.PostalCode);
+            writer.WriteElementString("CountryCode", Shipment.OriginAddress.CountryCode);
             writer.WriteEndElement(); // </Address>
             writer.WriteEndElement(); // </Shipper>
             writer.WriteStartElement("ShipTo");
             writer.WriteStartElement("Address");
-            if (Shipment.DestinationAddress.IsUnitedStatesAddress() || Shipment.DestinationAddress.IsCanadaAddress())
-            {
-                writer.WriteElementString("PostalCode", Shipment.DestinationAddress.PostalCode);
-            }
+            writer.WriteElementString("City", Shipment.DestinationAddress.City);
+            writer.WriteElementString("StateProvinceCode", Shipment.DestinationAddress.State);
+            writer.WriteElementString("PostalCode", Shipment.DestinationAddress.PostalCode);
             writer.WriteElementString("CountryCode", Shipment.DestinationAddress.CountryCode);
             writer.WriteEndElement(); // </Address>
             writer.WriteEndElement(); // </ShipTo>
+            writer.WriteStartElement("ShipFrom");
+            writer.WriteStartElement("Address");
+            writer.WriteElementString("City", Shipment.OriginAddress.City);
+            writer.WriteElementString("StateProvinceCode", Shipment.OriginAddress.State);
+            writer.WriteElementString("PostalCode", Shipment.OriginAddress.PostalCode);
+            writer.WriteElementString("CountryCode", Shipment.OriginAddress.CountryCode);
+            writer.WriteEndElement(); // </Address>
+            writer.WriteEndElement();// </ShipFrom>
             if (!string.IsNullOrWhiteSpace(_serviceDescription))
             {
                 writer.WriteStartElement("Service");
@@ -177,6 +216,12 @@ namespace DotNetShipping.ShippingProviders
                 writer.WriteEndElement(); // </InsuredValue>
                 writer.WriteEndElement(); // </PackageServiceOptions>
                 writer.WriteEndElement(); // </Package>
+            }
+            if (_useNegotiatedRates)
+            {
+                writer.WriteStartElement("RateInformation");
+                writer.WriteElementString("NegotiatedRatesIndicator", "");
+                writer.WriteEndElement();// </RateInformation>
             }
             writer.WriteEndDocument();
             writer.Flush();
@@ -274,6 +319,11 @@ namespace DotNetShipping.ShippingProviders
                 if (date != "")
                 {
                     delivery = DateTime.Parse(date);
+                }                
+                var negotiatedRate = rateNode.SelectSingleNode("NegotiatedRates/NetSummaryCharges/GrandTotal/MonetaryValue");
+                if (negotiatedRate != null) // check for negotiated rate
+                {
+                    totalCharges = Convert.ToDecimal(negotiatedRate.InnerText);
                 }
 
                 AddRate(name, description, totalCharges, delivery);
