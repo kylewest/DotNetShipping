@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
@@ -18,6 +19,13 @@ namespace DotNetShipping.ShippingProviders
         private const string PRODUCTION_URL = "http://production.shippingapis.com/ShippingAPI.dll";
         private readonly string _service;
         private readonly string _userId;
+        private readonly Dictionary<string, string> _serviceCodes = new Dictionary<string, string>
+        {
+            {"USPS GXG Envelopes", "USPS GXG Envelopes"},
+            {"First Class Mail International", "First Class Mail International"},
+            {"Priority Mail Express International", "Priority Mail Express International"},
+            {"Priority Mail International", "Priority Mail International"}
+        };
 
         public USPSInternationalProvider()
         {
@@ -47,6 +55,28 @@ namespace DotNetShipping.ShippingProviders
         }
 
         public bool Commercial { get; set; }
+
+        /// <summary>
+        /// Returns the supported service codes
+        /// </summary>
+        /// <returns></returns>
+        public IDictionary<string, string> GetServiceCodes()
+        {
+            if (_serviceCodes != null && _serviceCodes.Count > 0)
+            {
+                var serviceCodes = new Dictionary<string, string>();
+
+                foreach (var serviceCodeKey in _serviceCodes.Keys)
+                {
+                    var serviceCode = _serviceCodes[serviceCodeKey];
+                    serviceCodes.Add(serviceCodeKey, serviceCode);
+                }
+
+                return serviceCodes;
+            }
+
+            return null;
+        }
 
         public override void GetRates()
         {

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
@@ -19,6 +20,15 @@ namespace DotNetShipping.ShippingProviders
         private readonly string _service;
         private readonly string _shipDate;
         private readonly string _userId;
+        private readonly Dictionary<string, string> _serviceCodes = new Dictionary<string, string>
+        {
+            {"First Class Mail", "First Class Mail"},
+            {"Priority Mail Express", "Priority Mail Express"},
+            {"Priority Mail", "Priority Mail"},
+            {"Retail Ground", "Retail Ground"},
+            {"Media Mail", "Media Mail"},
+            {"Library Mail", "Library Mail"}
+        };
 
         public USPSProvider()
         {
@@ -53,6 +63,28 @@ namespace DotNetShipping.ShippingProviders
             _userId = userId;
             _service = service;
             _shipDate = shipDate;
+        }
+
+        /// <summary>
+        /// Returns the supported service codes
+        /// </summary>
+        /// <returns></returns>
+        public IDictionary<string, string> GetServiceCodes()
+        {
+            if (_serviceCodes != null && _serviceCodes.Count > 0)
+            {
+                var serviceCodes = new Dictionary<string, string>();
+
+                foreach (var serviceCodeKey in _serviceCodes.Keys)
+                {
+                    var serviceCode = _serviceCodes[serviceCodeKey];
+                    serviceCodes.Add(serviceCodeKey, serviceCode);
+                }
+
+                return serviceCodes;
+            }
+
+            return null;
         }
 
         public override void GetRates()

@@ -1,5 +1,7 @@
 ﻿using System.Linq;
 
+using DotNetShipping.ShippingProviders;
+
 using Xunit;
 
 namespace DotNetShipping.Tests.Features
@@ -26,6 +28,16 @@ namespace DotNetShipping.Tests.Features
             {
                 Assert.True(rate.TotalCharges > 0);
             }
+        }
+        
+        [Fact]
+        public void CanGetFedExServiceCodes()
+        {
+            var provider = new FedExProvider();
+            var serviceCodes = provider.GetServiceCodes();
+
+            Assert.NotNull(serviceCodes);
+            Assert.NotEmpty(serviceCodes);
         }
     }
 }

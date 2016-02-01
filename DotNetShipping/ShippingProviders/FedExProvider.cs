@@ -82,6 +82,28 @@ namespace DotNetShipping.ShippingProviders
             _useProduction = useProduction;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public IDictionary<string, string> GetServiceCodes()
+        {
+            if (_serviceCodes != null && _serviceCodes.Count > 0)
+            {
+                var serviceCodes = new Dictionary<string, string>();
+
+                foreach (var serviceCodeKey in _serviceCodes.Keys)
+                {
+                    var serviceCode = _serviceCodes[serviceCodeKey];
+                    serviceCodes.Add(serviceCodeKey, serviceCode);
+                }
+
+                return serviceCodes;
+            }
+
+            return null;
+        }
+
         private RateRequest CreateRateRequest()
         {
             // Build the RateRequest

@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Net;
@@ -56,6 +57,7 @@ namespace DotNetShipping.ShippingProviders
             _password = appSettings["UPSPassword"];
             _timeout = DEFAULT_TIMEOUT;
             _serviceDescription = "";
+            LoadServiceCodes();
         }
 
         public UPSProvider(string licenseNumber, string userId, string password) : this(licenseNumber, userId, password, DEFAULT_TIMEOUT)
@@ -206,6 +208,28 @@ namespace DotNetShipping.ShippingProviders
             var response = (HttpWebResponse) request.GetResponse();
             ParseRatesResponseMessage(new StreamReader(response.GetResponseStream()).ReadToEnd());
             response.Close();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public IDictionary<string, string> GetServiceCodes()
+        {
+            if (_serviceCodes != null && _serviceCodes.Count > 0)
+            {
+                var serviceCodes = new Dictionary<string, string>();
+
+                foreach (var serviceCodeKey in _serviceCodes.Keys)
+                {
+                    var serviceCode = (AvailableService)_serviceCodes[serviceCodeKey];
+                    serviceCodes.Add((string)serviceCodeKey, serviceCode.Name);
+                }
+
+                return serviceCodes;
+            }
+
+            return null;
         }
 
         private void LoadServiceCodes()
