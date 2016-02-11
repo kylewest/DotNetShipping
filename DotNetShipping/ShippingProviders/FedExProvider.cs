@@ -174,6 +174,7 @@ namespace DotNetShipping.ShippingProviders
             request.RequestedShipment.Recipient.Address.StateOrProvinceCode = "";
             request.RequestedShipment.Recipient.Address.PostalCode = Shipment.DestinationAddress.PostalCode;
             request.RequestedShipment.Recipient.Address.CountryCode = Shipment.DestinationAddress.CountryCode;
+            request.RequestedShipment.Recipient.Address.Residential = Shipment.DestinationAddress.IsResidential;
         }
 
         private void SetOrigin(RateRequest request)
@@ -185,6 +186,7 @@ namespace DotNetShipping.ShippingProviders
             request.RequestedShipment.Shipper.Address.StateOrProvinceCode = "";
             request.RequestedShipment.Shipper.Address.PostalCode = Shipment.OriginAddress.PostalCode;
             request.RequestedShipment.Shipper.Address.CountryCode = Shipment.OriginAddress.CountryCode;
+            request.RequestedShipment.Shipper.Address.Residential = Shipment.OriginAddress.IsResidential;
         }
 
         private void SetPackageLineItems(RateRequest request)

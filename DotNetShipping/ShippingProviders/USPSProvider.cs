@@ -20,14 +20,63 @@ namespace DotNetShipping.ShippingProviders
         private readonly string _service;
         private readonly string _shipDate;
         private readonly string _userId;
+
+        /// <summary>
+        /// Service codes. {0} is a placeholder for 1-Day, 2-Day, 3-Day, Military, DPO or a space
+        /// </summary>
         private readonly Dictionary<string, string> _serviceCodes = new Dictionary<string, string>
         {
-            {"First Class Mail", "First Class Mail"},
-            {"Priority Mail Express", "Priority Mail Express"},
-            {"Priority Mail", "Priority Mail"},
-            {"Retail Ground", "Retail Ground"},
-            {"Media Mail", "Media Mail"},
-            {"Library Mail", "Library Mail"}
+            {"First-Class Mail Large Envelope","First-Class Mail Large Envelope"},
+            {"First-Class Mail Letter","First-Class Mail Letter"},
+            {"First-Class Mail Parcel","First-Class Mail Parcel"},
+            {"First-Class Mail Postcards","First-Class Mail Postcards"},
+            {"Priority Mail {0}","Priority Mail {0}"},
+            {"Priority Mail Express {0} Hold For Pickup","Priority Mail Express {0} Hold For Pickup"},
+            {"Priority Mail Express {0}","Priority Mail Express {0}"},
+            {"Standard Post","Standard Post"},
+            {"Media Mail Parcel","Media Mail Parcel"},
+            {"Library Mail Parcel","Library Mail Parcel"},
+            {"Priority Mail Express {0} Flat Rate Envelope","Priority Mail Express {0} Flat Rate Envelope"},
+            {"First-Class Mail Large Postcards","First-Class Mail Large Postcards"},
+            {"Priority Mail {0} Flat Rate Envelope","Priority Mail {0} Flat Rate Envelope"},
+            {"Priority Mail {0} Medium Flat Rate Box","Priority Mail {0} Medium Flat Rate Box"},
+            {"Priority Mail {0} Large Flat Rate Box","Priority Mail {0} Large Flat Rate Box"},
+            {"Priority Mail Express {0} Sunday/Holiday Delivery","Priority Mail Express {0} Sunday/Holiday Delivery"},
+            {"Priority Mail Express {0} Sunday/Holiday Delivery Flat Rate Envelope","Priority Mail Express {0} Sunday/Holiday Delivery Flat Rate Envelope"},
+            {"Priority Mail Express {0} Flat Rate Envelope Hold For Pickup","Priority Mail Express {0} Flat Rate Envelope Hold For Pickup"},
+            {"Priority Mail {0} Small Flat Rate Box","Priority Mail {0} Small Flat Rate Box"},
+            {"Priority Mail {0} Padded Flat Rate Envelope","Priority Mail {0} Padded Flat Rate Envelope"},
+            {"Priority Mail Express {0} Legal Flat Rate Envelope","Priority Mail Express {0} Legal Flat Rate Envelope"},
+            {"Priority Mail Express {0} Legal Flat Rate Envelope Hold For Pickup","Priority Mail Express {0} Legal Flat Rate Envelope Hold For Pickup"},
+            {"Priority Mail Express {0} Sunday/Holiday Delivery Legal Flat Rate Envelope","Priority Mail Express {0} Sunday/Holiday Delivery Legal Flat Rate Envelope"},
+            {"Priority Mail {0} Hold For Pickup","Priority Mail {0} Hold For Pickup"},
+            {"Priority Mail {0} Large Flat Rate Box Hold For Pickup","Priority Mail {0} Large Flat Rate Box Hold For Pickup"},
+            {"Priority Mail {0} Medium Flat Rate Box Hold For Pickup","Priority Mail {0} Medium Flat Rate Box Hold For Pickup"},
+            {"Priority Mail {0} Small Flat Rate Box Hold For Pickup","Priority Mail {0} Small Flat Rate Box Hold For Pickup"},
+            {"Priority Mail {0} Flat Rate Envelope Hold For Pickup","Priority Mail {0} Flat Rate Envelope Hold For Pickup"},
+            {"Priority Mail {0} Gift Card Flat Rate Envelope","Priority Mail {0} Gift Card Flat Rate Envelope"},
+            {"Priority Mail {0} Gift Card Flat Rate Envelope Hold For Pickup","Priority Mail {0} Gift Card Flat Rate Envelope Hold For Pickup"},
+            {"Priority Mail {0} Window Flat Rate Envelope","Priority Mail {0} Window Flat Rate Envelope"},
+            {"Priority Mail {0} Window Flat Rate Envelope Hold For Pickup","Priority Mail {0} Window Flat Rate Envelope Hold For Pickup"},
+            {"Priority Mail {0} Small Flat Rate Envelope","Priority Mail {0} Small Flat Rate Envelope"},
+            {"Priority Mail {0} Small Flat Rate Envelope Hold For Pickup","Priority Mail {0} Small Flat Rate Envelope Hold For Pickup"},
+            {"Priority Mail {0} Legal Flat Rate Envelope","Priority Mail {0} Legal Flat Rate Envelope"},
+            {"Priority Mail {0} Legal Flat Rate Envelope Hold For Pickup","Priority Mail {0} Legal Flat Rate Envelope Hold For Pickup"},
+            {"Priority Mail {0} Padded Flat Rate Envelope Hold For Pickup","Priority Mail {0} Padded Flat Rate Envelope Hold For Pickup"},
+            {"Priority Mail {0} Regional Rate Box A","Priority Mail {0} Regional Rate Box A"},
+            {"Priority Mail {0} Regional Rate Box A Hold For Pickup","Priority Mail {0} Regional Rate Box A Hold For Pickup"},
+            {"Priority Mail {0} Regional Rate Box B","Priority Mail {0} Regional Rate Box B"},
+            {"Priority Mail {0} Regional Rate Box B Hold For Pickup","Priority Mail {0} Regional Rate Box B Hold For Pickup"},
+            {"First-Class Package Service Hold For Pickup","First-Class Package Service Hold For Pickup"},
+            {"Priority Mail Express {0} Flat Rate Boxes","Priority Mail Express {0} Flat Rate Boxes"},
+            {"Priority Mail Express {0} Flat Rate Boxes Hold For Pickup","Priority Mail Express {0} Flat Rate Boxes Hold For Pickup"},
+            {"Priority Mail Express {0} Sunday/Holiday Delivery Flat Rate Boxes","Priority Mail Express {0} Sunday/Holiday Delivery Flat Rate Boxes"},
+            {"Priority Mail {0} Regional Rate Box C","Priority Mail {0} Regional Rate Box C"},
+            {"Priority Mail {0} Regional Rate Box C Hold For Pickup","Priority Mail {0} Regional Rate Box C Hold For Pickup"},
+            {"First-Class Package Service","First-Class Package Service"},
+            {"Priority Mail Express {0} Padded Flat Rate Envelope","Priority Mail Express {0} Padded Flat Rate Envelope"},
+            {"Priority Mail Express {0} Padded Flat Rate Envelope Hold For Pickup","Priority Mail Express {0} Padded Flat Rate Envelope Hold For Pickup"},
+            {"Priority Mail Express {0} Sunday/Holiday Delivery Padded Flat Rate Envelope","Priority Mail Express {0} Sunday/Holiday Delivery Padded Flat Rate Envelope"}
         };
 
         public USPSProvider()
@@ -74,11 +123,19 @@ namespace DotNetShipping.ShippingProviders
             if (_serviceCodes != null && _serviceCodes.Count > 0)
             {
                 var serviceCodes = new Dictionary<string, string>();
+                var variableValues = new List<String>() {"1-Day", "2-Day", "3-Day", "Military", "DPO"};
 
-                foreach (var serviceCodeKey in _serviceCodes.Keys)
+                foreach (var variableValue in variableValues)
                 {
-                    var serviceCode = _serviceCodes[serviceCodeKey];
-                    serviceCodes.Add(serviceCodeKey, serviceCode);
+                    foreach (var serviceCodeKey in _serviceCodes.Keys)
+                    {
+                        var serviceCode = _serviceCodes[serviceCodeKey];
+                        var swappedServiceCodeKey = serviceCodeKey.Replace("{0}", variableValue);
+                        var swappedServiceCode = serviceCode.Replace("{0}", variableValue);
+                        
+                        if (!serviceCodes.ContainsKey(swappedServiceCode))
+                            serviceCodes.Add(swappedServiceCodeKey, swappedServiceCode);
+                    }
                 }
 
                 return serviceCodes;
