@@ -5,6 +5,8 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Xml;
+using System.Xml.Linq;
+using System.Xml.XPath;
 
 namespace DotNetShipping.ShippingProviders
 {
@@ -203,9 +205,15 @@ namespace DotNetShipping.ShippingProviders
             var stream = request.GetRequestStream();
             stream.Write(bytes, 0, bytes.Length);
             stream.Close();
-            var response = (HttpWebResponse) request.GetResponse();
-            ParseRatesResponseMessage(new StreamReader(response.GetResponseStream()).ReadToEnd());
-            response.Close();
+
+            using (var resp = request.GetResponse() as HttpWebResponse)
+            {
+                if (resp != null && resp.StatusCode == HttpStatusCode.OK)
+                {
+                    var xDoc = XDocument.Load(resp.GetResponseStream());
+                    ParseRatesResponseMessage(xDoc);
+                }
+            }
         }
 
         private void LoadServiceCodes()
@@ -225,58 +233,59 @@ namespace DotNetShipping.ShippingProviders
             _serviceCodes.Add("93", new AvailableService("UPS Sure Post", 4096));
         }
 
-        private void ParseRatesResponseMessage(string response)
+        private void ParseRatesResponseMessage(XDocument xDoc)
         {
-            var xDoc = new XmlDocument();
-            xDoc.LoadXml(response);
-            var ratedShipment = xDoc.SelectNodes("/RatingServiceSelectionResponse/RatedShipment");
-            foreach (XmlNode rateNode in ratedShipment)
+            if (xDoc.Root != null)
             {
-                var name = rateNode.SelectSingleNode("Service/Code").InnerText;
-                AvailableService service;
-                if (_serviceCodes.ContainsKey(name))
+                var ratedShipment = xDoc.Root.Elements("RatedShipment");
+                foreach (var rateNode in ratedShipment)
                 {
-                    service = (AvailableService) _serviceCodes[name];
-                }
-                else
-                {
-                    continue;
-                }
-                if (((int) _services & service.EnumValue) != service.EnumValue)
-                {
-                    continue;
-                }
-                var description = "";
-                if (_serviceCodes.ContainsKey(name))
-                {
-                    description = _serviceCodes[name].ToString();
-                }
-                var totalCharges = Convert.ToDecimal(rateNode.SelectSingleNode("TotalCharges/MonetaryValue").InnerText);
-                var delivery = DateTime.Parse("1/1/1900 12:00 AM");
-                var date = rateNode.SelectSingleNode("GuaranteedDaysToDelivery").InnerText;
-                if (date == "") // no gauranteed delivery date, so use MaxDate to ensure correct sorting
-                {
-                    date = DateTime.MaxValue.ToShortDateString();
-                }
-                else
-                {
-                    date = DateTime.Now.AddDays(Convert.ToDouble(date)).ToShortDateString();
-                }
-                var deliveryTime = rateNode.SelectSingleNode("ScheduledDeliveryTime").InnerText;
-                if (deliveryTime == "") // no scheduled delivery time, so use 11:59:00 PM to ensure correct sorting
-                {
-                    date += " 11:59:00 PM";
-                }
-                else
-                {
-                    date += " " + deliveryTime.Replace("Noon", "PM").Replace("P.M.", "PM").Replace("A.M.", "AM");
-                }
-                if (date != "")
-                {
-                    delivery = DateTime.Parse(date);
-                }
+                    var name = rateNode.XPathSelectElement("Service/Code").Value;
+                    AvailableService service;
+                    if (_serviceCodes.ContainsKey(name))
+                    {
+                        service = (AvailableService) _serviceCodes[name];
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                    if (((int) Services & service.EnumValue) != service.EnumValue)
+                    {
+                        continue;
+                    }
+                    var description = "";
+                    if (_serviceCodes.ContainsKey(name))
+                    {
+                        description = _serviceCodes[name].ToString();
+                    }
+                    var totalCharges = Convert.ToDecimal(rateNode.XPathSelectElement("TotalCharges/MonetaryValue").Value);
+                    var delivery = DateTime.Parse("1/1/1900 12:00 AM");
+                    var date = rateNode.XPathSelectElement("GuaranteedDaysToDelivery").Value;
+                    if (date == "") // no gauranteed delivery date, so use MaxDate to ensure correct sorting
+                    {
+                        date = DateTime.MaxValue.ToShortDateString();
+                    }
+                    else
+                    {
+                        date = DateTime.Now.AddDays(Convert.ToDouble(date)).ToShortDateString();
+                    }
+                    var deliveryTime = rateNode.XPathSelectElement("ScheduledDeliveryTime").Value;
+                    if (deliveryTime == "") // no scheduled delivery time, so use 11:59:00 PM to ensure correct sorting
+                    {
+                        date += " 11:59:00 PM";
+                    }
+                    else
+                    {
+                        date += " " + deliveryTime.Replace("Noon", "PM").Replace("P.M.", "PM").Replace("A.M.", "AM");
+                    }
+                    if (date != "")
+                    {
+                        delivery = DateTime.Parse(date);
+                    }
 
-                AddRate(name, description, totalCharges, delivery);
+                    AddRate(name, description, totalCharges, delivery);
+                }
             }
         }
 
