@@ -127,7 +127,7 @@ namespace DotNetShipping.ShippingProviders
             writer.WriteStartElement("Request");
             writer.WriteStartElement("TransactionReference");
             writer.WriteElementString("CustomerContext", "Rating and Service");
-            writer.WriteElementString("XpciVersion", "1.0001");
+            writer.WriteElementString("XpciVersion", "1.0");
             writer.WriteEndElement(); // </TransactionReference>
             writer.WriteElementString("RequestAction", "Rate");
             writer.WriteElementString("RequestOption", string.IsNullOrWhiteSpace(_serviceDescription) ? "Shop" : _serviceDescription);
