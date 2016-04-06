@@ -94,3 +94,4 @@ Originally forked from [dotNETShipping](http://dotnetshipping.codeplex.com/).
 * [@kylewest](https://github.com/kylewest)
 * [@brettallred](https://github.com/brettallred)
 * [@gkurts](https://github.com/gkurts)
+* [@Soulfire86](https://github.com/Soulfire86)
