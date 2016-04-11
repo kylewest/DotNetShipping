@@ -24,6 +24,7 @@ namespace DotNetShipping
 
         public string City { get; set; }
         public string CountryCode { get; set; }
+        public string CountryName { get; set; }
         public string Line1 { get; set; }
         public string Line2 { get; set; }
         public string Line3 { get; set; }
@@ -33,12 +34,26 @@ namespace DotNetShipping
 
         public string GetCountryName()
         {
+            if (!string.IsNullOrEmpty(CountryName))
+            {
+                return CountryName;
+            }
+
             if (string.IsNullOrEmpty(CountryCode))
             {
                 return string.Empty;
             }
-            var regionInfo = new RegionInfo(CountryCode);
-            return regionInfo.EnglishName;
+            try
+            { 
+                var regionInfo = new RegionInfo(CountryCode);
+                return regionInfo.EnglishName;
+            }
+            catch (ArgumentException e)
+            {
+                //causes the whole application to crash.
+            }
+
+            return string.Empty;
         }
 
         public bool IsCanadaAddress()
