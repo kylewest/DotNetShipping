@@ -66,8 +66,8 @@ foreach (Rate rate in shipment.Rates)
 DotNetShipping supports requesting a single rate from UPS and USPS.
 To do so, include the rate description as a parameter of the provider constructor.
 ```CSHARP
-rateManager.AddProvider(new USPSProvider(uspsUserId, "UPS Ground"));
-rateManager.AddProvider(new UPSProvider(upsLicenseNumber, upsUserId, upsPassword, "Priority Mail"));
+rateManager.AddProvider(new USPSProvider(uspsUserId, "Priority Mail"));
+rateManager.AddProvider(new UPSProvider(upsLicenseNumber, upsUserId, upsPassword, "UPS Ground"));
 ````
 A list of valid shipping methods can be found in the documentation links below.
 
