@@ -230,6 +230,8 @@ namespace DotNetShipping.ShippingProviders
 
         public override void GetRates()
         {
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+
             var request = (HttpWebRequest) WebRequest.Create(RatesUrl);
             request.Method = "POST";
             request.Timeout = _timeout * 1000;
