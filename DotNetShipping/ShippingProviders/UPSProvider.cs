@@ -177,6 +177,10 @@ namespace DotNetShipping.ShippingProviders
             writer.WriteEndElement(); // </Shipper>
             writer.WriteStartElement("ShipTo");
             writer.WriteStartElement("Address");
+            if (!string.IsNullOrWhiteSpace(Shipment.DestinationAddress.State))
+            {
+                writer.WriteElementString("StateProvinceCode", Shipment.DestinationAddress.State);
+            }
             if (Shipment.DestinationAddress.IsUnitedStatesAddress() || Shipment.DestinationAddress.IsCanadaAddress())
             {
                 writer.WriteElementString("PostalCode", Shipment.DestinationAddress.PostalCode);
