@@ -2,7 +2,6 @@
 
 [![Build status](https://ci.appveyor.com/api/projects/status/lom3p3jvvf4e9j3r?svg=true)](https://ci.appveyor.com/project/kylewest/dotnetshipping)
 [![NuGet Version](http://img.shields.io/nuget/v/DotNetShipping.svg?style=flat-square)](https://www.nuget.org/packages/DotNetShipping)
-[![NuGet Downloads](http://img.shields.io/nuget/dt/DotNetShipping.svg?style=flat-square)](https://www.nuget.org/packages/DotNetShipping)
 
 .NET wrapper to UPS, FedEx, and USPS APIs. Use it to retrieve shipping rates from these carriers.
 
@@ -67,8 +66,8 @@ foreach (Rate rate in shipment.Rates)
 DotNetShipping supports requesting a single rate from UPS and USPS.
 To do so, include the rate description as a parameter of the provider constructor.
 ```CSHARP
-rateManager.AddProvider(new USPSProvider(uspsUserId, "UPS Ground"));
-rateManager.AddProvider(new UPSProvider(upsLicenseNumber, upsUserId, upsPassword, "Priority Mail"));
+rateManager.AddProvider(new USPSProvider(uspsUserId, "Priority Mail"));
+rateManager.AddProvider(new UPSProvider(upsLicenseNumber, upsUserId, upsPassword, "UPS Ground"));
 ````
 A list of valid shipping methods can be found in the documentation links below.
 
@@ -95,3 +94,4 @@ Originally forked from [dotNETShipping](http://dotnetshipping.codeplex.com/).
 * [@kylewest](https://github.com/kylewest)
 * [@brettallred](https://github.com/brettallred)
 * [@gkurts](https://github.com/gkurts)
+* [@Soulfire86](https://github.com/Soulfire86)

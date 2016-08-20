@@ -14,7 +14,7 @@ namespace DotNetShipping.ShippingProviders
     ///     Provides rates from FedEx (Federal Express) excluding SmartPost. Please use <see cref="FedExSmartPostProvider"/> for SmartPost rates.
     /// </summary>
     public class FedExProvider : FedExBaseProvider
-    {
+    {        
         /// <summary>
         ///     Paramaterless constructor that loads settings from app.config
         /// </summary>
