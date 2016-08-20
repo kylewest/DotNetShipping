@@ -73,7 +73,6 @@ namespace DotNetShipping.ShippingProviders
                 {"FIRST_OVERNIGHT", "FedEx First Overnight"},
                 {"FEDEX_EXPRESS_SAVER", "FedEx Express Saver"},
                 {"FEDEX_GROUND", "FedEx Ground"},
-                {"SMART_POST", "FedEx Smart Post"},
                 {"FEDEX_INTERNATIONAL_GROUND", "FedEx International Ground"},
                 {"INTERNATIONAL_ECONOMY", "FedEx International Economy"},
                 {"INTERNATIONAL_PRIORITY", "FedEx International Priority"}
