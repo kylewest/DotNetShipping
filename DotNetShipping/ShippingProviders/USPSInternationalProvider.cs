@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
@@ -18,6 +19,35 @@ namespace DotNetShipping.ShippingProviders
         private const string PRODUCTION_URL = "http://production.shippingapis.com/ShippingAPI.dll";
         private readonly string _service;
         private readonly string _userId;
+        private readonly Dictionary<string, string> _serviceCodes = new Dictionary<string, string>
+        {
+            {"Priority Mail Express International","Priority Mail Express International"},
+            {"Priority Mail International","Priority Mail International"},
+            {"Global Express Guaranteed (GXG)","Global Express Guaranteed (GXG)"},
+            {"Global Express Guaranteed Document","Global Express Guaranteed Document"},
+            {"Global Express Guaranteed Non-Document Rectangular","Global Express Guaranteed Non-Document Rectangular"},
+            {"Global Express Guaranteed Non-Document Non-Rectangular","Global Express Guaranteed Non-Document Non-Rectangular"},
+            {"Priority Mail International Flat Rate Envelope","Priority Mail International Flat Rate Envelope"},
+            {"Priority Mail International Medium Flat Rate Box","Priority Mail International Medium Flat Rate Box"},
+            {"Priority Mail Express International Flat Rate Envelope","Priority Mail Express International Flat Rate Envelope"},
+            {"Priority Mail International Large Flat Rate Box","Priority Mail International Large Flat Rate Box"},
+            {"USPS GXG Envelopes","USPS GXG Envelopes"},
+            {"First-Class Mail International Letter","First-Class Mail International Letter"},
+            {"First-Class Mail International Large Envelope","First-Class Mail International Large Envelope"},
+            {"First-Class Package International Service","First-Class Package International Service"},
+            {"Priority Mail International Small Flat Rate Box","Priority Mail International Small Flat Rate Box"},
+            {"Priority Mail Express International Legal Flat Rate Envelope","Priority Mail Express International Legal Flat Rate Envelope"},
+            {"Priority Mail International Gift Card Flat Rate Envelope","Priority Mail International Gift Card Flat Rate Envelope"},
+            {"Priority Mail International Window Flat Rate Envelope","Priority Mail International Window Flat Rate Envelope"},
+            {"Priority Mail International Small Flat Rate Envelope","Priority Mail International Small Flat Rate Envelope"},
+            {"First-Class Mail International Postcard","First-Class Mail International Postcard"},
+            {"Priority Mail International Legal Flat Rate Envelope","Priority Mail International Legal Flat Rate Envelope"},
+            {"Priority Mail International Padded Flat Rate Envelope","Priority Mail International Padded Flat Rate Envelope"},
+            {"Priority Mail International DVD Flat Rate priced box","Priority Mail International DVD Flat Rate priced box"},
+            {"Priority Mail International Large Video Flat Rate priced box","Priority Mail International Large Video Flat Rate priced box"},
+            {"Priority Mail Express International Flat Rate Boxes","Priority Mail Express International Flat Rate Boxes"},
+            {"Priority Mail Express International Padded Flat Rate Envelope","Priority Mail Express International Padded Flat Rate Envelope"}
+        };
 
         public USPSInternationalProvider()
         {
@@ -47,6 +77,28 @@ namespace DotNetShipping.ShippingProviders
         }
 
         public bool Commercial { get; set; }
+
+        /// <summary>
+        /// Returns the supported service codes
+        /// </summary>
+        /// <returns></returns>
+        public IDictionary<string, string> GetServiceCodes()
+        {
+            if (_serviceCodes != null && _serviceCodes.Count > 0)
+            {
+                var serviceCodes = new Dictionary<string, string>();
+
+                foreach (var serviceCodeKey in _serviceCodes.Keys)
+                {
+                    var serviceCode = _serviceCodes[serviceCodeKey];
+                    serviceCodes.Add(serviceCodeKey, serviceCode);
+                }
+
+                return serviceCodes;
+            }
+
+            return null;
+        }
 
         public override void GetRates()
         {

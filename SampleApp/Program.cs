@@ -22,6 +22,8 @@ namespace DotNetShipping.SampleApp
             var fedexPassword = appSettings["FedExPassword"];
             var fedexAccountNumber = appSettings["FedExAccountNumber"];
             var fedexMeterNumber = appSettings["FedExMeterNumber"];
+            var fedexHubId = appSettings["FedExHubId"]; // 5531 is the hubId to use in FedEx's test environment
+            var fedexUseProduction = Convert.ToBoolean(appSettings["FedExUseProduction"]);
 
             // You will need a userId to use the USPS provider. Your account will also need access to the production servers.
             var uspsUserId = appSettings["USPSUserId"];
@@ -42,7 +44,8 @@ namespace DotNetShipping.SampleApp
 
             // Add desired DotNetShippingProviders
             rateManager.AddProvider(new UPSProvider(upsLicenseNumber, upsUserId, upsPassword) {UseProduction = false});
-            rateManager.AddProvider(new FedExProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber));
+            rateManager.AddProvider(new FedExProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber, fedexUseProduction));
+            rateManager.AddProvider(new FedExSmartPostProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber, fedexHubId, fedexUseProduction));
             rateManager.AddProvider(new USPSProvider(uspsUserId));
             rateManager.AddProvider(new USPSInternationalProvider(uspsUserId));
 
@@ -57,6 +60,8 @@ namespace DotNetShipping.SampleApp
             {
                 Console.WriteLine(rate);
             }
+
+            Console.ReadLine();
         }
     }
 }

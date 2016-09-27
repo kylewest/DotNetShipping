@@ -67,6 +67,7 @@
   <ItemGroup>
     <Compile Include="Address.cs" />
     <Compile Include="FedExRateService.cs" />
+    <Compile Include="Helpers\Extensions\RequestedShipmentExtensions.cs" />
     <Compile Include="PoundsAndOunces.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Extensions.cs" />
@@ -83,6 +84,7 @@
     <Compile Include="Shipment.cs" />
     <Compile Include="ShippingProviders\AbstractShippingProvider.cs" />
     <Compile Include="ShippingProviders\FedExProvider.cs" />
+    <Compile Include="ShippingProviders\FedExSmartPostProvider.cs" />
     <Compile Include="ShippingProviders\IShippingProvider.cs" />
     <Compile Include="ShippingProviders\UPSProvider.cs" />
     <Compile Include="ShippingProviders\USPSInternationalProvider.cs" />
@@ -112,9 +114,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -143,6 +142,9 @@
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
       <CachedSettingsPropName>DotNetShipping_RateServiceWebReference_RateService</CachedSettingsPropName>
     </WebReferenceUrl>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ShippingProviders\FedExBaseProvider.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

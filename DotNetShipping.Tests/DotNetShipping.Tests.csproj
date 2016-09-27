@@ -61,6 +61,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Features\FedExSmartPostShipRates.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Features\FedExShipRates.cs" />
     <Compile Include="Features\UPSRates.cs" />
