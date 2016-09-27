@@ -95,3 +95,4 @@ Originally forked from [dotNETShipping](http://dotnetshipping.codeplex.com/).
 * [@brettallred](https://github.com/brettallred)
 * [@gkurts](https://github.com/gkurts)
 * [@Soulfire86](https://github.com/Soulfire86)
+* [@StephenPAdams](https://github.com/StephenPAdams) - FedEx SmartPost Support
