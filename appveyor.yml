@@ -10,7 +10,7 @@ environment:
   FEDEX_METER_NUMBER:
     secure: UvSOUS4CR3Emo+VcQdf6/g==
   FEDEX_PASSWORD:
-    secure: 7AKP5O0xq3gnqxJ0PhjYxIdwUOSsl9AnbjBrbNprj4U
+    secure: 7AKP5O0xq3gnqxJ0PhjYxIdwUOSsl9AnbjBrbNprj4U=
   UPS_LICENSE_NUMBER:
     secure: PbuU0sZbXmcsCJ3QMtRn4SRYC7CVL5Gnb1eCeByQPPM=
   UPS_PASSWORD:
