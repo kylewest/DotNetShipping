@@ -14,7 +14,7 @@ namespace DotNetShipping
         /// <returns></returns>
         public static RateManager Build()
         {
-            var providers = Assembly.GetAssembly(typeof (IShippingProvider)).GetTypes().Where(x => x.BaseType == typeof (AbstractShippingProvider));
+            var providers = Assembly.GetAssembly(typeof (IShippingProvider)).GetTypes().Where(x => x.BaseType == typeof (AbstractShippingProvider) && !x.IsAbstract);
 
             var rateManager = new RateManager();
 
