@@ -175,6 +175,7 @@ namespace DotNetShipping.ShippingProviders
             }
             writer.WriteStartElement("Address");
             writer.WriteElementString("PostalCode", Shipment.OriginAddress.PostalCode);
+            writer.WriteElementString("CountryCode", Shipment.OriginAddress.CountryCode);
             writer.WriteEndElement(); // </Address>
             writer.WriteEndElement(); // </Shipper>
             writer.WriteStartElement("ShipTo");

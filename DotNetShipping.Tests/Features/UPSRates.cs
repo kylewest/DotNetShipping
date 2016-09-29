@@ -105,6 +105,29 @@ namespace DotNetShipping.Tests.Features
         }
 
         [Fact]
+        public void UPS_Returns_Rates_When_Using_International_Origin_And_Destination_Addresses_For_All_Services()
+        {
+            var rateManager = new RateManager();
+            rateManager.AddProvider(new UPSProvider(UPSLicenseNumber, UPSUserId, UPSPassword));
+
+            var response = rateManager.GetRates(InternationalAddress2, InternationalAddress1, Package1);
+
+            Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
+
+            Assert.NotNull(response);
+            Assert.NotEmpty(response.Rates);
+            Assert.Empty(response.ServerErrors);
+
+            foreach (var rate in response.Rates)
+            {
+                Assert.NotNull(rate);
+                Assert.True(rate.TotalCharges > 0);
+
+                Debug.WriteLine(rate.Name + ": " + rate.TotalCharges);
+            }
+        }
+
+        [Fact]
         public void UPS_Returns_Rates_When_Using_International_Destination_Addresses_For_All_Services()
         {
             var rateManager = new RateManager();
