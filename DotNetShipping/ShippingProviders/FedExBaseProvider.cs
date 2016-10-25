@@ -174,6 +174,7 @@ namespace DotNetShipping.ShippingProviders
             request.RequestedShipment.Recipient.Address.PostalCode = Shipment.DestinationAddress.PostalCode;
             request.RequestedShipment.Recipient.Address.CountryCode = Shipment.DestinationAddress.CountryCode;
             request.RequestedShipment.Recipient.Address.Residential = Shipment.DestinationAddress.IsResidential;
+            request.RequestedShipment.Recipient.Address.ResidentialSpecified = Shipment.DestinationAddress.IsResidential;
         }
 
 		/// <summary>
@@ -190,6 +191,7 @@ namespace DotNetShipping.ShippingProviders
             request.RequestedShipment.Shipper.Address.PostalCode = Shipment.OriginAddress.PostalCode;
             request.RequestedShipment.Shipper.Address.CountryCode = Shipment.OriginAddress.CountryCode;
             request.RequestedShipment.Shipper.Address.Residential = Shipment.OriginAddress.IsResidential;
+            request.RequestedShipment.Shipper.Address.ResidentialSpecified = Shipment.OriginAddress.IsResidential;
         }
 
 		/// <summary>
