@@ -198,8 +198,8 @@ namespace DotNetShipping.ShippingProviders
                     writer.WriteStartElement("Package");
                     writer.WriteAttributeString("ID", i.ToString());
                     writer.WriteElementString("Service", _service);
-                    writer.WriteElementString("ZipOrigination", Shipment.OriginAddress.PostalCode);
-                    writer.WriteElementString("ZipDestination", Shipment.DestinationAddress.PostalCode);
+                    writer.WriteElementString("ZipOrigination", Shipment.OriginAddress.CountryCode == "US" && Shipment.OriginAddress.PostalCode.Length > 5? Shipment.OriginAddress.PostalCode.Substring(0, 5) : Shipment.OriginAddress.PostalCode);
+                    writer.WriteElementString("ZipDestination", Shipment.DestinationAddress.CountryCode == "US" && Shipment.DestinationAddress.PostalCode.Length > 5 ? Shipment.DestinationAddress.PostalCode.Substring(0, 5) : Shipment.DestinationAddress.PostalCode);
                     writer.WriteElementString("Pounds", package.PoundsAndOunces.Pounds.ToString());
                     writer.WriteElementString("Ounces", package.PoundsAndOunces.Ounces.ToString());
 
