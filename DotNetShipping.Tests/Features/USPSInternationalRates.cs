@@ -26,7 +26,7 @@ namespace DotNetShipping.Tests.Features
             _internationalAddress1 = new Address("Jubail", "Jubail", "31951", "SA"); //has limited intl services available
             _internationalAddress2 = new Address("80-100 Victoria St", "", "", "London", "", "SW1E 5JL", "GB");
 
-            _package1 = new Package(4, 4, 4, 5, 0);
+            _package1 = new Package(14, 14, 14, 15, 0);
             _package2 = new Package(6, 6, 6, 5, 100);
 
             _uspsUserId = ConfigurationManager.AppSettings["USPSUserId"];
@@ -129,6 +129,16 @@ namespace DotNetShipping.Tests.Features
             Assert.True(response.Rates.First().TotalCharges > 0);
 
             Debug.WriteLine(response.Rates.First().Name + ": " + response.Rates.First().TotalCharges);
+        }
+
+        [Fact]
+        public void CanGetUspsInternationalServiceCodes()
+        {
+            var provider = new USPSInternationalProvider();
+            var serviceCodes = provider.GetServiceCodes();
+
+            Assert.NotNull(serviceCodes);
+            Assert.NotEmpty(serviceCodes);
         }
     }
 }

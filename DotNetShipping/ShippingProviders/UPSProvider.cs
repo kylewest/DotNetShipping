@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Net;
@@ -38,11 +39,13 @@ namespace DotNetShipping.ShippingProviders
         private const string DEVELOPMENT_RATES_URL = "https://wwwcie.ups.com/ups.app/xml/Rate";
         private const string PRODUCTION_RATES_URL = "https://onlinetools.ups.com/ups.app/xml/Rate";
         private AvailableServices _services = AvailableServices.All;
+        private bool _useNegotiatedRates = false;
         private bool _useProduction = true;
         private readonly string _licenseNumber;
         private readonly string _password;
         private readonly Hashtable _serviceCodes = new Hashtable(12);
         private readonly string _serviceDescription;
+        private readonly string _shipperNumber;
         private readonly int _timeout;
         private readonly string _userId;
 
@@ -58,6 +61,8 @@ namespace DotNetShipping.ShippingProviders
             _password = appSettings["UPSPassword"];
             _timeout = DEFAULT_TIMEOUT;
             _serviceDescription = "";
+            LoadServiceCodes();
+            _shipperNumber = "";
         }
 
         public UPSProvider(string licenseNumber, string userId, string password) : this(licenseNumber, userId, password, DEFAULT_TIMEOUT)
@@ -72,6 +77,7 @@ namespace DotNetShipping.ShippingProviders
             _password = password;
             _timeout = timeout;
             _serviceDescription = "";
+            _shipperNumber = "";
             LoadServiceCodes();
         }
 
@@ -83,6 +89,7 @@ namespace DotNetShipping.ShippingProviders
             _password = password;
             _timeout = DEFAULT_TIMEOUT;
             _serviceDescription = serviceDescription;
+            _shipperNumber = "";
             LoadServiceCodes();
         }
 
@@ -94,7 +101,20 @@ namespace DotNetShipping.ShippingProviders
             _password = password;
             _timeout = timeout;
             _serviceDescription = serviceDescription;
+            _shipperNumber = "";
             LoadServiceCodes();
+        }
+
+        public UPSProvider(string licenseNumber, string userId, string password, int timeout, string serviceDescription, string shipperNumber)
+        {
+             Name = "UPS";
+             _licenseNumber = licenseNumber;
+             _userId = userId;
+             _password = password;
+             _timeout = timeout;
+             _serviceDescription = serviceDescription;
+             _shipperNumber = shipperNumber;
+             LoadServiceCodes();
         }
 
         public AvailableServices Services
@@ -106,6 +126,13 @@ namespace DotNetShipping.ShippingProviders
         {
             get { return UseProduction ? PRODUCTION_RATES_URL : DEVELOPMENT_RATES_URL; }
         }
+
+        public bool UseNegotiatedRates
+        {
+             get { return _useNegotiatedRates; }
+             set { _useNegotiatedRates = value; }
+        }
+
         public bool UseProduction
         {
             get { return _useProduction; }
@@ -137,14 +164,26 @@ namespace DotNetShipping.ShippingProviders
             writer.WriteStartElement("PickupType");
             writer.WriteElementString("Code", "03");
             writer.WriteEndElement(); // </PickupType>
+            writer.WriteStartElement("CustomerClassification");
+            writer.WriteElementString("Code", string.IsNullOrWhiteSpace(_shipperNumber) ? "01" : "00"); // 00 gets shipper number rates, 01 for daily rates
+            writer.WriteEndElement(); // </CustomerClassification
             writer.WriteStartElement("Shipment");
             writer.WriteStartElement("Shipper");
+            if (!string.IsNullOrWhiteSpace(_shipperNumber))
+            {
+                writer.WriteElementString("ShipperNumber", _shipperNumber);
+            }
             writer.WriteStartElement("Address");
             writer.WriteElementString("PostalCode", Shipment.OriginAddress.PostalCode);
+            writer.WriteElementString("CountryCode", Shipment.OriginAddress.CountryCode);
             writer.WriteEndElement(); // </Address>
             writer.WriteEndElement(); // </Shipper>
             writer.WriteStartElement("ShipTo");
             writer.WriteStartElement("Address");
+            if (!string.IsNullOrWhiteSpace(Shipment.DestinationAddress.State))
+            {
+                writer.WriteElementString("StateProvinceCode", Shipment.DestinationAddress.State);
+            }
             if (Shipment.DestinationAddress.IsUnitedStatesAddress() || Shipment.DestinationAddress.IsCanadaAddress())
             {
                 writer.WriteElementString("PostalCode", Shipment.DestinationAddress.PostalCode);
@@ -157,6 +196,12 @@ namespace DotNetShipping.ShippingProviders
                 writer.WriteStartElement("Service");
                 writer.WriteElementString("Code", _serviceDescription.ToUpsShipCode());
                 writer.WriteEndElement(); //</Service>
+            }
+            if (_useNegotiatedRates)
+            {
+                writer.WriteStartElement("RateInformation");
+                writer.WriteElementString("NegotiatedRatesIndicator", "");
+                writer.WriteEndElement();// </RateInformation>
             }
             for (var i = 0; i < Shipment.Packages.Count; i++)
             {
@@ -192,6 +237,8 @@ namespace DotNetShipping.ShippingProviders
 
         public override void GetRates()
         {
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+
             var request = (HttpWebRequest) WebRequest.Create(RatesUrl);
             request.Method = "POST";
             request.Timeout = _timeout * 1000;
@@ -214,6 +261,28 @@ namespace DotNetShipping.ShippingProviders
                     ParseRatesResponseMessage(xDoc);
                 }
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public IDictionary<string, string> GetServiceCodes()
+        {
+            if (_serviceCodes != null && _serviceCodes.Count > 0)
+            {
+                var serviceCodes = new Dictionary<string, string>();
+
+                foreach (var serviceCodeKey in _serviceCodes.Keys)
+                {
+                    var serviceCode = (AvailableService)_serviceCodes[serviceCodeKey];
+                    serviceCodes.Add((string)serviceCodeKey, serviceCode.Name);
+                }
+
+                return serviceCodes;
+            }
+
+            return null;
         }
 
         private void LoadServiceCodes()
@@ -260,6 +329,14 @@ namespace DotNetShipping.ShippingProviders
                         description = _serviceCodes[name].ToString();
                     }
                     var totalCharges = Convert.ToDecimal(rateNode.XPathSelectElement("TotalCharges/MonetaryValue").Value);
+                    if (_useNegotiatedRates)
+                    {
+                        var negotiatedRate = rateNode.XPathSelectElement("NegotiatedRates/NetSummaryCharges/GrandTotal/MonetaryValue");
+                        if (negotiatedRate != null) // check for negotiated rate
+                        {
+                            totalCharges = Convert.ToDecimal(negotiatedRate.Value);
+                        }
+                    }
                     var delivery = DateTime.Parse("1/1/1900 12:00 AM");
                     var date = rateNode.XPathSelectElement("GuaranteedDaysToDelivery").Value;
                     if (date == "") // no gauranteed delivery date, so use MaxDate to ensure correct sorting

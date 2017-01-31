@@ -123,5 +123,15 @@ namespace DotNetShipping.Tests.Features
 
             Debug.WriteLine(response.Rates.First().Name + ": " + response.Rates.First().TotalCharges);
         }
+
+        [Fact]
+        public void CanGetUspsServiceCodes()
+        {
+            var provider = new USPSProvider();
+            var serviceCodes = provider.GetServiceCodes();
+
+            Assert.NotNull(serviceCodes);
+            Assert.NotEmpty(serviceCodes);
+        }
     }
 }

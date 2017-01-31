@@ -83,9 +83,9 @@ The call works the same but use the USPSInternationalProvider instead. Your curr
 
 Developer documentation is often hard to find. The links below are provided as reference.
 
-* [FedEx](https://rpmware.box.com/s/e1i8dultmit9x16jo1m1)
-* [USPS](https://rpmware.box.com/s/cvrmikfhnpm25r4qmb3f)
-* [UPS] (https://www.dropbox.com/sh/p4w81e6xi6eycsd/ei-QZHL0vI)
+* [FedEx](http://www.fedex.com/us/developer/)
+* [USPS](https://www.usps.com/business/web-tools-apis/welcome.htm)
+* [UPS] (https://www.ups.com/upsdeveloperkit)
 
 ## Credits
 
@@ -95,3 +95,4 @@ Originally forked from [dotNETShipping](http://dotnetshipping.codeplex.com/).
 * [@brettallred](https://github.com/brettallred)
 * [@gkurts](https://github.com/gkurts)
 * [@Soulfire86](https://github.com/Soulfire86)
+* [@StephenPAdams](https://github.com/StephenPAdams) - FedEx SmartPost Support
