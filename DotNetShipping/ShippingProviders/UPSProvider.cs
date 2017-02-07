@@ -40,6 +40,7 @@ namespace DotNetShipping.ShippingProviders
         private const string PRODUCTION_RATES_URL = "https://onlinetools.ups.com/ups.app/xml/Rate";
         private AvailableServices _services = AvailableServices.All;
         private bool _useNegotiatedRates = false;
+        private bool _useRetailRates = false;
         private bool _useProduction = true;
         private readonly string _licenseNumber;
         private readonly string _password;
@@ -122,9 +123,13 @@ namespace DotNetShipping.ShippingProviders
             get { return _services; }
             set { _services = value; }
         }
-        private string RatesUrl
+
+        private string RatesUrl => UseProduction ? PRODUCTION_RATES_URL : DEVELOPMENT_RATES_URL;
+
+        public bool UseRetailRates
         {
-            get { return UseProduction ? PRODUCTION_RATES_URL : DEVELOPMENT_RATES_URL; }
+            get { return _useRetailRates; }
+            set { _useRetailRates = value; }
         }
 
         public bool UseNegotiatedRates
@@ -165,7 +170,16 @@ namespace DotNetShipping.ShippingProviders
             writer.WriteElementString("Code", "03");
             writer.WriteEndElement(); // </PickupType>
             writer.WriteStartElement("CustomerClassification");
-            writer.WriteElementString("Code", string.IsNullOrWhiteSpace(_shipperNumber) ? "01" : "00"); // 00 gets shipper number rates, 01 for daily rates
+
+            if (_useRetailRates)
+            {
+                writer.WriteElementString("Code", "04"); //04 gets retail rates
+            }
+            else
+            {
+                writer.WriteElementString("Code", string.IsNullOrWhiteSpace(_shipperNumber) ? "01" : "00"); // 00 gets shipper number rates, 01 for daily rates
+            }
+
             writer.WriteEndElement(); // </CustomerClassification
             writer.WriteStartElement("Shipment");
             writer.WriteStartElement("Shipper");
@@ -264,7 +278,7 @@ namespace DotNetShipping.ShippingProviders
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns></returns>
         public IDictionary<string, string> GetServiceCodes()
