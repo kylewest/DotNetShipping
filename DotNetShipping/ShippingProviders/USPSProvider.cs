@@ -290,7 +290,7 @@ namespace DotNetShipping.ShippingProviders
                 var name = Regex.Replace(r.Name, "&lt.*&gt;", "");
                 var additionalCharges = 0.0m;
 
-                if (includeSpecialServiceCodes != null && includeSpecialServiceCodes.Count > 0)
+                if (includeSpecialServiceCodes != null && includeSpecialServiceCodes.Count > 0 && r.SpecialServices != null)
                 {
                     var specialServices = r.SpecialServices.XPathSelectElements("SpecialService").ToList();
                     if (specialServices.Count > 0)
