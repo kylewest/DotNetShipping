@@ -16,6 +16,7 @@ namespace DotNetShipping.Tests.Features
         private readonly Address DomesticAddress2;
         private readonly Address InternationalAddress1;
         private readonly Package Package1;
+        private readonly Package Package1SignatureRequired;
         private readonly string UPSLicenseNumber;
         private readonly string UPSPassword;
         private readonly string UPSUserId;
@@ -29,6 +30,7 @@ namespace DotNetShipping.Tests.Features
 
             Package1 = new Package(4, 4, 4, 5, 0);
             Package2 = new Package(6, 6, 6, 5, 100);
+            Package1SignatureRequired = new Package(4, 4, 4, 5, 0, null, true);
 
             UPSUserId = ConfigurationManager.AppSettings["UPSUserId"];
             UPSPassword = ConfigurationManager.AppSettings["UPSPassword"];
@@ -154,6 +156,45 @@ namespace DotNetShipping.Tests.Features
 
             Assert.NotNull(serviceCodes);
             Assert.NotEmpty(serviceCodes);
+        }
+
+        [Fact]
+        public void Can_Get_Different_Rates_For_Signature_Required_Lookup()
+        {
+            var rateManager = new RateManager();
+            rateManager.AddProvider(new UPSProvider(UPSLicenseNumber, UPSUserId, UPSPassword, "UPS Ground"));
+
+            var nonSignatureResponse = rateManager.GetRates(DomesticAddress1, DomesticAddress2, Package1);
+            var signatureResponse = rateManager.GetRates(DomesticAddress1, DomesticAddress2, Package1SignatureRequired);
+
+            Debug.WriteLine(string.Format("Rates returned: {0}", nonSignatureResponse.Rates.Any() ? nonSignatureResponse.Rates.Count.ToString() : "0"));
+
+            Assert.NotNull(nonSignatureResponse);
+            Assert.NotEmpty(nonSignatureResponse.Rates);
+            Assert.Empty(nonSignatureResponse.ServerErrors);
+            Assert.Equal(nonSignatureResponse.Rates.Count, 1);
+            Assert.True(nonSignatureResponse.Rates.First().TotalCharges > 0);
+
+            Debug.WriteLine(string.Format("Rates returned: {0}", signatureResponse.Rates.Any() ? signatureResponse.Rates.Count.ToString() : "0"));
+
+            Assert.NotNull(signatureResponse);
+            Assert.NotEmpty(signatureResponse.Rates);
+            Assert.Empty(signatureResponse.ServerErrors);
+            Assert.Equal(signatureResponse.Rates.Count, 1);
+            Assert.True(signatureResponse.Rates.First().TotalCharges > 0);
+
+            // Now compare prices
+            foreach (var signatureRate in signatureResponse.Rates)
+            {
+                var nonSignatureRate = nonSignatureResponse.Rates.FirstOrDefault(x => x.Name == signatureRate.Name);
+
+                if (nonSignatureRate != null)
+                {
+                    var signatureTotalCharges = signatureRate.TotalCharges;
+                    var nonSignatureTotalCharges = nonSignatureRate.TotalCharges;
+                    Assert.NotEqual(signatureTotalCharges, nonSignatureTotalCharges);
+                }
+            }
         }
     }
 }

@@ -221,6 +221,14 @@ namespace DotNetShipping.ShippingProviders
                 writer.WriteElementString("CurrencyCode", "USD");
                 writer.WriteElementString("MonetaryValue", Shipment.Packages[i].InsuredValue.ToString());
                 writer.WriteEndElement(); // </InsuredValue>
+
+                if (Shipment.Packages[i].SignatureRequiredOnDelivery)
+                {
+                    writer.WriteStartElement("DeliveryConfirmation");
+                    writer.WriteElementString("DCISType", "2");         // 2 represents Delivery Confirmation Signature Required
+                    writer.WriteEndElement(); // </DeliveryConfirmation>
+                }
+
                 writer.WriteEndElement(); // </PackageServiceOptions>
                 writer.WriteEndElement(); // </Package>
             }

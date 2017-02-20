@@ -8,6 +8,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
+using System.Xml.XPath;
 
 namespace DotNetShipping.ShippingProviders
 {
@@ -17,7 +18,12 @@ namespace DotNetShipping.ShippingProviders
     {
         private const string PRODUCTION_URL = "http://production.shippingapis.com/ShippingAPI.dll";
         private const string REMOVE_FROM_RATE_NAME = "&lt;sup&gt;&amp;reg;&lt;/sup&gt;";
+
+        /// <summary>
+        /// If set to ALL, special service types will not be returned. This is a limitation of the USPS API.
+        /// </summary>
         private readonly string _service;
+
         private readonly string _shipDate;
         private readonly string _userId;
 
@@ -158,8 +164,10 @@ namespace DotNetShipping.ShippingProviders
             }
 
             var sb = new StringBuilder();
+            var signatureOnDeliveryRequired = false;
 
             var settings = new XmlWriterSettings();
+
             settings.Indent = false;
             settings.OmitXmlDeclaration = true;
             settings.NewLineHandling = NewLineHandling.None;
@@ -214,6 +222,10 @@ namespace DotNetShipping.ShippingProviders
                     {
                         writer.WriteElementString("ShipDate", _shipDate);
                     }
+
+                    if (package.SignatureRequiredOnDelivery)
+                        signatureOnDeliveryRequired = true;
+
                     writer.WriteEndElement();
                     i++;
                 }
@@ -226,8 +238,12 @@ namespace DotNetShipping.ShippingProviders
                 var url = string.Concat(PRODUCTION_URL, "?API=RateV4&XML=", sb.ToString());
                 var webClient = new WebClient();
                 var response = webClient.DownloadString(url);
+                var specialServiceCodes = new List<String>();
 
-                ParseResult(response);
+                if (signatureOnDeliveryRequired)
+                    specialServiceCodes.Add("119");                                 // 119 represents Adult Signature Required
+
+                ParseResult(response, specialServiceCodes);
             }
             catch (Exception ex)
             {
@@ -256,27 +272,47 @@ namespace DotNetShipping.ShippingProviders
             return (package.Width <= 27 && package.Height <= 17 && package.Length <= 17) || (package.Width <= 17 && package.Height <= 27 && package.Length <= 17) || (package.Width <= 17 && package.Height <= 17 && package.Length <= 27);
         }
 
-        private void ParseResult(string response)
+        private void ParseResult(string response, IList<String> includeSpecialServiceCodes = null)
         {
             var document = XElement.Parse(response, LoadOptions.None);
 
             var rates = from item in document.Descendants("Postage")
                 group item by (string) item.Element("MailService")
                 into g
-                select new {Name = g.Key, TotalCharges = g.Sum(x => Decimal.Parse((string) x.Element("Rate"))), DeliveryDate = g.Select(x => (string) x.Element("CommitmentDate")).FirstOrDefault()};
+                select new {Name = g.Key,
+                            TotalCharges = g.Sum(x => Decimal.Parse((string) x.Element("Rate"))),
+                            DeliveryDate = g.Select(x => (string) x.Element("CommitmentDate")).FirstOrDefault(),
+                            SpecialServices = g.Select(x => x.Element("SpecialServices")).FirstOrDefault() };
 
             foreach (var r in rates)
             {
                 //string name = r.Name.Replace(REMOVE_FROM_RATE_NAME, string.Empty);
                 var name = Regex.Replace(r.Name, "&lt.*&gt;", "");
+                var additionalCharges = 0.0m;
+
+                if (includeSpecialServiceCodes != null && includeSpecialServiceCodes.Count > 0)
+                {
+                    var specialServices = r.SpecialServices.XPathSelectElements("SpecialService").ToList();
+                    if (specialServices.Count > 0)
+                    {
+                        foreach (var specialService in specialServices)
+                        {
+                            var serviceId = (string)specialService.Element("ServiceID");
+                            var price = Decimal.Parse((string) specialService.Element("Price"));
+
+                            if (includeSpecialServiceCodes.Contains(serviceId.ToString()))
+                                additionalCharges += price;
+                        }
+                    }
+                }
 
                 if (r.DeliveryDate != null)
                 {
-                    AddRate(name, string.Concat("USPS ", name), r.TotalCharges, DateTime.Parse(r.DeliveryDate));
+                    AddRate(name, string.Concat("USPS ", name), r.TotalCharges + additionalCharges, DateTime.Parse(r.DeliveryDate));
                 }
                 else
                 {
-                    AddRate(name, string.Concat("USPS ", name), r.TotalCharges, DateTime.Now.AddDays(30));
+                    AddRate(name, string.Concat("USPS ", name), r.TotalCharges + additionalCharges, DateTime.Now.AddDays(30));
                 }
             }
 
