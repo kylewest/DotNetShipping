@@ -16,7 +16,8 @@ namespace DotNetShipping
         /// <param name="weight">The weight of the package, in pounds.</param>
         /// <param name="insuredValue">The insured-value of the package, in dollars.</param>
         /// <param name="container">A specific packaging from a shipping provider. E.g. "LG FLAT RATE BOX" for USPS</param>
-        public Package(int length, int width, int height, int weight, decimal insuredValue, string container = null) : this(length, width, height, (decimal) weight, insuredValue, container)
+        /// <param name="signatureRequiredOnDelivery">If true, will attempt to send this to the appropriate rate provider.</param>
+        public Package(int length, int width, int height, int weight, decimal insuredValue, string container = null, bool signatureRequiredOnDelivery = false) : this(length, width, height, (decimal) weight, insuredValue, container, signatureRequiredOnDelivery)
         {
         }
 
@@ -29,7 +30,8 @@ namespace DotNetShipping
         /// <param name="weight">The weight of the package, in pounds.</param>
         /// <param name="insuredValue">The insured-value of the package, in dollars.</param>
         /// <param name="container">A specific packaging from a shipping provider. E.g. "LG FLAT RATE BOX" for USPS</param>
-        public Package(decimal length, decimal width, decimal height, decimal weight, decimal insuredValue, string container = null)
+        /// <param name="signatureRequiredOnDelivery">If true, will attempt to send this to the appropriate rate provider.</param>
+        public Package(decimal length, decimal width, decimal height, decimal weight, decimal insuredValue, string container = null, bool signatureRequiredOnDelivery = false)
         {
             Length = length;
             Width = width;
@@ -37,6 +39,7 @@ namespace DotNetShipping
             Weight = weight;
             InsuredValue = insuredValue;
             Container = container;
+            SignatureRequiredOnDelivery = signatureRequiredOnDelivery;
         }
 
         public decimal CalculatedGirth
@@ -70,6 +73,7 @@ namespace DotNetShipping
         public decimal Weight { get; set; }
         public decimal Width { get; set; }
         public string Container { get; set; }
+        public bool SignatureRequiredOnDelivery { get; set; }
         public PoundsAndOunces PoundsAndOunces
         {
             get

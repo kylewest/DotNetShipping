@@ -51,7 +51,53 @@ namespace DotNetShipping.Tests.Features
                 Assert.True(rate.TotalCharges > 0);
             }
         }
-        
+
+        [Fact]
+        public void FedExReturnsDifferentRatesForSignatureOnDelivery()
+        {
+            var from = new Address("Annapolis", "MD", "21401", "US");
+            var to = new Address("Fitchburg", "WI", "53711", "US");
+
+            var nonSignaturePackage = new Package(7, 7, 7, 6, 0, null, false);
+            var signaturePackage = new Package(7, 7, 7, 6, 0, null, true);
+
+            // Non signature rates first
+            var nonSignatureRates = _rateManager.GetRates(from, to, nonSignaturePackage);
+            var fedExNonSignatureRates = nonSignatureRates.Rates.ToList();
+
+            Assert.NotNull(nonSignatureRates);
+            Assert.True(fedExNonSignatureRates.Any());
+
+            foreach (var rate in fedExNonSignatureRates)
+            {
+                Assert.True(rate.TotalCharges > 0);
+            }
+            
+            var signatureRates = _rateManager.GetRates(from, to, signaturePackage);
+            var fedExSignatureRates = signatureRates.Rates.ToList();
+
+            Assert.NotNull(signatureRates);
+            Assert.True(fedExSignatureRates.Any());
+
+            foreach (var rate in fedExSignatureRates)
+            {
+                Assert.True(rate.TotalCharges > 0);
+            }
+
+            // Now compare prices
+            foreach (var signatureRate in fedExSignatureRates)
+            {
+                var nonSignatureRate = fedExNonSignatureRates.FirstOrDefault(x => x.Name == signatureRate.Name);
+
+                if (nonSignatureRate != null)
+                {
+                    var signatureTotalCharges = signatureRate.TotalCharges;
+                    var nonSignatureTotalCharges = nonSignatureRate.TotalCharges;
+                    Assert.NotEqual(signatureTotalCharges, nonSignatureTotalCharges);
+                }
+            }
+        }
+
         [Fact]
         public void CanGetFedExServiceCodes()
         {

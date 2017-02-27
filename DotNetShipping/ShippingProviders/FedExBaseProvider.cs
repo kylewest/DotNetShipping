@@ -228,6 +228,14 @@ namespace DotNetShipping.ShippingProviders
                     request.RequestedShipment.RequestedPackageLineItems[i].InsuredValue.Currency = "USD";
                 }
 
+                if (package.SignatureRequiredOnDelivery)
+                {
+                    var signatureOptionDetail = new SignatureOptionDetail { OptionType = SignatureOptionType.DIRECT };
+                    var specialServicesRequested = new PackageSpecialServicesRequested() { SignatureOptionDetail = signatureOptionDetail };
+
+                    request.RequestedShipment.RequestedPackageLineItems[i].SpecialServicesRequested = specialServicesRequested;
+                }
+
                 i++;
             }
         }
