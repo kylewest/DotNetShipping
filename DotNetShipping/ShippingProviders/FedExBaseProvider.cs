@@ -68,15 +68,7 @@ namespace DotNetShipping.ShippingProviders
         {
             if (_serviceCodes != null && _serviceCodes.Count > 0)
             {
-                var serviceCodes = new Dictionary<string, string>();
-
-                foreach (var serviceCodeKey in _serviceCodes.Keys)
-                {
-                    var serviceCode = _serviceCodes[serviceCodeKey];
-                    serviceCodes.Add(serviceCodeKey, serviceCode);
-                }
-
-                return serviceCodes;
+                return new Dictionary<string, string>(_serviceCodes);
             }
 
             return null;
