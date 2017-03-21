@@ -40,7 +40,7 @@ namespace DotNetShipping.ShippingProviders
         private const string PRODUCTION_RATES_URL = "https://onlinetools.ups.com/ups.app/xml/Rate";
         private AvailableServices _services = AvailableServices.All;
         private bool _useNegotiatedRates = false;
-        private bool _useRetailRates = false;
+        private bool _useRetailRates = true;
         private bool _useProduction = true;
         private readonly string _licenseNumber;
         private readonly string _password;
@@ -198,8 +198,8 @@ namespace DotNetShipping.ShippingProviders
             {
                 writer.WriteElementString("StateProvinceCode", Shipment.DestinationAddress.State);
             }
-            if (Shipment.DestinationAddress.IsUnitedStatesAddress() || Shipment.DestinationAddress.IsCanadaAddress())
-            {
+			if (!string.IsNullOrWhiteSpace(Shipment.DestinationAddress.PostalCode))
+			{
                 writer.WriteElementString("PostalCode", Shipment.DestinationAddress.PostalCode);
             }
             writer.WriteElementString("CountryCode", Shipment.DestinationAddress.CountryCode);
