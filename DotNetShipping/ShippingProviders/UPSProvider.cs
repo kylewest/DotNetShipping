@@ -203,7 +203,11 @@ namespace DotNetShipping.ShippingProviders
                 writer.WriteElementString("PostalCode", Shipment.DestinationAddress.PostalCode);
             }
             writer.WriteElementString("CountryCode", Shipment.DestinationAddress.CountryCode);
-            writer.WriteEndElement(); // </Address>
+			if (Shipment.DestinationAddress.IsResidential)
+			{
+				writer.WriteElementString("ResidentialAddressIndicator", "true");
+			}
+			writer.WriteEndElement(); // </Address>
             writer.WriteEndElement(); // </ShipTo>
             if (!string.IsNullOrWhiteSpace(_serviceDescription))
             {

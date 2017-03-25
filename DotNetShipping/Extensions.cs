@@ -50,7 +50,10 @@ namespace DotNetShipping
                 case "UPS Worldwide Saver":
                     return "65";
 
-                case "UPS Sure Post":
+				case "UPS Express Saver":
+					return "65";
+
+				case "UPS Sure Post":
                     return "93";
 
                 default:
