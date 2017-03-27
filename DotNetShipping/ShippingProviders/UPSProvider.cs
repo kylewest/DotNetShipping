@@ -39,7 +39,7 @@ namespace DotNetShipping.ShippingProviders
         private const string DEVELOPMENT_RATES_URL = "https://wwwcie.ups.com/ups.app/xml/Rate";
         private const string PRODUCTION_RATES_URL = "https://onlinetools.ups.com/ups.app/xml/Rate";
         private AvailableServices _services = AvailableServices.All;
-        private bool _useNegotiatedRates = true;
+        private bool _useNegotiatedRates = false;
         private bool _useRetailRates = false;
         private bool _useProduction = true;
         private readonly string _licenseNumber;
