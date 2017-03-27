@@ -198,12 +198,16 @@ namespace DotNetShipping.ShippingProviders
             {
                 writer.WriteElementString("StateProvinceCode", Shipment.DestinationAddress.State);
             }
-            if (Shipment.DestinationAddress.IsUnitedStatesAddress() || Shipment.DestinationAddress.IsCanadaAddress())
-            {
+			if (!string.IsNullOrWhiteSpace(Shipment.DestinationAddress.PostalCode))
+			{
                 writer.WriteElementString("PostalCode", Shipment.DestinationAddress.PostalCode);
             }
             writer.WriteElementString("CountryCode", Shipment.DestinationAddress.CountryCode);
-            writer.WriteEndElement(); // </Address>
+			if (Shipment.DestinationAddress.IsResidential)
+			{
+				writer.WriteElementString("ResidentialAddressIndicator", "true");
+			}
+			writer.WriteEndElement(); // </Address>
             writer.WriteEndElement(); // </ShipTo>
             if (!string.IsNullOrWhiteSpace(_serviceDescription))
             {
