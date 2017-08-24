@@ -11,14 +11,14 @@ namespace DotNetShipping
         /// <summary>
         /// Shipping provider that generated the message
         /// </summary>
-        public Enums.ShippingProvider ShippingProvider { get; set; }
+        public ShippingProvider ShippingProvider { get; set; }
 
         /// <summary>
         /// Message
         /// </summary>
         public String Message { get; set; }
 
-        public InfoMessage(Enums.ShippingProvider shippingProvider, String message)
+        public InfoMessage(ShippingProvider shippingProvider, String message)
         {
             ShippingProvider = shippingProvider;
             Message = message;

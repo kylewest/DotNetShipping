@@ -233,7 +233,7 @@ namespace DotNetShipping.ShippingProviders
 
                 var message = $"Removed {String.Join(", ", excludedMailServices.Select(x => x.SanitizeMailServiceName()))} from returned rates. Rate not available on all packages in Shipment.";
 
-                Shipment.InfoMessages.Add(new InfoMessage(Enums.ShippingProvider.USPSInternational, message));
+                Shipment.InfoMessages.Add(new InfoMessage(ShippingProvider.USPSInternational, message));
                 Shipment.RatesExcluded = true;
             }
 
