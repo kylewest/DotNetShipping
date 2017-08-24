@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
@@ -169,6 +171,25 @@ namespace DotNetShipping.Tests.Features
                     Assert.NotEqual(signatureTotalCharges, nonSignatureTotalCharges);
                 }
             }
+        }
+
+        [Fact]
+        public void USPS_Domestic_Will_Remove_Rates_That_Are_Not_Uniform_If_RequiredUniformRates_Enabled()
+        {
+            var rateManager = new RateManager();
+            rateManager.AddProvider(new USPSProvider(USPSUserId, "ALL", String.Empty, true));
+
+            var package1 = new Package(14, 14, 6, 2, 0);
+            var package2 = new Package(16, 16, 48, 16, 0);
+
+            var origin = new Address("", "", "21401", "US");
+            var destination = new Address("", "", "54937", "US");
+
+            var response = rateManager.GetRates(origin, destination, new List<Package>() { package1, package2 } );
+
+            Assert.True(response.RatesExcluded);
+            Assert.NotNull(response.InfoMessages);
+            Assert.True(response.InfoMessages.Count > 0);
         }
     }
 }
