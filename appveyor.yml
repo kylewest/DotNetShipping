@@ -1,16 +1,16 @@
 # version format
-version: 0.9.4.{build}
+version: 0.9.5.{build}
 
 # environment variables
 environment:
   FEDEX_ACCOUNT_NUMBER:
-    secure: DJ9bsmEOWzIP8Yvj80f/cQ==
+    secure: LULEmbMONsSAiGcBRUy0gA==
   FEDEX_KEY:
-    secure: UlmvrWKTSvDIsF6+FvZLZcckuf4wB/RmpXcxqzWn2C8=
+    secure: CamE8i+1YL/RrDDAod+bxcXoTQ9J8WJS7Vkzg57oXd0=
   FEDEX_METER_NUMBER:
-    secure: KMSY2fBJpviNQxle2G/kiw==
+    secure: UvSOUS4CR3Emo+VcQdf6/g==
   FEDEX_PASSWORD:
-    secure: 43QtIRadTMRcx6SOgl8y4FZVqsHadKmIwX6+DzlJY48=
+    secure: 7AKP5O0xq3gnqxJ0PhjYxIdwUOSsl9AnbjBrbNprj4U=
   UPS_LICENSE_NUMBER:
     secure: PbuU0sZbXmcsCJ3QMtRn4SRYC7CVL5Gnb1eCeByQPPM=
   UPS_PASSWORD:
