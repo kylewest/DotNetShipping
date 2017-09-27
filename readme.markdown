@@ -85,7 +85,7 @@ Developer documentation is often hard to find. The links below are provided as r
 
 * [FedEx](http://www.fedex.com/us/developer/)
 * [USPS](https://www.usps.com/business/web-tools-apis/welcome.htm)
-* [UPS] (https://www.ups.com/upsdeveloperkit)
+* [UPS](https://www.ups.com/upsdeveloperkit)
 
 ## Credits
 
