@@ -197,27 +197,33 @@ namespace DotNetShipping.ShippingProviders
             var i = 0;
             foreach (var package in Shipment.Packages)
             {
-                request.RequestedShipment.RequestedPackageLineItems[i] = new RequestedPackageLineItem();
-                request.RequestedShipment.RequestedPackageLineItems[i].SequenceNumber = (i + 1).ToString();
-                request.RequestedShipment.RequestedPackageLineItems[i].GroupPackageCount = "1";
-                // package weight
-                request.RequestedShipment.RequestedPackageLineItems[i].Weight = new Weight();
-                request.RequestedShipment.RequestedPackageLineItems[i].Weight.Units = WeightUnits.LB;
-                request.RequestedShipment.RequestedPackageLineItems[i].Weight.Value = package.RoundedWeight;
-                // package dimensions
-                request.RequestedShipment.RequestedPackageLineItems[i].Dimensions = new Dimensions();
-                request.RequestedShipment.RequestedPackageLineItems[i].Dimensions.Length = package.RoundedLength.ToString();
-                request.RequestedShipment.RequestedPackageLineItems[i].Dimensions.Width = package.RoundedWidth.ToString();
-                request.RequestedShipment.RequestedPackageLineItems[i].Dimensions.Height = package.RoundedHeight.ToString();
-                request.RequestedShipment.RequestedPackageLineItems[i].Dimensions.Units = LinearUnits.IN;
+                request.RequestedShipment.RequestedPackageLineItems[i] = new RequestedPackageLineItem
+                {
+                    SequenceNumber = (i + 1).ToString(),
+                    GroupPackageCount = "1",
+                    Weight = new Weight
+                    {
+                        Units = WeightUnits.LB,
+                        Value = package.Weight
+                    },
+                    Dimensions = new Dimensions
+                    {
+                        Length = package.Length.ToString(),
+                        Width = package.Width.ToString(),
+                        Height = package.Height.ToString(),
+                        Units = LinearUnits.IN
+                    }
+                };
 
                 if (_allowInsuredValues)
                 {
                     // package insured value
-                    request.RequestedShipment.RequestedPackageLineItems[i].InsuredValue = new Money();
-                    request.RequestedShipment.RequestedPackageLineItems[i].InsuredValue.Amount = package.InsuredValue;
-                    request.RequestedShipment.RequestedPackageLineItems[i].InsuredValue.AmountSpecified = true;
-                    request.RequestedShipment.RequestedPackageLineItems[i].InsuredValue.Currency = "USD";
+                    request.RequestedShipment.RequestedPackageLineItems[i].InsuredValue = new Money
+                    {
+                        Amount = package.InsuredValue,
+                        AmountSpecified = true,
+                        Currency = "USD"
+                    };
                 }
 
                 if (package.SignatureRequiredOnDelivery)
