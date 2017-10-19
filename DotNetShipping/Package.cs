@@ -92,5 +92,6 @@ namespace DotNetShipping
                 return poundsAndOunces;
             }
         }
+        public string Currency { get; set; }
     }
 }

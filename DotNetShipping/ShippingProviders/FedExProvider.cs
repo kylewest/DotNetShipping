@@ -1,11 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Diagnostics;
-using System.Linq;
-using System.Web.Services.Protocols;
-
-using DotNetShipping.Helpers.Extensions;
 using DotNetShipping.RateServiceWebReference;
 
 namespace DotNetShipping.ShippingProviders
@@ -14,14 +9,16 @@ namespace DotNetShipping.ShippingProviders
     ///     Provides rates from FedEx (Federal Express) excluding SmartPost. Please use <see cref="FedExSmartPostProvider"/> for SmartPost rates.
     /// </summary>
     public class FedExProvider : FedExBaseProvider
-    {        
+    {
+        private bool _useAccountRates;
+
         /// <summary>
         ///     Paramaterless constructor that loads settings from app.config
         /// </summary>
         public FedExProvider()
         {
             var appSettings = ConfigurationManager.AppSettings;
-            Init(appSettings["FedExKey"], appSettings["FedExPassword"], appSettings["FedExAccountNumber"], appSettings["FedExMeterNumber"], true);
+            Init(appSettings["FedExKey"], appSettings["FedExPassword"], appSettings["FedExAccountNumber"], appSettings["FedExMeterNumber"], true, false);
         }
 
         /// <summary>
@@ -32,7 +29,7 @@ namespace DotNetShipping.ShippingProviders
         /// <param name="meterNumber"></param>
         public FedExProvider(string key, string password, string accountNumber, string meterNumber)
         {
-            Init(key, password, accountNumber, meterNumber, true);
+            Init(key, password, accountNumber, meterNumber, true, false);
         }
 
         /// <summary>
@@ -42,12 +39,13 @@ namespace DotNetShipping.ShippingProviders
         /// <param name="accountNumber"></param>
         /// <param name="meterNumber"></param>
         /// <param name="useProduction"></param>
-        public FedExProvider(string key, string password, string accountNumber, string meterNumber, bool useProduction)
+        /// <param name="useAccountRates">Flag to indicate if you want to use account discounted rates or FedEx listed rates.</param>
+        public FedExProvider(string key, string password, string accountNumber, string meterNumber, bool useProduction, bool useAccountRates = false)
         {
-            Init(key, password, accountNumber, meterNumber, useProduction);
+            Init(key, password, accountNumber, meterNumber, useProduction, useAccountRates);
         }
 
-        private void Init(string key, string password, string accountNumber, string meterNumber, bool useProduction)
+        private void Init(string key, string password, string accountNumber, string meterNumber, bool useProduction, bool useAccountRates)
         {
             Name = "FedEx";
             _key = key;
@@ -55,6 +53,7 @@ namespace DotNetShipping.ShippingProviders
             _accountNumber = accountNumber;
             _meterNumber = meterNumber;
             _useProduction = useProduction;
+            _useAccountRates = useAccountRates;
 
             SetServiceCodes();
         }
@@ -91,8 +90,7 @@ namespace DotNetShipping.ShippingProviders
             request.RequestedShipment.ShipTimestampSpecified = true;
             request.RequestedShipment.DropoffType = DropoffType.REGULAR_PICKUP; //Drop off types are BUSINESS_SERVICE_CENTER, DROP_BOX, REGULAR_PICKUP, REQUEST_COURIER, STATION
             request.RequestedShipment.DropoffTypeSpecified = true;
-            request.RequestedShipment.PackagingType = PackagingType.YOUR_PACKAGING;
-            request.RequestedShipment.PackagingTypeSpecified = true;
+            request.RequestedShipment.PackagingTypeSpecified = false;
 
             SetOrigin(request);
 
@@ -101,7 +99,11 @@ namespace DotNetShipping.ShippingProviders
             SetPackageLineItems(request);
             
             request.RequestedShipment.RateRequestTypes = new RateRequestType[1];
-            request.RequestedShipment.RateRequestTypes[0] = RateRequestType.LIST;
+            if (_useAccountRates)
+                request.RequestedShipment.RateRequestTypes[0] = RateRequestType.ACCOUNT;
+            else
+                request.RequestedShipment.RateRequestTypes[0] = RateRequestType.LIST;
+
             request.RequestedShipment.PackageCount = Shipment.PackageCount.ToString();
         }
     }

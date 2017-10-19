@@ -17,7 +17,9 @@ namespace DotNetShipping.ShippingProviders
         protected string _key;
 		protected string _meterNumber;
         protected string _password;
+
         protected bool _useProduction = true;
+
         protected Dictionary<string, string> _serviceCodes;
 
         /// <summary>
@@ -223,7 +225,7 @@ namespace DotNetShipping.ShippingProviders
                     {
                         Amount = package.InsuredValue,
                         AmountSpecified = true,
-                        Currency = "USD"
+                        Currency = package.Currency ?? "USD"
                     };
                 }
 
