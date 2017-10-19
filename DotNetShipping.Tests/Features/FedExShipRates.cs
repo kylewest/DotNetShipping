@@ -53,6 +53,20 @@ namespace DotNetShipping.Tests.Features
         }
 
         [Fact]
+        public void FedExReturnsRates_WithPackageWithDecimals()
+        {
+            var from = new Address("Quebec", "QC", "G1K6T3", "CA");
+            var to = new Address("Quebec", "QC", "G1H2T5", "CA");
+            var package = new Package(0.5m, 0.5m, 0.5m, 0.1m, 0m);
+
+            var r = _rateManager.GetRates(from, to, package);
+            var fedExRates = r.Rates.ToList();
+
+            Assert.NotNull(r);
+            Assert.True(fedExRates.Any());
+        }
+
+        [Fact]
         public void FedExReturnsDifferentRatesForSignatureOnDelivery()
         {
             var from = new Address("Annapolis", "MD", "21401", "US");

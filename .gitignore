@@ -9,6 +9,7 @@
 packages/
 
 #Visual Studio files
+.vs/
 *.[Oo]bj
 *.user
 *.aps

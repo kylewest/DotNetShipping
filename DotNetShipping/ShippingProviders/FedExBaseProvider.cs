@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Web.Services.Protocols;
@@ -208,9 +209,9 @@ namespace DotNetShipping.ShippingProviders
                     },
                     Dimensions = new Dimensions
                     {
-                        Length = package.Length.ToString(),
-                        Width = package.Width.ToString(),
-                        Height = package.Height.ToString(),
+                        Length = package.RoundedLength.ToString("0.##", CultureInfo.InvariantCulture),
+                        Width = package.RoundedWidth.ToString("0.##", CultureInfo.InvariantCulture),
+                        Height = package.RoundedHeight.ToString("0.##", CultureInfo.InvariantCulture),
                         Units = LinearUnits.IN
                     }
                 };
