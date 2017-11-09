@@ -188,6 +188,10 @@ namespace DotNetShipping.ShippingProviders
                 writer.WriteElementString("ShipperNumber", _shipperNumber);
             }
             writer.WriteStartElement("Address");
+            if (!string.IsNullOrWhiteSpace(Shipment.OriginAddress.State))
+            {
+                writer.WriteElementString("StateProvinceCode", Shipment.OriginAddress.State);
+            }
             writer.WriteElementString("PostalCode", Shipment.OriginAddress.PostalCode);
             writer.WriteElementString("CountryCode", Shipment.OriginAddress.CountryCode);
             writer.WriteEndElement(); // </Address>
