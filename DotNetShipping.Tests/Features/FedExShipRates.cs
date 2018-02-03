@@ -36,9 +36,9 @@ namespace DotNetShipping.Tests.Features
         [Fact]
         public void FedExReturnsRates()
         {
-            var from = new Address("Annapolis", "MD", "21401", "US");
-            var to = new Address("Fitchburg", "WI", "53711", "US");
-            var package = new Package(7, 7, 7, 6, 0);
+            var from = new Address("", "", "60084", "US");
+            var to = new Address("", "", "80465", "US") { IsResidential = true };
+            var package = new Package(24, 24, 13, 50, 0);
 
             var r = _rateManager.GetRates(from, to, package);
             var fedExRates = r.Rates.ToList();
@@ -50,6 +50,51 @@ namespace DotNetShipping.Tests.Features
             {
                 Assert.True(rate.TotalCharges > 0);
             }
+        }
+
+        [Fact]
+        public void FedExReturnsDifferentRatesForResidentialAndBusiness()
+        {
+            var from = new Address("Annapolis", "MD", "21401", "US");
+            var residentialTo = new Address("Fitchburg", "WI", "53711", "US") { IsResidential = true };
+            var businessTo = new Address("Fitchburg", "WI", "53711", "US") { IsResidential = false };
+            var package = new Package(7, 7, 7, 6, 0);
+
+            var residential = _rateManager.GetRates(from, residentialTo, package);
+            var residentialRates = residential.Rates.ToList();
+
+            var business = _rateManager.GetRates(from, businessTo, package);
+            var businessRates = business.Rates.ToList();
+
+            var homeFound = false;
+            var groundFound = false;
+
+            // FedEx Home should come back for Residential
+            foreach (var rate in residentialRates)
+            {
+                if (rate.ProviderCode.Equals("GROUND_HOME_DELIVERY"))
+                    homeFound = true;
+                if (rate.ProviderCode.Equals("FEDEX_GROUND"))
+                    groundFound = true;
+            }
+
+            Assert.True(homeFound);
+            Assert.True(!groundFound);
+
+            homeFound = false;
+            groundFound = false;
+
+            // FedEx Ground should come back for Business
+            foreach (var rate in businessRates)
+            {
+                if (rate.ProviderCode.Equals("GROUND_HOME_DELIVERY"))
+                    homeFound = true;
+                if (rate.ProviderCode.Equals("FEDEX_GROUND"))
+                    groundFound = true;
+            }
+
+            Assert.True(!homeFound);
+            Assert.True(groundFound);
         }
 
         [Fact]
