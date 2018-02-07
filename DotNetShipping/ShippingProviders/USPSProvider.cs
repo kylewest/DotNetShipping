@@ -10,6 +10,8 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
+using DotNetShipping.Helpers;
+
 namespace DotNetShipping.ShippingProviders
 {
     /// <summary>
@@ -17,7 +19,6 @@ namespace DotNetShipping.ShippingProviders
     public class USPSProvider : AbstractShippingProvider
     {
         private const string PRODUCTION_URL = "http://production.shippingapis.com/ShippingAPI.dll";
-        private const string REMOVE_FROM_RATE_NAME = "&lt;sup&gt;&amp;reg;&lt;/sup&gt;";
 
         /// <summary>
         /// If set to ALL, special service types will not be returned. This is a limitation of the USPS API.
@@ -26,6 +27,15 @@ namespace DotNetShipping.ShippingProviders
 
         private readonly string _shipDate;
         private readonly string _userId;
+
+        /// <summary>
+        /// If set to true, the rates that are returned and combined across packages will only be done if even package has the same mail service available across returned packages.
+        /// <example>
+        /// If 2 packages are calculated and the first package has rates for Priority Mail 2 Day and Standard Post, but the second package only supports Standard Post, then only Standard Post rates would be returned.
+        /// In instances where this happens, ignored shipping rates will be populated in the InfoMessages property of the Shipment.
+        /// </example>
+        /// </summary>
+        private readonly bool _requireUniformMailServices;
 
         /// <summary>
         /// Service codes. {0} is a placeholder for 1-Day, 2-Day, 3-Day, Military, DPO or a space
@@ -84,7 +94,7 @@ namespace DotNetShipping.ShippingProviders
             {"Priority Mail Express {0} Padded Flat Rate Envelope Hold For Pickup","Priority Mail Express {0} Padded Flat Rate Envelope Hold For Pickup"},
             {"Priority Mail Express {0} Sunday/Holiday Delivery Padded Flat Rate Envelope","Priority Mail Express {0} Sunday/Holiday Delivery Padded Flat Rate Envelope"}
         };
-
+        
         public USPSProvider()
         {
             Name = "USPS";
@@ -118,6 +128,15 @@ namespace DotNetShipping.ShippingProviders
             _userId = userId;
             _service = service;
             _shipDate = shipDate;
+        }
+
+        public USPSProvider(string userId, string service, string shipDate, bool requireUniformMailServices)
+        {
+            Name = "USPS";
+            _userId = userId;
+            _service = service;
+            _shipDate = shipDate;
+            _requireUniformMailServices = requireUniformMailServices;
         }
 
         /// <summary>
@@ -271,18 +290,46 @@ namespace DotNetShipping.ShippingProviders
 
             return (package.Width <= 27 && package.Height <= 17 && package.Length <= 17) || (package.Width <= 17 && package.Height <= 27 && package.Length <= 17) || (package.Width <= 17 && package.Height <= 17 && package.Length <= 27);
         }
-
+        
         private void ParseResult(string response, IList<String> includeSpecialServiceCodes = null)
         {
             var document = XElement.Parse(response, LoadOptions.None);
+            var excludedMailServices = new List<String>();
 
-            var rates = from item in document.Descendants("Postage")
+            var rates = (from item in document.Descendants("Postage")
                 group item by (string) item.Element("MailService")
                 into g
                 select new {Name = g.Key,
                             TotalCharges = g.Sum(x => Decimal.Parse((string) x.Element("Rate"))),
                             DeliveryDate = g.Select(x => (string) x.Element("CommitmentDate")).FirstOrDefault(),
-                            SpecialServices = g.Select(x => x.Element("SpecialServices")).FirstOrDefault() };
+                            SpecialServices = g.Select(x => x.Element("SpecialServices")).FirstOrDefault() }).ToList();
+
+            if (_requireUniformMailServices)
+            {
+                // Put together a list of excluded mail services by getting a count of packages and a count of each mail service returned
+                var totalPackages = document.Descendants("Package").Count();
+                var mailServices = from item in document.Descendants("Postage")
+                                   group item by (string)item.Element("MailService")
+                                   into g
+                                   select new
+                                   {
+                                       Name = g.Key,
+                                       Count = g.Count()
+                                   };
+
+                excludedMailServices.AddRange(from mailService in mailServices where mailService.Count < totalPackages select mailService.Name);
+            }
+
+            // Remove excluded rates
+            if (excludedMailServices.Count > 0)
+            {
+                rates.RemoveAll(x => excludedMailServices.Contains(x.Name));
+
+                var message = $"Removed {String.Join(", ", excludedMailServices.Select(x => x.SanitizeMailServiceName()))} from returned rates. Rate not available on all packages in Shipment.";
+
+                Shipment.InfoMessages.Add(new InfoMessage(ShippingProvider.USPS, message));
+                Shipment.RatesExcluded = true;
+            }
 
             foreach (var r in rates)
             {
