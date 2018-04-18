@@ -76,7 +76,8 @@ namespace DotNetShipping.ShippingProviders
                 {"GROUND_HOME_DELIVERY", "FedEx Ground Residential"},
                 {"FEDEX_INTERNATIONAL_GROUND", "FedEx International Ground"},
                 {"INTERNATIONAL_ECONOMY", "FedEx International Economy"},
-                {"INTERNATIONAL_PRIORITY", "FedEx International Priority"}
+                {"INTERNATIONAL_PRIORITY", "FedEx International Priority"},
+                {"INTERNATIONAL_FIRST", "FedEx International First" }
             };
         }
 
