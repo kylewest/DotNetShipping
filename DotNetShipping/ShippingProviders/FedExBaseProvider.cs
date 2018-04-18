@@ -148,7 +148,11 @@ namespace DotNetShipping.ShippingProviders
 
                 var key = rateReplyDetail.ServiceType.ToString();
                 var deliveryDate = rateReplyDetail.DeliveryTimestampSpecified ? rateReplyDetail.DeliveryTimestamp : DateTime.Now.AddDays(30);
-                AddRate(key, _serviceCodes[key], netCharge, deliveryDate);
+
+                if (_serviceCodes.ContainsKey(key))
+                {
+                    AddRate(key, _serviceCodes[key], netCharge, deliveryDate);
+                }                
             }
         }
 
