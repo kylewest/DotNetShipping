@@ -196,6 +196,7 @@ namespace DotNetShipping.ShippingProviders
         protected void SetPackageLineItems(RateRequest request)
         {
             request.RequestedShipment.RequestedPackageLineItems = new RequestedPackageLineItem[Shipment.PackageCount];
+            request.RequestedShipment.PreferredCurrency = Shipment.Packages.FirstOrDefault()?.Currency ?? "USD";
 
             var i = 0;
             foreach (var package in Shipment.Packages)
