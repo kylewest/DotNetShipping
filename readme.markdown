@@ -1,3 +1,11 @@
+## ⚠️ Unmaintained Repository
+
+This repository is no longer actively maintained. For an updated and maintained version, please visit the following fork:
+
+[https://github.com/alexeybusygin/ShippingRates](https://github.com/alexeybusygin/ShippingRates)
+
+---
+
 # DotNetShipping
 
 [![Build status](https://ci.appveyor.com/api/projects/status/lom3p3jvvf4e9j3r?svg=true)](https://ci.appveyor.com/project/kylewest/dotnetshipping)
