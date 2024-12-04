@@ -10,6 +10,8 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 
+using DotNetShipping.Helpers;
+
 namespace DotNetShipping.ShippingProviders
 {
     /// <summary>
@@ -19,6 +21,16 @@ namespace DotNetShipping.ShippingProviders
         private const string PRODUCTION_URL = "http://production.shippingapis.com/ShippingAPI.dll";
         private readonly string _service;
         private readonly string _userId;
+
+        /// <summary>
+        /// If set to true, the rates that are returned and combined across packages will only be done if even package has the same mail service available across returned packages.
+        /// <example>
+        /// If 2 packages are calculated and the first package has rates for Priority Mail 2 Day and Standard Post, but the second package only supports Standard Post, then only Standard Post rates would be returned.
+        /// In instances where this happens, ignored shipping rates will be populated in the InfoMessages property of the Shipment.
+        /// </example>
+        /// </summary>
+        private readonly bool _requireUniformMailServices;
+
         private readonly Dictionary<string, string> _serviceCodes = new Dictionary<string, string>
         {
             {"Priority Mail Express International","Priority Mail Express International"},
@@ -74,6 +86,17 @@ namespace DotNetShipping.ShippingProviders
             Name = "USPS";
             _userId = userId;
             _service = service;
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="userId"></param>
+        public USPSInternationalProvider(string userId, string service, bool requireUniformMailServices)
+        {
+            Name = "USPS";
+            _userId = userId;
+            _service = service;
+            _requireUniformMailServices = requireUniformMailServices;
         }
 
         public bool Commercial { get; set; }
@@ -183,8 +206,36 @@ namespace DotNetShipping.ShippingProviders
         private void ParseResult(string response)
         {
             var document = XDocument.Load(new StringReader(response));
+            var excludedMailServices = new List<String>();
 
-            var rates = document.Descendants("Service").GroupBy(item => (string) item.Element("SvcDescription")).Select(g => new {Name = g.Key, TotalCharges = g.Sum(x => Decimal.Parse((string) x.Element("Postage")))});
+            var rates = document.Descendants("Service").GroupBy(item => (string) item.Element("SvcDescription")).Select(g => new {Name = g.Key, TotalCharges = g.Sum(x => Decimal.Parse((string) x.Element("Postage")))}).ToList();
+
+            if (_requireUniformMailServices)
+            {
+                // Put together a list of excluded mail services by getting a count of packages and a count of each mail service returned
+                var totalPackages = document.Descendants("Package").Count();
+                var mailServices = from item in document.Descendants("Postage")
+                                   group item by (string)item.Element("MailService")
+                                   into g
+                                   select new
+                                   {
+                                       Name = g.Key,
+                                       Count = g.Count()
+                                   };
+
+                excludedMailServices.AddRange(from mailService in mailServices where mailService.Count < totalPackages select mailService.Name);
+            }
+
+            // Remove excluded rates
+            if (excludedMailServices.Count > 0)
+            {
+                rates.RemoveAll(x => excludedMailServices.Contains(x.Name));
+
+                var message = $"Removed {String.Join(", ", excludedMailServices.Select(x => x.SanitizeMailServiceName()))} from returned rates. Rate not available on all packages in Shipment.";
+
+                Shipment.InfoMessages.Add(new InfoMessage(ShippingProvider.USPSInternational, message));
+                Shipment.RatesExcluded = true;
+            }
 
             if (_service == "ALL")
             {

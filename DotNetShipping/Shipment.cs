@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -13,9 +14,15 @@ namespace DotNetShipping
         public ICollection<IRateAdjuster> RateAdjusters;
         private readonly List<Rate> _rates;
         private readonly List<USPSError> _serverErrors;
+
+        /// <summary>
+        /// Will contain any informative messages 
+        /// </summary>
+        private readonly List<InfoMessage> _infoMessages;
+         
         public readonly Address DestinationAddress;
         public readonly Address OriginAddress;
-
+        
         public Shipment(Address originAddress, Address destinationAddress, List<Package> packages)
         {
             OriginAddress = originAddress;
@@ -23,6 +30,7 @@ namespace DotNetShipping
             Packages = packages.AsReadOnly();
             _rates = new List<Rate>();
             _serverErrors = new List<USPSError>();
+            _infoMessages = new List<InfoMessage>();
         }
 
         public int PackageCount
@@ -41,5 +49,14 @@ namespace DotNetShipping
         {
             get { return _serverErrors; }
         }
+        public List<InfoMessage> InfoMessages
+        {
+            get { return _infoMessages; }
+        }
+
+        /// <summary>
+        /// If true, some rates were excluded. See InfoMessages for more information.
+        /// </summary>
+        public bool RatesExcluded { get; set; }        
     }
 }
